@@ -25,6 +25,17 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
+    nixerus = {
+      type = "github";
+      owner = "materusPL";
+      repo = "Nixerus";
+      ref = "master";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "home-manager";
+      };
+    };
+
     nur = {
       type = "github";
       owner = "nix-community";
