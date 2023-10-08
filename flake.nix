@@ -14,7 +14,10 @@
       ref = "mock";
     };
     configInputs = {
-      url = "git+file:/materus/config/nixos-config?ref=inputs";
+      type = "github";
+      owner = "materusPL";
+      repo = "nixos-config";
+      ref = "inputs";
       inputs = {
         nixpkgs.follows = "nixpkgs";
       };

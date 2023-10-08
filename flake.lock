@@ -13,16 +13,16 @@
       "locked": {
         "lastModified": 1696774666,
         "narHash": "sha256-kqSXbAPQdkUadGsQL/bH9FBV/y4+d2g3GJxJHafquS4=",
-        "ref": "inputs",
+        "owner": "materusPL",
+        "repo": "nixos-config",
         "rev": "cae14663b542afa8140c72b8aa42cd42cf7b0151",
-        "revCount": 5,
-        "type": "git",
-        "url": "file:/materus/config/nixos-config"
+        "type": "github"
       },
       "original": {
+        "owner": "materusPL",
         "ref": "inputs",
-        "type": "git",
-        "url": "file:/materus/config/nixos-config"
+        "repo": "nixos-config",
+        "type": "github"
       }
     },
     "emacs-overlay": {
