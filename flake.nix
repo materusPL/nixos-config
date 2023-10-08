@@ -7,18 +7,31 @@
       repo = "nixpkgs";
       ref = "nixos-unstable";
     };
-    private = {
+    home-manager = {
       type = "github";
-      owner = "materusPL";
-      repo = "Nixerus";
-      ref = "mock";
-    };
-    configInputs = {
-      url = "path:./inputs";
+      owner = "nix-community";
+      repo = "home-manager";
+      ref = "master";
       inputs = {
         nixpkgs.follows = "nixpkgs";
       };
     };
+    emacs-overlay = {
+      type = "github";
+      owner = "nix-community";
+      repo = "emacs-overlay";
+      ref = "master";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+    nur = {
+      type = "github";
+      owner = "nix-community";
+      repo = "NUR";
+      ref = "master";
+    };
+
   };
 
 
@@ -33,9 +46,7 @@
     in
     rec {
 
-      nixosConfigurations = import ./configurations/host { inherit inputs; materusFlake = self; };
-      homeConfigurations = import ./configurations/home { inherit inputs; materusFlake = self; };
-      selfPath = ./.;
+      inherit inputs;
 
     };
 }
