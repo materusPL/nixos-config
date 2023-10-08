@@ -6,7 +6,7 @@ with materusPkgs.lib;
   ];
 
   #Single Packages
-  #options.materus.profile.packages.home-manager = mkPrivateVar inputs.home-manager.packages.${pkgs.system}.home-manager;
+  options.materus.profile.packages.home-manager = mkPrivateVar inputs.configInputs.inputs.home-manager.packages.${pkgs.system}.home-manager;
   options.materus.profile.packages.firefox = mkPrivateVar pkgs.firefox;
   
   #Package Lists

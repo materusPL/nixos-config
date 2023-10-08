@@ -12,7 +12,7 @@ let
         ([{
           name = builtins.elemAt _list i;
           value = let host = builtins.elemAt hosts i; in
-            inputs.home-manager.lib.homeManagerConfiguration {
+            inputs.configInputs.inputs.home-manager.lib.homeManagerConfiguration {
               pkgs = materusFlake.nixosConfigurations.${host}.pkgs;
               extraSpecialArgs = { inherit inputs; inherit materusFlake; };
               modules = [
@@ -29,7 +29,7 @@ let
     in
     (builtins.listToAttrs (_for 0)) // {
       #Make generic x86_64-linux user profile "username"
-      ${username} = inputs.home-manager.lib.homeManagerConfiguration {
+      ${username} = inputs.configInputs.inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import inputs.nixpkgs { system = "x86_64-linux"; config = {allowUnfree = true;}; };
         extraSpecialArgs = { inherit inputs; inherit materusFlake; };
         modules = [
