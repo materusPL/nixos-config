@@ -14,7 +14,7 @@
       ref = "mock";
     };
     configInputs = {
-      url = "path:./inputs";
+      url = "git+file:/materus/config/nixos-config?ref=inputs";
       inputs = {
         nixpkgs.follows = "nixpkgs";
       };
@@ -32,7 +32,6 @@
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
     in
     rec {
-
       nixosConfigurations = import ./configurations/host { inherit inputs; materusFlake = self; };
       homeConfigurations = import ./configurations/home { inherit inputs; materusFlake = self; };
       selfPath = ./.;
