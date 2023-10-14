@@ -2,7 +2,7 @@
 let
   optHip = pkgs.stdenv.mkDerivation rec {
   pname = "optHip";
-  version = pkgs.hip.version;
+  version = pkgs.rocmPackages.clr.version;
 
 
   dontFixup = true;
@@ -12,12 +12,12 @@ let
   sourceRoot = ".";
 
   buildInputs = [
-    pkgs.hip
+    pkgs.rocmPackages.clr
   ];
 
   installPhase = ''
     mkdir -p $out/opt/rocm
-    ln -s ${pkgs.hip} $out/opt/rocm/hip
+    ln -s ${pkgs.rocmPackages.clr} $out/opt/rocm/hip
   '';
   };
 
@@ -26,6 +26,7 @@ let
       #config.materus.profile.packages.firefox
       optHip #for blender
 
+      pkgs.libdecor
       pkgs.obs-studio-plugins.obs-vkcapture
       pkgs.steamcmd
       pkgs.nss_latest

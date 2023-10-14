@@ -17,7 +17,7 @@
   services.teamviewer.enable = true;
 
   systemd.tmpfiles.rules = [
-    "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.hip}"
+    "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
   ];
 
   services.flatpak.enable = true;
@@ -47,8 +47,13 @@
     services.xserver.displayManager.lightdm.greeters.enso.enable = true;
     services.xserver.displayManager.lightdm.greeters.enso.blur = true;
   */
-  
-  services.xserver.config = pkgs.lib.mkAfter ''
+
+  xdg.portal.enable = true;
+  xdg.portal.wlr.enable = true;
+  xdg.portal.xdgOpenUsePortal = true;
+
+  services.xserver.exportConfiguration = true;
+  services.xserver.extraConfig = pkgs.lib.mkDefault ''
     Section "OutputClass"
       Identifier "amd-options"
       Option "TearFree" "True"
@@ -105,10 +110,6 @@
     #   ];
   };
   environment.variables = {
-    DISABLE_LAYER_AMD_SWITCHABLE_GRAPHICS_1 = "1";
-    VK_ICD_FILENAMES = "/run/opengl-driver/share/vulkan/icd.d/radeon_icd.x86_64.json:/run/opengl-driver-32/share/vulkan/icd.d/radeon_icd.i686.json";
-    AMD_VULKAN_ICD = "RADV";
-    RADV_PERFTEST = "gpl,rt,sam";
     ALSOFT_DRIVERS = "pulse";
   };
   environment.sessionVariables = rec {
@@ -151,7 +152,7 @@
     enable = true;
     enableSSHSupport = false;
     enableBrowserSocket = true;
-    
+
   };
   programs.ssh.startAgent = true;
   services.openssh.enable = true;

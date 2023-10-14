@@ -13,13 +13,34 @@
     enableTerminalExtra = lib.mkDefault true;
     enableNixDevel = lib.mkDefault true;
     editor.code.fhs.enable = true;
-    editor.code.fhs.packages = (ps: with ps;[
-      llvmPackages_16.clang
-      llvmPackages_16.llvm
-      llvmPackages_16.bintools
-      llvmPackages_16.lld
-      llvmPackages_16.lldb
-      llvmPackages_16.libllvm
+
+    editor.code.fhs.packages = (ps: with ps; let llvmpkgs = llvmPackages_16; in[
+      llvmpkgs.clang
+      llvmpkgs.llvm
+      llvmpkgs.bintools
+      llvmpkgs.lld
+      llvmpkgs.lldb
+      llvmpkgs.libllvm
+
+
+      gcc
+      gdb
+
+      cmake
+      mold
+      python3
+      lua
+      SDL2.dev
+      SDL2
+      boost.dev
+      boost
+      fpc
+      jdk
+
+
+      ldc
+      dmd
+      dub
     ]);
 
   };
