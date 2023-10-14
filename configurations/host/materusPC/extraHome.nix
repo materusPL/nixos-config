@@ -21,12 +21,21 @@
       llvmpkgs.lld
       llvmpkgs.lldb
       llvmpkgs.libllvm
+      llvmpkgs.libllvm.dev
 
 
       gcc
       gdb
 
       cmake
+      gnumake
+      ninja 
+      binutils
+      coreutils
+      util-linux
+
+      dotnet-sdk_8
+      mono
       mold
       python3
       lua
