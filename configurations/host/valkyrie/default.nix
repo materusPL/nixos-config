@@ -9,7 +9,7 @@
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./pleroma.nix
+      ./services
           ];
 
   materus.profile.nix.enable = true;
@@ -28,7 +28,7 @@
   networking.hostName = "valkyrie"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = false; # Easiest to use and most distros use this by default.
+  networking.networkmanager.enable = false;
 
   # Set your time zone.
   time.timeZone = "Europe/Warsaw";
@@ -100,7 +100,7 @@
   services.openssh.settings.PasswordAuthentication = true;
 
 
-  services.adguardhome.enable = true;
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
