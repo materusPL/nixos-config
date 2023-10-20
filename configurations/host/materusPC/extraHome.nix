@@ -39,10 +39,20 @@
       mold
       python3
       lua
+      gtk4.dev
+      gtk4
+      miniaudio
       SDL2.dev
       SDL2
+      freeglut.dev
+      freeglut
       boost.dev
       boost
+      glew.dev
+      libGL.dev
+      libGLU.dev
+      vulkan-loader.dev
+
       fpc
       jdk
 
