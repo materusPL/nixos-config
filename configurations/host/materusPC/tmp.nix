@@ -217,6 +217,8 @@
     config.programs.java.package
 
     nss_latest
+    
+    pciutils
 
     aspell
     aspellDicts.pl
@@ -249,7 +251,7 @@
 
     # pgcli
     # litecli
-
+    materusPkgs.alvr
     #zenmonitor
 
     nix-du
