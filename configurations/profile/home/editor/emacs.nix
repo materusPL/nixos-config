@@ -1,6 +1,7 @@
-{ config, lib, pkgs, materusPkgs, ... }:
+{ config, lib, pkgs, materusPkgs, materusFlake, ... }:
 let
   cfg = config.materus.profile.editor.emacs;
+  configPath = "${materusFlake.selfPath}" + "/extraFiles/config/emacs/materus/"; 
   emacsPkgs = with pkgs;[
     python3
     lua
@@ -26,14 +27,27 @@ in
       enable = true;
       package = with pkgs; lib.mkDefault (if pkgs ? emacs-pgtk then emacs-pgtk else emacs-gtk);
       extraPackages = epkgs: with epkgs; [
-        magit
         evil
+        evil-numbers
+        evil-mc
+        evil-tex
+        evil-nerd-commenter
+
+        magit
         helm
         avy
         corfu
+        ivy
         vterm
         centaur-tabs
         treemacs
+        treemacs-evil
+        treemacs-nerd-icons
+        tree-edit
+        doom-modeline
+        nerd-icons
+        nerd-icons-completion
+        load-relative
 
         lsp-mode
         d-mode
@@ -41,6 +55,9 @@ in
         org
         markdown-mode
         json-mode
+
+        vscode-dark-plus-theme
+        kaolin-themes
       ];
       extraConfig = ''
         ;;;; Set emacs PATH
@@ -49,6 +66,9 @@ in
         ${builtins.concatStringsSep "\n" (builtins.map (x: "(setq exec-path (append exec-path '(\""+x+"/bin\")))" ) emacsPkgs)}
       
         ;;;; Done setting PATH
+
+        ; Load Config file
+         (load-file "${configPath + "config.el"}")
       '';
     };
 
