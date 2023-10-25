@@ -13,7 +13,6 @@
     enableTerminalExtra = lib.mkDefault true;
     enableNixDevel = lib.mkDefault true;
     editor.code.fhs.enable = true;
-
     editor.code.fhs.packages = (ps: with ps; let llvmpkgs = llvmPackages_16; in[
       llvmpkgs.clang
       llvmpkgs.llvm
@@ -62,6 +61,8 @@
       dub
     ]);
 
+    editor.emacs.enable = true;
+    
   };
 
   home.packages = [

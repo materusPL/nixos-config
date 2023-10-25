@@ -11,10 +11,7 @@ in
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
-      withNodeJs = true;
-      withPython3 = true;
-      withRuby = true;
-      defaultEditor = true;
+
 
       extraConfig = ''
       set number
@@ -22,7 +19,6 @@ in
     
 
     plugins = with pkgs.vimPlugins;[
-      nerdtree
       syntastic
 
       vim-fugitive
@@ -31,21 +27,6 @@ in
 
       nvim-fzf
       nvim-treesitter.withAllGrammars
-      
-      coc-clangd
-      coc-python
-      coc-pyright
-      coc-sh
-      coc-git
-      coc-css
-      coc-yaml
-      coc-toml
-      coc-json
-      coc-html
-      coc-highlight
-      coc-java
-      coc-cmake
-      coc-vimlsp
       
     ];
     };
