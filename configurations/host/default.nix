@@ -31,4 +31,5 @@ in
   materusPC = makeSystem { host = "materusPC"; stable = false; };
   flamaster = makeSystem { host = "flamaster"; stable = true; };
   valkyrie = makeSystem { host = "valkyrie"; stable = true; };
+  waffentrager = makeSystem { host = "waffentrager"; stable = false; arch = "aarch64-linux"; extraModules = [];};
 }
