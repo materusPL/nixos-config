@@ -217,7 +217,7 @@
     config.programs.java.package
 
     nss_latest
-    
+
     pciutils
 
     aspell

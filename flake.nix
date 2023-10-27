@@ -22,7 +22,7 @@
       ref = "nixos-23.05";
     };
 
-    
+
     configInputs = {
       type = "github";
       owner = "materusPL";
@@ -46,18 +46,9 @@
 
 
   outputs = inputs @ { self, nixpkgs, home-manager, nur, ... }:
-    let
-      systems = [
-        "x86_64-linux"
-        "i686-linux"
-        "aarch64-linux"
-      ];
-      forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
-    in
     rec {
       nixosConfigurations = import ./configurations/host { inherit inputs; materusFlake = self; };
       homeConfigurations = import ./configurations/home { inherit inputs; materusFlake = self; };
       selfPath = ./.;
-
     };
 }

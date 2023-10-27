@@ -28,26 +28,25 @@ let
     in
     (builtins.listToAttrs (_for 0)) // {
       #Make generic x86_64-linux user profile "username"
-      ${username} = 
-    let materusCfg = {
-        stable = false;
-        inherit materusFlake;
-        host = "Generic";
-        hm = inputs.configInputs.inputs.home-manager;
-        nixerus = inputs.configInputs.inputs.nixerus;
-        configInputs = inputs.configInputs;
-        path = materusFlake.selfPath;
-      }; in
+      ${username} =
+        let materusCfg = {
+          stable = false;
+          inherit materusFlake;
+          host = "Generic";
+          hm = inputs.configInputs.inputs.home-manager;
+          nixerus = inputs.configInputs.inputs.nixerus;
+          configInputs = inputs.configInputs;
+          path = materusFlake.selfPath;
+        }; in
         inputs.configInputs.inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = import inputs.nixpkgs { system = "x86_64-linux"; config = {allowUnfree = true;}; };
-        extraSpecialArgs = { inherit materusCfg; };
-        modules = [
-          ./${username}
-          profiles.homeProfile
-          inputs.private.homeModule
-        ];
-      };
+          pkgs = import inputs.nixpkgs { system = "x86_64-linux"; config = { allowUnfree = true; }; };
+          extraSpecialArgs = { inherit materusCfg; };
+          modules = [
+            ./${username}
+            profiles.homeProfile
+            inputs.private.homeModule
+          ];
+        };
     };
-
 in
 genHomes
