@@ -7,6 +7,7 @@
       repo = "nixpkgs";
       ref = "nixos-unstable";
     };
+    
     home-manager = {
       type = "github";
       owner = "nix-community";
@@ -16,6 +17,7 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
+
     emacs-overlay = {
       type = "github";
       owner = "nix-community";
@@ -25,6 +27,14 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
+
+    nixos-hardware = {
+      type = "github";
+      owner = "NixOS";
+      repo = "nixos-hardware";
+      ref = "master";
+    };
+
     nixerus = {
       type = "github";
       owner = "materusPL";
