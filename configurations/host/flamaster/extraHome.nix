@@ -1,4 +1,4 @@
-{ config, pkgs, materusPkgs, lib, ... }:
+{ config, pkgs, materusArg, lib, ... }:
 {
   home.stateVersion = "23.05";
   home.homeDirectory = "/home/materus";
@@ -15,7 +15,7 @@
 
   home.packages = [
     pkgs.papirus-icon-theme
-    (materusPkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; })
+    (materusArg.pkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; })
   ];
 
 }

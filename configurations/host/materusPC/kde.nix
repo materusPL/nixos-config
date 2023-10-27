@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, materusFlake, materusPkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   westonSddm = pkgs.writeText "weston.ini"
     ''

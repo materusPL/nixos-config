@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, materusFlake, ... }:
+{ config, pkgs, lib, ... }:
 {
   networking.useDHCP = lib.mkDefault true;
   networking.hostName = "materusPC";

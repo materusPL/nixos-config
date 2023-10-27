@@ -1,4 +1,4 @@
-{ config, pkgs, materusPkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 {
   home.stateVersion = "23.05";
   home.homeDirectory = "/home/materus";

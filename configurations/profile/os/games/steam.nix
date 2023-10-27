@@ -1,4 +1,4 @@
-{ config, pkgs, lib, materusPkgs, inputs, ... }:
+{ config, pkgs, lib, materusArg, inputs, ... }:
 let
   optHip = pkgs.stdenv.mkDerivation rec {
   pname = "optHip";
@@ -24,7 +24,7 @@ let
   steamPkg = pkgs.steam.override {
     extraPkgs = pkgs: [
       #config.materus.profile.packages.firefox
-      optHip #for blender
+      #optHip #for blender
       pkgs.libdecor
       pkgs.obs-studio-plugins.obs-vkcapture
       pkgs.steamcmd
@@ -72,7 +72,7 @@ let
       pkgs.x264.lib
       pkgs.steamtinkerlaunch
 
-    ] ++ config.materus.profile.packages.list.fonts;
+    ] ++ config.materus.profile.packages.list.fonts ++ config.materus.profile.steam.extraPkgs;
 
     extraLibraries = pkgs: [
       pkgs.libkrb5
@@ -100,11 +100,15 @@ let
   cfg = config.materus.profile.steam;
 in
 {
-  options.materus.profile.steam.enable = materusPkgs.lib.mkBoolOpt false "Enable materus steam settings for OS";
+  options.materus.profile.steam.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable materus steam settings for OS";
   options.materus.profile.steam.package = lib.mkOption {
     type = lib.types.package;
     default = steamPkg;
     description = "Package used by steam";
+  };
+  options.materus.profile.steam.extraPkgs = lib.mkOption {
+    default = [];
+    description = "Extra packages for steam";
   };
 
 

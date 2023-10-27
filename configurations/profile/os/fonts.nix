@@ -1,10 +1,10 @@
-{ config, pkgs, lib, materusPkgs, ... }:
+{ config, pkgs, lib, materusArg, ... }:
 let
   packages = config.materus.profile.packages;
   cfg = config.materus.profile.fonts;
 in
 {
-  options.materus.profile.fonts.enable = materusPkgs.lib.mkBoolOpt false "Enable materus font settings for OS";
+  options.materus.profile.fonts.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable materus font settings for OS";
 
   config = lib.mkIf cfg.enable {
 

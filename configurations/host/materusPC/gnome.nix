@@ -1,5 +1,5 @@
 
-{ config, pkgs, lib, inputs, materusFlake, materusPkgs, ... }:
+{ config, pkgs, lib,... }:
 {
 
 

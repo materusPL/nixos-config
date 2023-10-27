@@ -1,12 +1,12 @@
-{ config, pkgs, lib, materusFlake, materusPkgs, options, ... }:
+{ config, pkgs, lib, materusArg, options, ... }:
 let
   p10kcfg = "${zshcfg}/p10kcfg";
-  zshcfg = "${materusFlake.selfPath}/extraFiles/config/zsh";
+  zshcfg = "${materusArg.cfg.path}" + "/extraFiles/config/zsh";
   cfg = config.materus.profile.zsh;
   enableStarship = config.materus.starship.enable;
 in
 {
-  options.materus.profile.zsh.enable = materusPkgs.lib.mkBoolOpt config.materus.profile.enableTerminalExtra "Enable materus zsh config";
+  options.materus.profile.zsh.enable = materusArg.pkgs.lib.mkBoolOpt config.materus.profile.enableTerminalExtra "Enable materus zsh config";
   options.materus.profile.zsh.prompt = lib.mkOption {
       type = lib.types.enum ["p10k" "starship"];
       example = "p10k";

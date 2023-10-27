@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, materusFlake, materusPkgs, ... }:
+{ config, pkgs, lib, materusArg, ... }:
 
 {
   virtualisation.lxc.enable = false;
@@ -193,7 +193,7 @@
     firefox
     gamescope
     #(pkgs.lutris.override { extraLibraries = pkgs: with pkgs;  [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
-    materusPkgs.amdgpu-pro-libs.prefixes
+    materusArg.pkgs.amdgpu-pro-libs.prefixes
     (pkgs.bottles.override { extraPkgs = pkgs: with pkgs; [ pkgs.libsForQt5.breeze-qt5 pkgs.libsForQt5.breeze-gtk pkgs.nss_latest ]; extraLibraries = pkgs: with pkgs; [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
     glibc
     glib
@@ -251,7 +251,7 @@
 
     # pgcli
     # litecli
-    materusPkgs.alvr
+    materusArg.pkgs.alvr
     #zenmonitor
 
     nix-du

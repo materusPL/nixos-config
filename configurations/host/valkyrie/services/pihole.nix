@@ -1,6 +1,6 @@
-{ config, pkgs, lib, materusPkgs, ... }:
+{ config, pkgs, lib, materusArg, ... }:
 {
-  options.valkyrieService.pihole.enable = materusPkgs.lib.mkBoolOpt false "Enable pihole";
+  options.valkyrieService.pihole.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable pihole";
   options.valkyrieService.pihole.dnsIP = lib.mkOption { default = "127.0.0.1";};
   options.valkyrieService.pihole.webIP = lib.mkOption { default = "127.0.0.1";};
 

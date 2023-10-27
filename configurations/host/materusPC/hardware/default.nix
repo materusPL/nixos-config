@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, materusFlake, materusPkgs, ... }:
+{ config, pkgs, lib, materusArg, ... }:
 {
   imports =
     [
@@ -7,8 +7,8 @@
 
     ];
   hardware.firmware = with pkgs; [
-    #materusPkgs.amdgpu-pro-libs.firmware.vcn
-    #materusPkgs.amdgpu-pro-libs.firmware
+    #materusArg.pkgs.amdgpu-pro-libs.firmware.vcn
+    #materusArg.pkgs.amdgpu-pro-libs.firmware
     linux-firmware
     alsa-firmware
     sof-firmware
@@ -37,13 +37,13 @@
     amdvlk
     rocmPackages.clr.icd
     rocmPackages.clr
-    materusPkgs.amdgpu-pro-libs.vulkan
-    materusPkgs.amdgpu-pro-libs.amf
+    materusArg.pkgs.amdgpu-pro-libs.vulkan
+    materusArg.pkgs.amdgpu-pro-libs.amf
   ];
   hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [
     vaapiVdpau
     pkgs.driversi686Linux.amdvlk
-    materusPkgs.i686Linux.amdgpu-pro-libs.vulkan
+    materusArg.pkgs.i686Linux.amdgpu-pro-libs.vulkan
     libvdpau-va-gl
   ];
   services.udev.extraRules = ''

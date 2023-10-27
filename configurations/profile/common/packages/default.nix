@@ -1,12 +1,12 @@
-{ config, pkgs, lib, inputs, materusFlake, materusPkgs, ... }:
-with materusPkgs.lib;
+{ config, pkgs, lib, materusArg, ... }:
+with materusArg.pkgs.lib;
 {
   imports = [
     ./fonts.nix
   ];
 
   #Single Packages
-  options.materus.profile.packages.home-manager = mkPrivateVar inputs.configInputs.inputs.home-manager.packages.${pkgs.system}.home-manager;
+  options.materus.profile.packages.home-manager = mkPrivateVar materusArg.cfg.configInputs.inputs.home-manager.packages.${pkgs.system}.home-manager;
   options.materus.profile.packages.firefox = mkPrivateVar pkgs.firefox;
   
   #Package Lists

@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, lib, pkgs, materusFlake, materusPkgs, ... }:
+{ config, lib, pkgs, materusArg, ... }:
 
 {
   imports =
@@ -115,7 +115,7 @@
     isNormalUser = true;
     description = "Mateusz Słodkowicz";
     extraGroups = [ "networkmanager" "wheel" ];
-    openssh.authorizedKeys.keyFiles = [ (materusFlake.selfPath + /extraFiles/keys/ssh/materus.pub) ];
+    openssh.authorizedKeys.keyFiles = [  ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
     packages = with pkgs; [
       kate
     ];

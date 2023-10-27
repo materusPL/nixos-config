@@ -1,10 +1,10 @@
-{ config, lib, pkgs, materusPkgs, ... }:
+{ config, lib, pkgs, materusArg, ... }:
 let 
 cfg = config.materus.profile.browser;
 in
 {
   
-  options= let mkBoolOpt = materusPkgs.lib.mkBoolOpt; in{
+  options= let mkBoolOpt = materusArg.pkgs.lib.mkBoolOpt; in{
     materus.profile.browser.firefox.enable = mkBoolOpt config.materus.profile.enableDesktop "Enable Firefox with materus cfg";
     materus.profile.browser.vivaldi.enable = mkBoolOpt config.materus.profile.enableDesktop "Enable Vivaldi with materus cfg";
     materus.profile.browser.brave.enable = mkBoolOpt  false "Enable Brave with materus cfg";

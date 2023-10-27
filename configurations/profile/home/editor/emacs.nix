@@ -1,14 +1,14 @@
-{ config, lib, pkgs, materusPkgs, materusFlake, ... }:
+{ config, lib, pkgs, materusArg, ... }:
 let
   cfg = config.materus.profile.editor.emacs;
-  configPath = "${materusFlake.selfPath}" + "/extraFiles/config/emacs/materus/"; 
+  configPath = "${materusArg.cfg.path}" + "/extraFiles/config/emacs/materus/"; 
   emacsPkgs = with pkgs;[
     python3
     lua
   ];
 in
 {
-  options.materus.profile.editor.emacs.enable = materusPkgs.lib.mkBoolOpt false "Enable emacs with materus cfg";
+  options.materus.profile.editor.emacs.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable emacs with materus cfg";
 
   config = lib.mkIf cfg.enable {
     #TODO: Make config

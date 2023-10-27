@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, materusFlake, ... }:
+{ config, pkgs, lib, ... }:
 {
   zramSwap = {
     enable = true;

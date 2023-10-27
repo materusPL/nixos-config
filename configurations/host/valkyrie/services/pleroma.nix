@@ -1,4 +1,4 @@
-{ config, pkgs, lib, materusPkgs, ... }:
+{ config, pkgs, lib, materusArg, ... }:
 let
 
   socketPath = "/run/pleroma/http.sock";
@@ -41,7 +41,7 @@ let
 
 in
 {
-  options.valkyrieService.pleroma.enable = materusPkgs.lib.mkBoolOpt false "Enable pleroma";
+  options.valkyrieService.pleroma.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable pleroma";
   config = lib.mkIf config.valkyrieService.pleroma.enable {
     systemd.tmpfiles.rules = [
       "d    /var/lib/pleroma   0766    pleroma    pleroma     -"

@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, lib,... }:
+{ config, pkgs, lib, materusArg, ... }:
 let
   mkBoolOpt = default: description: lib.mkOption {
     inherit default;
@@ -18,5 +18,5 @@ in
     joypixels.acceptLicense = lib.mkDefault true;
     firefox.enablePlasmaBrowserIntegration = true;
   };
-  config.nixpkgs.overlays = lib.mkIf cfg.enableOverlays [inputs.configInputs.inputs.emacs-overlay.overlay];
+  config.nixpkgs.overlays = lib.mkIf cfg.enableOverlays [materusArg.cfg.configInputs.inputs.emacs-overlay.overlay];
 }

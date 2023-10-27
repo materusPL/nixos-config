@@ -1,10 +1,10 @@
-{ config, lib, pkgs, materusPkgs, ... }:
+{ config, lib, pkgs, materusArg, ... }:
 let
   cfg = config.materus.profile.editor.code;
 in
 {
-  options.materus.profile.editor.code.enable = materusPkgs.lib.mkBoolOpt config.materus.profile.enableDesktop "Enable VSCodium with materus cfg";
-  options.materus.profile.editor.code.fhs.enable = materusPkgs.lib.mkBoolOpt false "Use fhs vscodium";
+  options.materus.profile.editor.code.enable = materusArg.pkgs.lib.mkBoolOpt config.materus.profile.enableDesktop "Enable VSCodium with materus cfg";
+  options.materus.profile.editor.code.fhs.enable = materusArg.pkgs.lib.mkBoolOpt false "Use fhs vscodium";
   options.materus.profile.editor.code.fhs.packages = lib.mkOption { default = (ps: []);};
   config = lib.mkIf cfg.enable {
     programs.vscode = {

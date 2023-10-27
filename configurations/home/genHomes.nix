@@ -12,15 +12,14 @@ let
         ([{
           name = builtins.elemAt _list i;
           value = let host = builtins.elemAt hosts i; in
-            inputs.configInputs.inputs.home-manager.lib.homeManagerConfiguration {
+            materusFlake.nixosConfigurations.${host}.materusCfg.hm.lib.homeManagerConfiguration {
               pkgs = materusFlake.nixosConfigurations.${host}.pkgs;
-              extraSpecialArgs = { inherit inputs; inherit materusFlake; };
+              extraSpecialArgs = { materusCfg = materusFlake.nixosConfigurations.${host}.materusCfg; };
               modules = [
                 ./${username}
                 ../host/${host}/extraHome.nix
                 profiles.homeProfile
                 inputs.private.homeModule
-
               ];
             };
         }]
@@ -29,9 +28,19 @@ let
     in
     (builtins.listToAttrs (_for 0)) // {
       #Make generic x86_64-linux user profile "username"
-      ${username} = inputs.configInputs.inputs.home-manager.lib.homeManagerConfiguration {
+      ${username} = 
+    let materusCfg = {
+        stable = false;
+        inherit materusFlake;
+        host = "Generic";
+        hm = inputs.configInputs.inputs.home-manager;
+        nixerus = inputs.configInputs.inputs.nixerus;
+        configInputs = inputs.configInputs;
+        path = materusFlake.selfPath;
+      }; in
+        inputs.configInputs.inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = import inputs.nixpkgs { system = "x86_64-linux"; config = {allowUnfree = true;}; };
-        extraSpecialArgs = { inherit inputs; inherit materusFlake; };
+        extraSpecialArgs = { inherit materusCfg; };
         modules = [
           ./${username}
           profiles.homeProfile

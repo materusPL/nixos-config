@@ -1,4 +1,4 @@
-{ config, pkgs, materusPkgs, lib, ... }:
+{ config, pkgs, materusArg, lib, ... }:
 {
   home.stateVersion = "23.05";
   home.homeDirectory = "/home/materus";
@@ -67,13 +67,13 @@
 
   home.packages = [
     pkgs.papirus-icon-theme
-    materusPkgs.ffmpeg6-amf-full
-    (materusPkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; extraLibs = [ ]; })
+    materusArg.pkgs.ffmpeg6-amf-full
+    (materusArg.pkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; extraLibs = [ ]; })
   ];
 
   programs.obs-studio = {
     enable = true;
     plugins = with pkgs.obs-studio-plugins; [ wlrobs obs-vaapi obs-vkcapture obs-gstreamer input-overlay obs-multi-rtmp obs-pipewire-audio-capture ];
-    package = materusPkgs.obs-amf;
+    package = materusArg.pkgs.obs-amf;
   };
 }

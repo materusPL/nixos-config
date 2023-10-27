@@ -1,9 +1,15 @@
-{ config, pkgs, lib, materusFlake, inputs, ... }:
+{ config, pkgs, lib, materusCfg, ... }:
+let
+materusArg = {
+  pkgs = (import materusCfg.nixerus { inherit pkgs; }) //
+  (if pkgs.system == "x86_64-linux" then { i686Linux = import materusCfg.nixerus { pkgs = pkgs.pkgsi686Linux; }; } else { });
+  cfg = materusCfg;
+};
+in
 {
   imports = [
     ./nixpkgs.nix
     ./packages
   ];
-  config._module.args.materusPkgs = (import inputs.configInputs.inputs.nixerus { inherit pkgs; }) //
-  (if pkgs.system == "x86_64-linux" then { i686Linux = import inputs.configInputs.inputs.nixerus { pkgs = pkgs.pkgsi686Linux; }; } else { });
+  config._module.args.materusArg = materusArg;
 }

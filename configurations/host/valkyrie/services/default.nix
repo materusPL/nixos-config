@@ -1,4 +1,4 @@
-{ config, pkgs, materusFlake, ... }:
+{ config, pkgs, ... }:
 {
       imports =
     [

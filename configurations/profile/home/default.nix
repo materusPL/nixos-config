@@ -1,4 +1,4 @@
-{ config, lib, pkgs, materusPkgs, ... }:
+{ config, lib, pkgs, materusArg, ... }:
 let
   packages = cfg.packages;
   cfg = config.materus.profile;
@@ -12,10 +12,10 @@ in
     ./editor
 
   ];
-  options.materus.profile.enableDesktop = materusPkgs.lib.mkBoolOpt false "Enable settings for desktop";
-  options.materus.profile.enableTerminal = materusPkgs.lib.mkBoolOpt true "Enable settings for terminal";
-  options.materus.profile.enableTerminalExtra = materusPkgs.lib.mkBoolOpt false "Enable extra settings for terminal";
-  options.materus.profile.enableNixDevel = materusPkgs.lib.mkBoolOpt false "Enable settings for nix devel";
+  options.materus.profile.enableDesktop = materusArg.pkgs.lib.mkBoolOpt false "Enable settings for desktop";
+  options.materus.profile.enableTerminal = materusArg.pkgs.lib.mkBoolOpt true "Enable settings for terminal";
+  options.materus.profile.enableTerminalExtra = materusArg.pkgs.lib.mkBoolOpt false "Enable extra settings for terminal";
+  options.materus.profile.enableNixDevel = materusArg.pkgs.lib.mkBoolOpt false "Enable settings for nix devel";
 
   config =
     {

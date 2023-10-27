@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, materusFlake, ... }:
+{ config, pkgs, lib, ... }:
 let
 valkyrie-sync = pkgs.writeShellScriptBin "valkyrie-sync" ''
 ${pkgs.rsync}/bin/rsync -avzrh --delete --exclude ".git*" --exclude "flake.lock" /materus/config/nixos-config materus@valkyrie:/materus/config/ && \

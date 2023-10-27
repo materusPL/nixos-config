@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, materusFlake, ... }:
+{ config, pkgs, lib, ... }:
 {
   imports = [
     ./win10
