@@ -5,9 +5,9 @@
       ./pleroma.nix
       ./pihole.nix
     ];
-    services.adguardhome.enable = false;
+    services.adguardhome.enable = true;
 
-    valkyrieService.pihole.enable = true;
+    valkyrieService.pihole.enable = false;
     valkyrieService.pleroma.enable = true;
 
 
