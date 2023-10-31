@@ -1,9 +1,9 @@
 { config, pkgs, lib, materusArg, ... }:
 
 {
-  virtualisation.lxc.enable = false;
-  virtualisation.lxc.lxcfs.enable = false;
-  virtualisation.lxd.enable = false;
+  virtualisation.lxc.enable = true;
+  virtualisation.lxc.lxcfs.enable = true;
+  virtualisation.lxd.enable = true;
   #virtualisation.lxd.recommendedSysctlSettings = true;
 
   programs.corectrl.enable = true;
@@ -117,7 +117,10 @@
     XDG_CONFIG_HOME = "\${HOME}/.config";
     XDG_BIN_HOME = "\${HOME}/.local/bin";
     XDG_DATA_HOME = "\${HOME}/.local/share";
-
+    GTK_IM_MODULE="fcitx";
+    QT_IM_MODULE="fcitx";
+    XMODIFIERS="@im=fcitx";
+    SDL_IM_MODULE="fcitx";
     SDL_AUDIODRIVER = "pipewire";
 
     #SSH_ASKPASS_REQUIRE = "prefer";
