@@ -15,14 +15,6 @@
       ref = "nixos-unstable";
     };
 
-    nixpkgs-stable = {
-      type = "github";
-      owner = "NixOS";
-      repo = "nixpkgs";
-      ref = "nixos-23.05";
-    };
-
-
     configInputs = {
       type = "github";
       owner = "materusPL";
@@ -32,6 +24,22 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
+
+    nixpkgs-stable = {
+      type = "github";
+      owner = "NixOS";
+      repo = "nixpkgs";
+      ref = "nixos-23.05";
+    };
+
+    hm-stable = {
+      type = "github";
+      owner = "nix-community";
+      repo = "home-manager";
+      ref = "release-23.05";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+
     configInputs-stable = {
       type = "github";
       owner = "materusPL";
@@ -39,7 +47,7 @@
       ref = "inputs";
       inputs = {
         nixpkgs.follows = "nixpkgs-stable";
-        home-manager.url = "github:nix-community/home-manager/release-23.05";
+        home-manager.follows = "hm-stable";
       };
     };
   };
