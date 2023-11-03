@@ -32,4 +32,6 @@ in
   flamaster = makeSystem { host = "flamaster"; stable = true; };
   valkyrie = makeSystem { host = "valkyrie"; stable = true; };
   waffentrager = makeSystem { host = "waffentrager"; stable = false; arch = "aarch64-linux"; extraModules = [ ]; };
+
+  Old-materusPC = makeSystem { host = "Old-materusPC"; stable = false; };
 }
