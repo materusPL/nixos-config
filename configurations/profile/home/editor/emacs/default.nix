@@ -1,7 +1,7 @@
 { config, lib, pkgs, materusArg, ... }:
 let
   cfg = config.materus.profile.editor.emacs;
-  configPath = "${materusArg.cfg.path}" + "/extraFiles/config/emacs/materus/"; 
+  configPath = "${materusArg.cfg.path}" + "/extraFiles/config/emacs/"; 
   emacsPkgs = with pkgs;[
     python3
     lua
@@ -11,18 +11,6 @@ in
   options.materus.profile.editor.emacs.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable emacs with materus cfg";
 
   config = lib.mkIf cfg.enable {
-    #TODO: Make config
-    /*home.activation.doomEmacs = lib.hm.dag.entryBetween [ "onFilesChange" ] [ "writeBoundry" ] ''
-      if [ ! -d ~/.emacs.d ] ; 
-      then ${pkgs.git}/bin/git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d 
-      fi
-      PATH="${config.programs.git.package}/bin:${config.programs.emacs.package}/bin:$PATH"
-      ~/.emacs.d/bin/doom sync
-      '';
-
-      home.file.doomEmacs.source = "${materusArg.flakeData.extraFiles}/config/emacs/doom";
-      home.file.doomEmacs.target = "${config.xdg.configHome}/doom";*/
-
     programs.emacs = {
       enable = true;
       package = with pkgs; lib.mkDefault (if pkgs ? emacs-pgtk then emacs-pgtk else emacs-gtk);
@@ -33,6 +21,7 @@ in
         evil-tex
         evil-nerd-commenter
 
+        dashboard
         magit
         helm
         avy
@@ -67,8 +56,9 @@ in
       
         ;;;; Done setting PATH
 
-        ; Load Config file
-         (load-file "${configPath + "config.el"}")
+        ;;;; Config
+        ${builtins.readFile (configPath + "config.el")}
+        ;;;; Config End
       '';
     };
 
