@@ -14,3 +14,5 @@ flamaster - my laptop, used mostly as server for games.
 valkyrie - VPS, my website and pleroma instance
 
 waffentrager - raspberry pi4
+
+

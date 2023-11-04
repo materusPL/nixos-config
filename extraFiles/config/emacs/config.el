@@ -16,12 +16,7 @@
     (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ; Show dashboard when emacs is running as daemon
 )
 
-;Evil
-(cua-mode 0) ; to load cua commmands but not set cua-mode
-(evil-mode 1)
-(define-key evil-insert-state-map (kbd "C-c") 'cua-copy-region)
-(define-key evil-insert-state-map (kbd "C-v") 'cua-paste)
-(define-key evil-insert-state-map (kbd "C-x") 'cua-cut-region)
-(define-key evil-insert-state-map (kbd "C-z") 'undo)
-(define-key evil-insert-state-map (kbd "C-y") 'undo-redo)
+:CUA
+(cua-mode 1)
+(global-set-key (kbd "C-y") 'undo-redo)
 
