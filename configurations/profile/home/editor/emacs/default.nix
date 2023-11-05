@@ -13,7 +13,7 @@ in
   config = lib.mkIf cfg.enable {
     programs.emacs = {
       enable = true;
-      package = with pkgs; lib.mkDefault (if pkgs ? emacs-pgtk then emacs-pgtk else emacs-gtk);
+      package = with pkgs; lib.mkDefault (if pkgs ? emacs-pgtk then emacs-pgtk else emacs29-gtk);
       extraPackages = epkgs: with epkgs; [
         evil
         evil-numbers
@@ -45,8 +45,7 @@ in
         markdown-mode
         json-mode
 
-        vscode-dark-plus-theme
-        kaolin-themes
+        moe-theme
       ];
       extraConfig = ''
         ;;;; Set emacs PATH
