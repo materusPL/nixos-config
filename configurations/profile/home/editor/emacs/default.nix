@@ -15,28 +15,30 @@ in
       enable = true;
       package = with pkgs; lib.mkDefault (if pkgs ? emacs-pgtk then emacs-pgtk else emacs29-gtk);
       extraPackages = epkgs: with epkgs; [
-        evil
-        evil-numbers
-        evil-mc
-        evil-tex
-        evil-nerd-commenter
-
+        elcord
+        persp-mode
         dashboard
         magit
         helm
         avy
         corfu
-        ivy
         vterm
         centaur-tabs
+        projectile
+
         treemacs
-        treemacs-evil
         treemacs-nerd-icons
+        treemacs-perspective
+        treemacs-icons-dired
+        treemacs-magit
+        treemacs-projectile
         tree-edit
-        doom-modeline
+        vertico
         nerd-icons
         nerd-icons-completion
-        load-relative
+        perspective
+        minions
+        telephone-line
 
         lsp-mode
         d-mode
@@ -44,7 +46,9 @@ in
         org
         markdown-mode
         json-mode
-
+        nix-mode
+        
+        minimap
         moe-theme
       ];
       extraConfig = ''

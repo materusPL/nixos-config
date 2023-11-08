@@ -1,17 +1,20 @@
 ;Graphical
-;(when (display-graphic-p)
-;    
-;)
-(tool-bar-mode -1)
+(when (display-graphic-p)
+  (set-frame-font "FiraCode Nerd Font" nil t)
+  (tool-bar-mode -1)
+)
+
 (load-theme 'moe-dark)
 
 
 (setq-default cursor-type '(bar . 1))
-(set-frame-font "FiraCode Nerd Font" nil t)
 (pixel-scroll-precision-mode 1)
 (setq pixel-scroll-precision-large-scroll-height 10.0)
-(setq mouse-wheel-follow-mouse 't) 
-
+(setq mouse-wheel-follow-mouse 't)
+(setq scroll-step 1)
+(setq mouse-drag-and-drop-region t)
+(telephone-line-mode 1)
+(minions-mode 1)
 
 ;Hide startup screen if started with file
 (defun startup-screen-advice (orig-fun &rest args)
@@ -26,7 +29,7 @@
 ;Enable dashboard
 (dashboard-setup-startup-hook)
 (when (daemonp)
-    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ; Show dashboard when emacs is running as daemon
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ; Show dashboard when emacs is running as daemon
 )
 
 

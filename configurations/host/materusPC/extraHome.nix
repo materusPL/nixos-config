@@ -22,10 +22,10 @@
       llvmpkgs.libllvm
       llvmpkgs.libllvm.dev
 
-
+      
       gcc
       gdb
-
+      nil
       cmake
       gnumake
       ninja 
