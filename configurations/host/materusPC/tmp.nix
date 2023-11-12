@@ -32,8 +32,21 @@
     #     keyMap = "pl";
     useXkbConfig = true; # use xkbOptions in tty.
   };
-  services.xserver.layout = "pl";
+  services.xserver.extraLayouts.hyper-pl = {
+    description = "PL, hyper mod3";
+    languages = [ "pol" ];
+    symbolsFile = pkgs.writeText "hyper-pl" ''
+      xkb_symbols "hyper-pl"
+      {
+        include "pl(basic)"
+        name[Group1]="Polish HYPR";
+        
+        modifier_map Mod3  { <HYPR> };
+     };'';
+  };
 
+  services.xserver.layout = "hyper-pl";
+  services.xserver.xkbOptions = "caps:hyper";
   services.xserver.enable = true;
   services.xserver.videoDrivers = [ "amdgpu" ];
   services.dbus.enable = true;
@@ -52,7 +65,7 @@
   xdg.portal.wlr.enable = true;
   xdg.portal.xdgOpenUsePortal = true;
 
-  services.xserver.exportConfiguration = true;
+  services.xserver.exportConfiguration = false;
   services.xserver.extraConfig = pkgs.lib.mkDefault ''
     Section "OutputClass"
       Identifier "amd-options"
@@ -117,6 +130,7 @@
     XDG_CONFIG_HOME = "\${HOME}/.config";
     XDG_BIN_HOME = "\${HOME}/.local/bin";
     XDG_DATA_HOME = "\${HOME}/.local/share";
+    QT_XKB_CONFIG_ROOT = "\${XKB_CONFIG_ROOT}";
     GTK_IM_MODULE="fcitx";
     QT_IM_MODULE="fcitx";
     XMODIFIERS="@im=fcitx";
@@ -193,6 +207,7 @@
     };*/
 
   environment.systemPackages = with pkgs; [
+
     firefox
     gamescope
     #(pkgs.lutris.override { extraLibraries = pkgs: with pkgs;  [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
@@ -204,7 +219,6 @@
     gtk4
     gsettings-desktop-schemas
     libsForQt5.dolphin
-
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
 
     patchelf
