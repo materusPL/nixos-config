@@ -1,4 +1,5 @@
 (message "Config loading from package")
 (setq-default materus/nix-packages t)
+(require 'load-relative)
 (load-relative "materus/init")
 (provide 'materus-config)

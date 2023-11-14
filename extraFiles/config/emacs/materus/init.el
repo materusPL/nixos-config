@@ -1,12 +1,13 @@
 (defvar materus/nix-packages nil)
 (defvar materus/init-from-home nil)
+(defvar materus/home-dir (concat user-emacs-directory "materus/" ))
+(setq native-comp-async-report-warnings-errors nil)
+(setq package-enable-at-startup nil)
+(setq frame-inhibit-implied-resize t)
+
 
 (when (not materus/nix-packages)
-  (message "Not using config from packages, will compile")
-  (setq native-comp-async-report-warnings-errors nil)
-  (setq package-enable-at-startup nil)
-  (defvar straight-use-package-by-default nil)
-  (setq straight-use-package-by-default t)
+  (message "Not using config from nix packages, using straight")
   (defvar bootstrap-version)
   (let ((bootstrap-file
         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -22,19 +23,14 @@
   (declare-function straight-use-package "straight" (&optional ARG))
   (declare-function load-relative "load-relative" (&optional ARG))
   (straight-use-package 'load-relative)
-  (require 'load-relative)
   (load-relative "packages")
-  
-  (if materus/init-from-home
-  (byte-recompile-directory (concat (expand-file-name user-emacs-directory) "materus/" ) 0)
-  (byte-recompile-directory (expand-file-name user-emacs-directory) 0))
-
 )
 
 (require 'telephone-line)
 (require 'elcord)
 (require 'dashboard)
 (require 'minions)
+(require 'doom-themes)
 
 
 ;Graphical
@@ -53,7 +49,7 @@
 
 
 (tool-bar-mode -1)
-(load-theme 'moe-dark t)
+(load-theme 'doom-horizon t)
 
 (setq ring-bell-function 'ignore)
 (setq-default cursor-type '(bar . 1))

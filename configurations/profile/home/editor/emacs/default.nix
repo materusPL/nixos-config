@@ -31,19 +31,30 @@ let
         rainbow-delimiters
         use-package
 
+        cmake-mode
         lsp-mode
-        lsp-bridge
+        lsp-java
+        lsp-jedi
+        lsp-haskell
+        lsp-ui
+        lsp-treemacs
         dap-mode
         d-mode
         multiple-cursors
         org
         org-rainbow-tags
+        org-roam
+        org-roam-ui
+        org-review
         markdown-mode
         json-mode
         nix-mode
         
         minimap
+
+        
         moe-theme
+        doom-themes
       ];
 
 
@@ -52,8 +63,10 @@ let
   (defvar materus/init-from-home nil)
   (defvar materus/init-from-default nil)
   (when (not materus/init-from-home)
+          (setq-default materus/home-dir (concat user-emacs-directory "materus/" ))
           (setq-default materus/init-from-default t)
           (message "Config loading not from homeDir, need "materus/init-from-home" variable in init.el")
+
           ${setNixInit}
           (require 'materus-config)
         )
@@ -113,12 +126,21 @@ in
   options.materus.profile.editor.emacs.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable emacs with materus cfg";
 
   config = lib.mkIf cfg.enable {
+    home.activation.emacsCompile = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    ${config.programs.emacs.finalPackage}/bin/emacs --batch \
+    --eval '(setq warning-minimum-log-level :error)' \
+    --eval '(byte-recompile-directory "${config.xdg.configHome}/emacs/materus" 0 t)' \
+    --eval '(byte-recompile-file "${config.xdg.configHome}/emacs/init.el")'
+    '';
     xdg.configFile."emacs/init.el".text = ''
+    (setq inhibit-defaul-init 1)
+    (setq native-comp-speed 3)
     (defvar materus/nix-packages nil)
     (defvar materus/init-from-home t)
     (defvar materus/init-from-default nil)
     ${setNixInit}
     (setq-default materus/init-from-home t)
+    (setq-default materus/home-dir (concat user-emacs-directory "materus/" ))
     (setq-default materus/nix-packages (require 'materus-config nil 'noerror))
     (when (not materus/nix-packages)
       (load (concat  user-emacs-directory "materus/init"))
