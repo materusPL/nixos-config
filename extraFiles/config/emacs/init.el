@@ -1,30 +1,8 @@
-(defvar materus/nix-packages nil)
-(defvar materus/init-from-home nil)
-(defvar materus/home-dir (concat user-emacs-directory "materus/" ))
+
 (setq native-comp-async-report-warnings-errors nil)
 (setq package-enable-at-startup nil)
 (setq frame-inhibit-implied-resize t)
 
-
-(when (not materus/nix-packages)
-  (message "Not using config from nix packages, using straight")
-  (defvar bootstrap-version)
-  (let ((bootstrap-file
-        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-        (bootstrap-version 6))
-    (unless (file-exists-p bootstrap-file)
-      (with-current-buffer
-          (url-retrieve-synchronously
-          "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-          'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (load bootstrap-file nil 'nomessage))
-  (declare-function straight-use-package "straight" (&optional ARG))
-  (declare-function load-relative "load-relative" (&optional ARG))
-  (straight-use-package 'load-relative)
-  (load-relative "packages")
-)
 
 (require 'telephone-line)
 (require 'elcord)

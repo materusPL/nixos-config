@@ -1,5 +1,8 @@
 { config, lib, pkgs, materusArg, ... }:
 let
+  configPath = "${materusArg.cfg.path}" + "/extraFiles/config/emacs/"; 
+
+  inits = import ./init.nix {path = configPath; inherit pkgs;};
   packages =  epkgs: with epkgs; [
         load-relative
         elcord
@@ -61,61 +64,24 @@ let
   default-config = ''
   (defvar materus/nix-packages t)
   (defvar materus/init-from-home nil)
-  (defvar materus/init-from-default nil)
-  (when (not materus/init-from-home)
-          (setq-default materus/home-dir (concat user-emacs-directory "materus/" ))
-          (setq-default materus/init-from-default t)
-          (message "Config loading not from homeDir, need "materus/init-from-home" variable in init.el")
-
+  (unless materus/init-from-home
+          (message "Config loading not from homeDir, need \"materus/init-from-home\" variable in init.el")
           ${setNixInit}
-          (require 'materus-config)
+          ${inits.initText}
         )
   '';
 
-
-
-  materus-config = epkgs: epkgs.trivialBuild rec {
-        pname = "materus-config";
-        src = pkgs.symlinkJoin {
-          name = "materus-emacs-config";
-          paths = [
-            configPath
-          ];
-          };
-        version = "1.0";
-        packageRequires = (packages epkgs);
-        buildPhase = ''
-          runHook preBuild
-
-          emacs -L . --batch -f batch-byte-compile **/*.el
-          emacs -L . --batch -f batch-byte-compile *.el
-
-          runHook postBuild
-        '';
-
-        installPhase = ''
-          runHook preInstall
-
-          LISPDIR=$out/share/emacs/site-lisp
-          install -d $LISPDIR
-          install **.el **.elc $LISPDIR
-          cp -r materus $LISPDIR
-          emacs --batch -l package --eval "(package-generate-autoloads \"${pname}\" \"$LISPDIR\")"
-
-          runHook postInstall
-        '';
-      };
-
-
-
-  cfg = config.materus.profile.editor.emacs;
-  configPath = "${materusArg.cfg.path}" + "/extraFiles/config/emacs/"; 
   emacsPkgs = with pkgs;[
     python3
     lua
     multimarkdown
     git
   ];
+
+
+  cfg = config.materus.profile.editor.emacs;
+
+
   setNixInit = ''
     (setenv "PATH" (concat (getenv "PATH") ":${lib.makeBinPath emacsPkgs}"))
     ${builtins.concatStringsSep "\n" (builtins.map (x: "(setq exec-path (append exec-path '(\""+x+"/bin\")))" ) emacsPkgs)}
@@ -129,32 +95,26 @@ in
     home.activation.emacsCompile = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
     ${config.programs.emacs.finalPackage}/bin/emacs --batch \
     --eval '(setq warning-minimum-log-level :error)' \
-    --eval '(byte-recompile-directory "${config.xdg.configHome}/emacs/materus" 0 t)' \
-    --eval '(byte-recompile-file "${config.xdg.configHome}/emacs/init.el")'
+    --eval '(byte-compile-file "${config.xdg.configHome}/emacs/early-init.el")' \
+    --eval '(byte-compile-file "${config.xdg.configHome}/emacs/init.el")'
     '';
     xdg.configFile."emacs/init.el".text = ''
-    (setq inhibit-defaul-init 1)
-    (setq native-comp-speed 3)
     (defvar materus/nix-packages nil)
     (defvar materus/init-from-home t)
-    (defvar materus/init-from-default nil)
-    ${setNixInit}
     (setq-default materus/init-from-home t)
-    (setq-default materus/home-dir (concat user-emacs-directory "materus/" ))
-    (setq-default materus/nix-packages (require 'materus-config nil 'noerror))
-    (when (not materus/nix-packages)
-      (load (concat  user-emacs-directory "materus/init"))
-      (message "Config loaded from user dir")
-    )
+    
+    ${setNixInit}
+    ${inits.initText}
     '';
-    xdg.configFile."emacs/materus" = {
-      source = configPath + "materus";
-      recursive = true;
-    };
+
+    xdg.configFile."emacs/early-init.el".text = ''
+    ${inits.earlyInitText}
+    '';
+
     programs.emacs = {
       enable = true;
       package = with pkgs; lib.mkDefault (emacs29.override { withX = true; withGTK3 = true; withAlsaLib = true; withGconf = true; withImageMagick = true; withXwidgets = true; });
-      extraPackages = epkgs: ((packages epkgs)  ++ [(materus-config epkgs)]);
+      extraPackages = epkgs: ((packages epkgs));
       extraConfig = default-config; 
     };
 
