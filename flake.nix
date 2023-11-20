@@ -10,12 +10,12 @@
 
     nixpkgs = {
       type = "github";
-      owner = "NixOS";
-      repo = "nixpkgs";
+      owner = "NixOS"; 
+      repo = "nixpkgs";  
       ref = "nixos-unstable";
     };
 
-    configInputs = {
+    configInputs = { 
       type = "github";
       owner = "materusPL";
       repo = "nixos-config";
