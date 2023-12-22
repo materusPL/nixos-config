@@ -71,6 +71,7 @@ let
       pkgs.vivaldi
       pkgs.x264.lib
       pkgs.steamtinkerlaunch
+      pkgs.pipewire
 
     ] ++ config.materus.profile.packages.list.fonts ++ config.materus.profile.steam.extraPkgs;
 

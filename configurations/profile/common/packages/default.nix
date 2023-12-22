@@ -31,7 +31,7 @@ with materusArg.pkgs.lib;
     tdesktop
     mpv
     ani-cli
-    (pkgs.obsidian)
+    #(pkgs.obsidian)
     spotify
     thunderbird
     keepassxc

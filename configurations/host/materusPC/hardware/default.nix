@@ -7,8 +7,8 @@
 
     ];
   hardware.firmware = with pkgs; [
-    #materusArg.pkgs.amdgpu-pro-libs.firmware.vcn
-    materusArg.pkgs.amdgpu-pro-libs.firmware
+    materusArg.pkgs.amdgpu-pro-libs.firmware.vcn
+    #materusArg.pkgs.amdgpu-pro-libs.firmware
     linux-firmware
     alsa-firmware
     sof-firmware
@@ -26,8 +26,6 @@
   #extra
   hardware.wooting.enable = true;
   hardware.bluetooth.enable = true;
-
-
   #Graphics
   hardware.opengl.enable = true;
   hardware.opengl.driSupport32Bit = true;

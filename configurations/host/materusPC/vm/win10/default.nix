@@ -32,10 +32,15 @@ let
     echo "10" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
     echo "8" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
 
+    echo "3" > /proc/sys/vm/drop_caches
+    echo "1" > /proc/sys/vm/compact_memory
+   #echo "8192" >  /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
 
-    systemctl set-property --runtime -- user.slice AllowedCPUs=12-15,28-31
-    systemctl set-property --runtime -- system.slice AllowedCPUs=12-15,28-31
-    systemctl set-property --runtime -- init.scope AllowedCPUs=12-15,28-31
+
+
+    systemctl set-property --runtime -- user.slice AllowedCPUs=0-7,16-23
+    systemctl set-property --runtime -- system.slice AllowedCPUs=0-7,16-23
+    systemctl set-property --runtime -- init.scope AllowedCPUs=0-7,16-23
 
 
   '';
@@ -66,7 +71,8 @@ let
 
     echo ''$VIRSH_GPU_VIDEO > /sys/bus/pci/drivers/amdgpu/bind
     echo ''$VIRSH_GPU_AUDIO > /sys/bus/pci/drivers/snd_hda_intel/bind
-
+    
+   #echo "0" >  /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
 
     systemctl start mountWin10Share.service
 

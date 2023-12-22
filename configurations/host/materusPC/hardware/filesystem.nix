@@ -12,9 +12,6 @@
   ];
 
 
-
-
-
   fileSystems."/etc/nixos" =
     {
       device = "/materus/config/nixos-config";

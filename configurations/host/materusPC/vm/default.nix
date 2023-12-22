@@ -4,6 +4,25 @@
     ./win10
   ];
 
+  systemd.mounts = [
+        { where = "/dev/hugepages";
+            enable = false;
+        }
+        { where = "/dev/hugepages/hugepages-2048kB";
+            enable  = true;
+            what  = "hugetlbfs";
+            type  = "hugetlbfs";
+            options = "pagesize=2M";
+            requiredBy  = [ "basic.target" ];
+        }
+        { where = "/dev/hugepages/hugepages-1048576kB";
+            enable  = true;
+            what  = "hugetlbfs";
+            type  = "hugetlbfs";
+            options = "pagesize=1G";
+            requiredBy  = [ "basic.target" ];
+        }
+    ];
 
   virtualisation.libvirtd = {
     enable = true;

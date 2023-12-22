@@ -6,9 +6,9 @@
   virtualisation.lxd.enable = true;
   #virtualisation.lxd.recommendedSysctlSettings = true;
 
-  programs.corectrl.enable = true;
-  programs.corectrl.gpuOverclock.enable = true;
-  programs.corectrl.gpuOverclock.ppfeaturemask = "0xffffffff";
+  #programs.corectrl.enable = true;
+  #programs.corectrl.gpuOverclock.enable = true;
+  #programs.corectrl.gpuOverclock.ppfeaturemask = "0xffffffff";
   programs.gamemode.enable = true;
 
 
@@ -288,6 +288,8 @@
     ncurses
     monkeysphere
     gparted
+
+    reaper
 
     virt-viewer
 
