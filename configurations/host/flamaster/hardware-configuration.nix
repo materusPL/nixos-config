@@ -16,13 +16,26 @@
 
   fileSystems."/" =
     {
-      device = "/dev/disk/by-label/NixOS_Root";
-      fsType = "ext4";
+      device = "/dev/disk/by-label/NixOS_Root_Laptop";
+      fsType = "btrfs";
+      options = [ "subvol=@" "noatime" "ssd" "space_cache=v2" "compress=zstd" ];
+    };
+   fileSystems."/nix" =
+    {
+      device = "/dev/disk/by-label/NixOS_Root_Laptop";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" "noatime" "compress=zstd" "ssd" "space_cache=v2" ];
+    };
+  fileSystems."/boot" =
+    {
+      device = "/dev/disk/by-label/NixOS_Root_Laptop";
+      fsType = "btrfs";
+      options = [ "subvol=@boot" "ssd" ];
     };
 
   fileSystems."/boot/efi" =
     {
-      device = "/dev/disk/by-label/NixOS_EFI";
+      device = "/dev/disk/by-label/NixOS_EFI_L";
       fsType = "vfat";
     };
 

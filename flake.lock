@@ -211,11 +211,11 @@
         "nur": "nur"
       },
       "locked": {
-        "lastModified": 1703084866,
-        "narHash": "sha256-tuJS6LFveE9ZU32TtHRnaMzQ/5Jo+XTTJxniHVFDi1E=",
+        "lastModified": 1706212521,
+        "narHash": "sha256-HBPSlLngxSjrWBzVsno3vL50hl5JLxfFfo+gMgYdIac=",
         "owner": "materusPL",
         "repo": "Nixerus",
-        "rev": "ae5af742820306b2e25134b73f2952d6f62606b7",
+        "rev": "f2175b39f181d2303f265661b43fcf1f1dba4e7e",
         "type": "github"
       },
       "original": {
@@ -366,11 +366,11 @@
     },
     "nur": {
       "locked": {
-        "lastModified": 1702770334,
-        "narHash": "sha256-MVILxIF9ZVIk0f9w3yYZpy8auwxgey0MFzdoIFFvQNU=",
+        "lastModified": 1706211899,
+        "narHash": "sha256-gedJjTowTi71oxbYiMXRvzlbMthu2knSmvpuqe7QO4Y=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "1d37444620523278aa163bb9e30104f5d1152061",
+        "rev": "61c04b2e2cc15d505cab5c959df9388fde20525f",
         "type": "github"
       },
       "original": {

@@ -72,6 +72,8 @@ let
       pkgs.x264.lib
       pkgs.steamtinkerlaunch
       pkgs.pipewire
+      pkgs.gitFull
+      pkgs.git-lfs
 
     ] ++ config.materus.profile.packages.list.fonts ++ config.materus.profile.steam.extraPkgs;
 
@@ -86,6 +88,8 @@ let
       pkgs.gnutls
       pkgs.samba 
       pkgs.tdb
+      pkgs.jemalloc
+      pkgs.gperftools
     ] ++
     (with config.hardware.opengl; if pkgs.hostPlatform.is64bit
     then [ package ] ++ extraPackages

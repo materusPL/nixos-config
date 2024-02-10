@@ -22,7 +22,7 @@
       llvmpkgs.libllvm
       llvmpkgs.libllvm.dev
 
-      
+      raylib
       gcc
       gdb
       nil
