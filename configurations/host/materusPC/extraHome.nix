@@ -1,4 +1,4 @@
-{ config, pkgs, materusArg, lib, ... }:
+{ pkgs, materusArg, lib, ... }:
 {
   home.stateVersion = "23.05";
   home.homeDirectory = "/home/materus";
@@ -53,7 +53,7 @@
       vulkan-loader.dev
 
       fpc
-      jdk
+      openjdk21
 
 
       ldc
@@ -61,7 +61,7 @@
       dub
     ]);
 
-    editor.emacs.enable = true;
+    editor.emacs.enable = false;
     
   };
 
