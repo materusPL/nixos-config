@@ -46,6 +46,16 @@
       };
     };
 
+    sops-nix = {
+      type = "github";
+      owner = "Mic92";
+      repo = "sops-nix";
+      ref = "master";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
+
     nur = {
       type = "github";
       owner = "nix-community";
@@ -57,15 +67,7 @@
 
 
   outputs = inputs @ { self, nixpkgs, home-manager, nur, ... }:
-    let
-      systems = [
-        "x86_64-linux"
-        "i686-linux"
-        "aarch64-linux"
-      ];
-      forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
-    in
-    rec {
+    {
 
       inherit inputs;
 
