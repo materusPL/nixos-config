@@ -7,7 +7,7 @@ let
     let
       nixosSystem = if stable then inputs.nixpkgs-stable.lib.nixosSystem else inputs.nixpkgs.lib.nixosSystem;
       hm = if stable then inputs.configInputs-stable.inputs.home-manager else inputs.configInputs.inputs.home-manager;
-      materusCfg = {
+      materusCfg = rec {
         inherit stable;
         inherit materusFlake;
         inherit host;
@@ -15,9 +15,10 @@ let
         nixerus = if stable then inputs.configInputs-stable.inputs.nixerus else inputs.configInputs.inputs.nixerus;
         configInputs = if stable then inputs.configInputs-stable else inputs.configInputs;
         path = materusFlake.selfPath;
+        isHm = configInputs.inputs.nixpkgs.lib.mkDefault false;
       };
     in
-    (nixosSystem rec {
+    (nixosSystem {
       specialArgs = { inherit materusCfg; };
       system = arch;
       modules = [
