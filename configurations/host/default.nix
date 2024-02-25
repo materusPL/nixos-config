@@ -15,9 +15,10 @@ let
         nixerus = if stable then inputs.configInputs-stable.inputs.nixerus else inputs.configInputs.inputs.nixerus;
         configInputs = if stable then inputs.configInputs-stable else inputs.configInputs;
         path = materusFlake.selfPath;
+        isHm = false;
       };
     in
-    (nixosSystem rec {
+    (nixosSystem {
       specialArgs = { inherit materusCfg; };
       system = arch;
       modules = [

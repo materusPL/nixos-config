@@ -1,4 +1,4 @@
-{ config, pkgs, lib, materusArg, options, ... }:
+{ config, pkgs, lib, materusArg, ... }:
 let
   p10kcfg = "${zshcfg}/p10kcfg";
   zshcfg = "${materusArg.cfg.path}" + "/extraFiles/config/zsh";
