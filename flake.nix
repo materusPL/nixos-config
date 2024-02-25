@@ -7,6 +7,31 @@
       repo = "nixpkgs";
       ref = "nixos-unstable";
     };
+
+    flake-utils = {
+      type = "github";
+      owner = "numtide";
+      repo = "flake-utils";
+      ref = "main";
+    };
+
+    base16 = {
+      type = "github";
+      owner = "SenchoPens";
+      repo = "base16.nix";
+      ref = "main";
+    };
+
+    devshell = {
+      type = "github";
+      owner = "numtide";
+      repo = "devshell";
+      ref = "main";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
+    };
     
     home-manager = {
       type = "github";
@@ -25,6 +50,7 @@
       ref = "master";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
       };
     };
 
@@ -53,6 +79,17 @@
       ref = "master";
       inputs = {
         nixpkgs.follows = "nixpkgs";
+      };
+    };
+
+    git-agecrypt = {
+      type = "github";
+      owner = "vlaci";
+      repo = "git-agecrypt";
+      ref = "main";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
       };
     };
 
