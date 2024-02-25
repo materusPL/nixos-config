@@ -89,8 +89,6 @@ in
 
     };
 
-    #home.file."${(lib.optionalString (config.programs.zsh.dotDir != null) (config.programs.zsh.dotDir + "/")) + ".zshrc"}".text = lib.mkAfter "#TEST";
-
     programs.starship.enableZshIntegration = lib.mkForce false; 
   };
 

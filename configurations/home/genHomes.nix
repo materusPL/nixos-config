@@ -14,7 +14,7 @@ let
           value = let host = builtins.elemAt hosts i; in
             materusFlake.nixosConfigurations.${host}.materusCfg.hm.lib.homeManagerConfiguration {
               pkgs = materusFlake.nixosConfigurations.${host}.pkgs;
-              extraSpecialArgs = { materusCfg = materusFlake.nixosConfigurations.${host}.materusCfg // {isHm = true;}; };
+              extraSpecialArgs = { materusCfg = materusFlake.nixosConfigurations.${host}.materusCfg; };
               modules = [
                 ./${username}
                 ../host/${host}/extraHome.nix
@@ -37,7 +37,6 @@ let
           nixerus = inputs.configInputs.inputs.nixerus;
           configInputs = inputs.configInputs;
           path = materusFlake.selfPath;
-          isHm = true;
         }; in
         inputs.configInputs.inputs.home-manager.lib.homeManagerConfiguration {
           pkgs = import inputs.nixpkgs { system = "x86_64-linux"; config = { allowUnfree = true; }; };
