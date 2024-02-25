@@ -1,4 +1,4 @@
-{ config, pkgs, lib, materusArg, ... }:
+{ config, pkgs, materusArg, ... }:
 
 {
   virtualisation.lxc.enable = true;
@@ -125,7 +125,7 @@
   environment.variables = {
     ALSOFT_DRIVERS = "pulse";
   };
-  environment.sessionVariables = rec {
+  environment.sessionVariables = {
     XDG_CACHE_HOME = "\${HOME}/.cache";
     XDG_CONFIG_HOME = "\${HOME}/.config";
     XDG_BIN_HOME = "\${HOME}/.local/bin";
@@ -212,7 +212,7 @@
     gamescope
     #(pkgs.lutris.override { extraLibraries = pkgs: with pkgs;  [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
     materusArg.pkgs.amdgpu-pro-libs.prefixes
-    (pkgs.bottles.override { extraPkgs = pkgs: with pkgs; [ pkgs.libsForQt5.breeze-qt5 pkgs.libsForQt5.breeze-gtk pkgs.nss_latest ]; extraLibraries = pkgs: with pkgs; [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
+    (pkgs.bottles.override { extraPkgs = pkgs: [ pkgs.libsForQt5.breeze-qt5 pkgs.libsForQt5.breeze-gtk pkgs.nss_latest ]; extraLibraries = pkgs: [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
     glibc
     glib
     gtk3
