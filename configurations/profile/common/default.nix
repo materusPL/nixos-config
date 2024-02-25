@@ -11,5 +11,6 @@ in
     ./nixpkgs.nix
     ./packages
   ];
-  config._module.args.materusArg = materusArg;
+  options.materus.materusArg = lib.mkOption {default = {};};
+  config._module.args.materusArg = config.materus.materusArg // materusArg;
 }
