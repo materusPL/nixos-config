@@ -1,9 +1,45 @@
 { config, pkgs, lib, materusArg, ... }:
 let
+
+  relToDotDir = file: (lib.optionalString (config.programs.zsh.dotDir != null) (config.programs.zsh.dotDir + "/")) + file;
+  pluginsDir = if config.programs.zsh.dotDir != null then
+    relToDotDir "plugins" else ".zsh/plugins";
+
+
+
   p10kcfg = "${zshcfg}/p10kcfg";
   zshcfg = "${materusArg.cfg.path}" + "/extraFiles/config/zsh";
   cfg = config.materus.profile.zsh;
-  enableStarship = config.materus.starship.enable;
+  #enableStarship = config.materus.starship.enable;
+
+  makeEnv = name: val: ''${name}=''${${name}:-"${val}"}'';
+  makeIfVar = var: val: ret: ''
+  if [ ''$${var} = "${val}" ]; then 
+  ${ret}
+  fi'';
+
+
+
+
+
+
+  makePlugin = nameArg: fileArg: srcArg:  rec {
+    name = nameArg;
+    src = srcArg;
+    path = pluginsDir + "/" + name;
+    file = fileArg;
+    fullPath = path + "/" + file;
+  };
+
+  extraPlugins = {
+    powerlevel10k = makePlugin "powerlevel10k" "powerlevel10k.zsh-theme" (pkgs.fetchFromGitHub {
+            owner = "romkatv";
+            repo = "powerlevel10k";
+            rev = "v1.20.0";
+            sha256 = "sha256-ES5vJXHjAKw/VHjWs8Au/3R+/aotSbY7PWnWAMzCR8E=";
+      });
+
+  };
 in
 {
   options.materus.profile.zsh.enable = materusArg.pkgs.lib.mkBoolOpt config.materus.profile.enableTerminalExtra "Enable materus zsh config";
@@ -18,6 +54,8 @@ in
     home.packages = [
       pkgs.ripgrep
     ];
+    
+    home.file =  builtins.foldl' (a: b: a // b) {} (builtins.map (plugin: {${plugin.path}.source = plugin.src;})(builtins.attrValues extraPlugins));
 
     programs.zsh = {
       enable = true;
@@ -30,34 +68,25 @@ in
 
 
       envExtra = ''
-        if [[ -z "$__MATERUS_HM_ZSH" ]]; then
-          __MATERUS_HM_ZSH=1
-        fi
-        if [[ -z "$__MATERUS_HM_ZSH_PROMPT" ]]; then
-          __MATERUS_HM_ZSH_PROMPT=${cfg.prompt}
-        fi
+          ${makeEnv "__MATERUS_HM_ZSH" "1"}
+          ${makeEnv "__MATERUS_HM_ZSH_PROMPT" cfg.prompt}
       '';
 
 
-      initExtraFirst = lib.mkIf (cfg.prompt == "p10k" ) ''
-        if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
-          source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-        fi
-      '';
+      initExtraFirst = ''
+        ${makeIfVar "__MATERUS_HM_ZSH_PROMPT" "p10k" ''
+            if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+              source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+            fi
+            if [[ -f "${extraPlugins.powerlevel10k.fullPath}" ]]; then
+              source "${extraPlugins.powerlevel10k.fullPath}"
+            fi
+            ''
+        }'';
 
 
 
       plugins = [
-        (lib.mkIf (cfg.prompt == "p10k" ) {
-          name = "powerlevel10k";
-          src = pkgs.fetchFromGitHub {
-            owner = "romkatv";
-            repo = "powerlevel10k";
-            rev = "bc5983543a10cff2eac30cced9208bbfd91428b8";
-            sha256 = "0s8ndbpmlqakg7s7hryyi1pqij1h5dv0xv9xvr2qwwyhyj6zrx2i";
-          };
-          file = "powerlevel10k.zsh-theme";
-        })
       ];
       
       history = {
@@ -78,14 +107,13 @@ in
         bindkey ";5C" forward-word
         bindkey ";5D" backward-word
         '' +
-        (if (cfg.prompt == "p10k" ) then
-        ''
+        makeIfVar "__MATERUS_HM_ZSH_PROMPT" "p10k" ''
         if zmodload zsh/terminfo && (( terminfo[colors] >= 256 )); then
           [[ ! -f ${p10kcfg}/fullcolor.zsh ]] || source ${p10kcfg}/fullcolor.zsh
         else
           [[ ! -f ${p10kcfg}/compatibility.zsh ]] || source ${p10kcfg}/compatibility.zsh
         fi
-      '' else "");
+      '';
 
     };
 
