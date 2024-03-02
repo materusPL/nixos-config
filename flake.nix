@@ -103,10 +103,5 @@
   };
 
 
-  outputs = inputs @ { self, nixpkgs, home-manager, nur, ... }:
-    {
-
-      inherit inputs;
-
-    };
+  outputs = inputs: inputs;
 }
