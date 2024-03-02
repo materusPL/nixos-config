@@ -32,21 +32,7 @@
     #     keyMap = "pl";
     useXkbConfig = true; # use xkbOptions in tty.
   };
-  services.xserver.extraLayouts.hyper-pl = {
-    description = "PL, hyper mod3";
-    languages = [ "pol" ];
-    symbolsFile = pkgs.writeText "hyper-pl" ''
-      xkb_symbols "hyper-pl"
-      {
-        include "pl(basic)"
-        name[Group1]="Polish HYPR";
-        
-        modifier_map Mod3  { <HYPR> };
-     };'';
-  };
 
-  services.xserver.layout = "hyper-pl";
-  services.xserver.xkbOptions = "caps:hyper";
   services.xserver.enable = true;
   services.xserver.videoDrivers = [ "amdgpu" ];
   services.dbus.enable = true;
@@ -135,7 +121,7 @@
     QT_IM_MODULE="fcitx";
     XMODIFIERS="@im=fcitx";
     SDL_IM_MODULE="fcitx";
-    SDL_AUDIODRIVER = "pipewire";
+    #SDL_AUDIODRIVER = "pipewire";
 
     #SSH_ASKPASS_REQUIRE = "prefer";
 

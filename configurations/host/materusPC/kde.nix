@@ -28,7 +28,7 @@ in
   services.xserver.displayManager.sddm.enable = true;
   services.xserver.displayManager.sddm.settings = {
     General = {
-      DisplayServer = "wayland";
+      #DisplayServer = "wayland";
       InputMethod="";
     };
     Theme = {
@@ -36,7 +36,7 @@ in
       CursorSize = "24";
     };
     Wayland = {
-      CompositorCommand = "${pkgs.weston}/bin/weston  -c ${westonSddm}";
+      #CompositorCommand = "${pkgs.weston}/bin/weston  -c ${westonSddm}";
       
     };
   };
