@@ -2,7 +2,7 @@
 {
   imports =
     [
-      (if (materusCfg.materusFlake.encrypted == "decrypted") then ./private else "")
+      (if (materusCfg.materusFlake.decrypted == true) then ./private else "")
     ];
 
     sops.age.generateKey = false;

@@ -57,7 +57,7 @@
     rec {
       nixosConfigurations = import ./configurations/host { inherit inputs; materusFlake = self; };
       homeConfigurations = import ./configurations/home { inherit inputs; materusFlake = self; };
-      selfPath = ./.;
-      encrypted = builtins.readFile (selfPath + "/encrypted-test");
+      selfPath = self;
+      decrypted = builtins.pathExists (selfPath + "/decrypted");
     };
 }
