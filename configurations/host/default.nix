@@ -25,6 +25,7 @@ let
         ./${host}
         inputs.private.systemModule
         profiles.osProfile
+        materusCfg.configInputs.sops-nix.nixosModules.sops
       ] ++ extraModules;
     }) // { inherit materusCfg; };
 in

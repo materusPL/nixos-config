@@ -20,6 +20,7 @@ let
                 ../host/${host}/extraHome.nix
                 profiles.homeProfile
                 inputs.private.homeModule
+                materusFlake.nixosConfigurations.${host}.materusCfg.configInputs.sops-nix.homeManagerModules.sops
               ];
             };
         }]
@@ -46,6 +47,7 @@ let
             ./${username}
             profiles.homeProfile
             inputs.private.homeModule
+            materusCfg.configInputs.sops-nix.homeManagerModules.sops
           ];
         };
     };
