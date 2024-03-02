@@ -2,14 +2,15 @@
 {
   imports =
     [
+      ./private
     ];
-    sops.age.keyFile = "/materus/root/age.key";
+
     sops.age.generateKey = false;
     sops.gnupg.home = null;
     sops.gnupg.sshKeyPaths = [];
-    sops.secrets.users.materus = {
-      format = "json";
-      sopsFile = ./users.json;
+    sops.secrets."users/materus" = {
+      format = "yaml";
+      sopsFile = ./users.yaml;
     };
 
     services.openssh.hostKeys = [
