@@ -1,8 +1,8 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, materusCfg, ... }:
 {
   imports =
     [
-      ./private
+      (if (materusCfg.materusFlake.encrypted == "decrypted") then ./private else "")
     ];
 
     sops.age.generateKey = false;
