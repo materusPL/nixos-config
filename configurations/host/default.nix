@@ -6,13 +6,13 @@ let
   makeSystem = { host, arch ? "x86_64-linux", extraModules ? [ ], stable ? true }:
     let
       nixosSystem = if stable then inputs.nixpkgs-stable.lib.nixosSystem else inputs.nixpkgs.lib.nixosSystem;
-      hm = if stable then inputs.configInputs-stable.inputs.home-manager else inputs.configInputs.inputs.home-manager;
+      hm = if stable then inputs.configInputs-stable.home-manager else inputs.configInputs.home-manager;
       materusCfg = {
         inherit stable;
         inherit materusFlake;
         inherit host;
         inherit hm;
-        nixerus = if stable then inputs.configInputs-stable.inputs.nixerus else inputs.configInputs.inputs.nixerus;
+        nixerus = if stable then inputs.configInputs-stable.nixerus else inputs.configInputs.nixerus;
         configInputs = if stable then inputs.configInputs-stable else inputs.configInputs;
         path = materusFlake.selfPath;
         isHm = false;

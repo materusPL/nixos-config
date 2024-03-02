@@ -18,5 +18,5 @@ in
     joypixels.acceptLicense = lib.mkDefault true;
     firefox.enablePlasmaBrowserIntegration = true;
   };
-  config.nixpkgs.overlays = lib.mkIf cfg.enableOverlays [materusArg.cfg.configInputs.inputs.emacs-overlay.overlay];
+  config.nixpkgs.overlays = lib.mkIf cfg.enableOverlays [materusArg.cfg.configInputs.emacs-overlay.overlay];
 }

@@ -33,13 +33,13 @@ let
           stable = false;
           inherit materusFlake;
           host = "Generic";
-          hm = inputs.configInputs.inputs.home-manager;
-          nixerus = inputs.configInputs.inputs.nixerus;
+          hm = inputs.configInputs.home-manager;
+          nixerus = inputs.configInputs.nixerus;
           configInputs = inputs.configInputs;
           path = materusFlake.selfPath;
           isHm = true;
         }; in
-        inputs.configInputs.inputs.home-manager.lib.homeManagerConfiguration {
+        inputs.configInputs.home-manager.lib.homeManagerConfiguration {
           pkgs = import inputs.nixpkgs { system = "x86_64-linux"; config = { allowUnfree = true; }; };
           extraSpecialArgs = { inherit materusCfg; };
           modules = [
