@@ -69,6 +69,7 @@
     pkgs.papirus-icon-theme
     materusArg.pkgs.ffmpeg6-amf-full
     (materusArg.pkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; extraLibs = [ ]; })
+    pkgs.git-crypt
   ];
 
   programs.obs-studio = {
