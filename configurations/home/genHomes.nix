@@ -14,7 +14,7 @@ let
           value = let host = builtins.elemAt hosts i; in
             materusFlake.nixosConfigurations.${host}.materusCfg.hm.lib.homeManagerConfiguration {
               pkgs = materusFlake.nixosConfigurations.${host}.pkgs;
-              extraSpecialArgs = { materusCfg = materusFlake.nixosConfigurations.${host}.materusCfg // {isHm = true;}; };
+              extraSpecialArgs = { materusCfg = materusFlake.nixosConfigurations.${host}.materusCfg // {homePath = materusFlake.selfPath + "/configurations/home/${username}"; isHm = true;}; };
               modules = [
                 ./${username}
                 ../host/${host}/extraHome.nix
@@ -38,6 +38,7 @@ let
           nixerus = inputs.configInputs.nixerus;
           configInputs = inputs.configInputs;
           path = materusFlake.selfPath;
+          homePath = materusFlake.selfPath + "/configurations/home/${username}";
           isHm = true;
         }; in
         inputs.configInputs.home-manager.lib.homeManagerConfiguration {

@@ -8,10 +8,8 @@
     sops.age.generateKey = false;
     sops.gnupg.home = null;
     sops.gnupg.sshKeyPaths = [];
-    sops.secrets."users/materus" = {
-      format = "yaml";
-      sopsFile = ./users.yaml;
-    };
+    sops.defaultSopsFile = materusCfg.hostPath + "/secrets/secrets.yaml";
+    sops.secrets."users/materus" = {};
 
     services.openssh.hostKeys = [
       {
