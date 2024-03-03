@@ -21,6 +21,10 @@ create_decrypt () {
     git add --intent-to-add decrypted
     git update-index --assume-unchanged decrypted
 }
+delete_decrypt () {
+    rm decrypted
+    git rm decrypted
+}
 
 
 if [ $# = 1 ]; then
@@ -32,8 +36,18 @@ if [ $# = 1 ]; then
     fi
 
     if [ $1 = "lock" ]; then
-        rm decrypted
+        delete_decrypt
         git-crypt lock
+        exit
+    fi
+
+    if [ $1 = "create_decrypt" ]; then
+        create_decrypt
+        exit
+    fi
+
+    if [ $1 = "delete_decrypt" ]; then
+        delete_decrypt
         exit
     fi
 
