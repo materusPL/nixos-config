@@ -2,8 +2,8 @@
 {
   imports =
     [
-      (if (materusCfg.materusFlake.decrypted == true) then ./private else "")
-    ];
+      
+    ] ++ (if (materusCfg.materusFlake.decrypted) then [ ./private ] else [] );
 
     sops.age.generateKey = false;
     sops.gnupg.home = null;
