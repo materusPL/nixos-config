@@ -44,7 +44,7 @@ in
   services.xserver.desktopManager.plasma5.phononBackend = "gstreamer";
   services.xserver.desktopManager.plasma5.useQtScaling = true;
   services.xserver.desktopManager.plasma5.runUsingSystemd = true;
-  programs.gnupg.agent.pinentryFlavor = "qt";
+  programs.gnupg.agent.pinentryFlavor = "gnome3";
   environment.plasma5.excludePackages = with pkgs; [ libsForQt5.kwallet libsForQt5.kwalletmanager libsForQt5.kwallet-pam ];
   
   environment.variables = {

@@ -36,7 +36,7 @@
   services.xserver.enable = true;
   services.xserver.videoDrivers = [ "amdgpu" ];
   services.dbus.enable = true;
-  services.dbus.packages = [ pkgs.gcr_4 ];
+  services.dbus.packages = [ pkgs.gcr ];
 
 
   #services.xserver.displayManager.autoLogin.user = "materus";
@@ -251,7 +251,7 @@
     tldr
     bat
     ##config.materus.profile.packages.home-manager
-
+    gcr
     # pgcli
     # litecli
     materusArg.pkgs.alvr
