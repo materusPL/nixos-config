@@ -136,7 +136,7 @@
   '';
 
   i18n.inputMethod.enabled = "fcitx5";
-  i18n.inputMethod.fcitx5.addons = [ pkgs.fcitx5-configtool pkgs.fcitx5-lua pkgs.fcitx5-mozc pkgs.fcitx5-gtk pkgs.libsForQt5.fcitx5-qt ];
+  i18n.inputMethod.fcitx5.addons = [ pkgs.fcitx5-configtool pkgs.fcitx5-lua pkgs.fcitx5-mozc pkgs.fcitx5-gtk pkgs.kdePackages.fcitx5-qt];
 
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -198,13 +198,13 @@
     gamescope
     #(pkgs.lutris.override { extraLibraries = pkgs: with pkgs;  [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
     materusArg.pkgs.amdgpu-pro-libs.prefixes
-    (pkgs.bottles.override { extraPkgs = pkgs: [ pkgs.libsForQt5.breeze-qt5 pkgs.libsForQt5.breeze-gtk pkgs.nss_latest ]; extraLibraries = pkgs: [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
+    (pkgs.bottles.override { extraPkgs = pkgs: [ pkgs.libsForQt5.breeze-qt5 pkgs.kdePackages.breeze-gtk pkgs.nss_latest ]; extraLibraries = pkgs: [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
     glibc
     glib
     gtk3
     gtk4
     gsettings-desktop-schemas
-    libsForQt5.dolphin
+    kdePackages.dolphin
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
 
     patchelf

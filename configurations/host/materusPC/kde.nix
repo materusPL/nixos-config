@@ -24,7 +24,7 @@ let
   ;
 in
 {
-  services.xserver.displayManager.defaultSession = "plasmawayland";
+  services.xserver.displayManager.defaultSession = "plasma";
   services.xserver.displayManager.sddm.enable = true;
   services.xserver.displayManager.sddm.settings = {
     General = {
@@ -40,12 +40,10 @@ in
       
     };
   };
-  services.xserver.desktopManager.plasma5.enable = true;
-  services.xserver.desktopManager.plasma5.phononBackend = "gstreamer";
-  services.xserver.desktopManager.plasma5.useQtScaling = true;
-  services.xserver.desktopManager.plasma5.runUsingSystemd = true;
+  services.xserver.desktopManager.plasma6.enable = true;
+  services.xserver.desktopManager.plasma6.enableQt5Integration = true;
   programs.gnupg.agent.pinentryFlavor = "gnome3";
-  environment.plasma5.excludePackages = with pkgs; [ libsForQt5.kwallet libsForQt5.kwalletmanager libsForQt5.kwallet-pam ];
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [ kwallet kwalletmanager kwallet-pam ];
   
   environment.variables = {
     # Old fix for black cursor on amdgpu, seems to work fine now
