@@ -70,19 +70,7 @@
   services.printing.enable = true;
 
 
-  sound.enable = true;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    audio.enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    systemWide = false;
-    # If you want to use JACK applications, uncomment this
-    jack.enable = true;
-  };
-  hardware.pulseaudio.enable = false;
+
 
   services.xserver.libinput.enable = true;
 
@@ -108,9 +96,7 @@
     #     thunderbird
     #   ];
   };
-  environment.variables = {
-    ALSOFT_DRIVERS = "pulse";
-  };
+
   environment.sessionVariables = {
     XDG_CACHE_HOME = "\${HOME}/.cache";
     XDG_CONFIG_HOME = "\${HOME}/.config";
@@ -266,7 +252,6 @@
     wineWowPackages.stagingFull
     winetricks
     protontricks
-    openal
     gnupg
     pinentry
     pinentry-gnome
@@ -275,7 +260,7 @@
     monkeysphere
     gparted
 
-    reaper
+    
 
     virt-viewer
 
@@ -289,7 +274,7 @@
     bubblewrap
     bindfs
 
-    pulseaudio
+    
 
     binutils
     config.materus.profile.packages.firefox
