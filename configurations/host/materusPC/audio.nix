@@ -54,6 +54,8 @@
     odin2
     surge
     fire
+    decent-sampler
+    lsp-plugins
 
   ];
 
