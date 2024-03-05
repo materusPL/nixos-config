@@ -49,11 +49,13 @@ in
     # Old fix for black cursor on amdgpu, seems to work fine now
     #KWIN_DRM_NO_AMS = "1";
 
-    #Fix fo amdgpu crashes
+    #Fix for amdgpu crashes
     KWIN_DRM_USE_MODIFIERS="0";
     KWIN_DRM_NO_DIRECT_SCANOUT="1";
   };
   environment.systemPackages = with pkgs; [
 
   ];
+
+  materus.profile.steam.extraPkgs = [pkgs.kdePackages.breeze pkgs.kdePackages.breeze-gtk pkgs.kdePackages.dolphin];
 }

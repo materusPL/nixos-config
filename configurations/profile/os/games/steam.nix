@@ -61,9 +61,6 @@ let
       pkgs.glib
       pkgs.gsettings-desktop-schemas
       pkgs.fuse
-      pkgs.libsForQt5.breeze-qt5
-      pkgs.libsForQt5.breeze-gtk
-      pkgs.libsForQt5.dolphin
       pkgs.samba4Full
       pkgs.tdb
       pkgs.jbig2enc

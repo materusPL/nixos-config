@@ -51,10 +51,17 @@
       libGL.dev
       libGLU.dev
       vulkan-loader.dev
-
+      xorg.xorgproto
+      xorg.libX11.dev 
+      xorg.libXrandr.dev
+      xorg.libXrender.dev
+      
+      freetype.dev
+      
       fpc
       openjdk21
-
+      bison
+      flex
 
       ldc
       dmd
