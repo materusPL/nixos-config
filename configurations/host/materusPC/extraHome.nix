@@ -22,7 +22,6 @@
       llvmpkgs.libllvm
       llvmpkgs.libllvm.dev
 
-      rustup
       raylib
       gcc
       gdb
