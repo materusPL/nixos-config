@@ -69,7 +69,7 @@
       dub
     ]);
 
-    editor.emacs.enable = true;
+    editor.emacs.enable = false;
     
   };
 
