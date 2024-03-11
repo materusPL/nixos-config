@@ -16,8 +16,8 @@ let
     pkgs.noto-fonts-cjk-serif
     pkgs.wqy_zenhei
     pkgs.corefonts
-    (pkgs.nerdfonts.override { fonts = [ "FiraCode"]; })
-    
+    (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
+
   ] ++ defaultFonts;
 
   moreFonts = [

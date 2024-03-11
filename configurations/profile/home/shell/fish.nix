@@ -1,6 +1,6 @@
 { config, pkgs, lib, materusArg, ... }:
-let 
-cfg = config.materus.profile.fish;
+let
+  cfg = config.materus.profile.fish;
 in
 {
   options.materus.profile.fish.enable = materusArg.pkgs.lib.mkBoolOpt config.materus.profile.enableTerminalExtra "Enable materus fish config";

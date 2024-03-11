@@ -14,36 +14,36 @@ let
     ''
     +*/
     ''
-    # Make sure nothing renders on gpu to prevent "sysfs: cannot create duplicate filename" after rebinding to amdgpu
-    chmod 0 /dev/dri/renderD128 
-    fuser -k /dev/dri/renderD128
+       # Make sure nothing renders on gpu to prevent "sysfs: cannot create duplicate filename" after rebinding to amdgpu
+       chmod 0 /dev/dri/renderD128 
+       fuser -k /dev/dri/renderD128
 
-    # Seems to fix reset bug for 7900 XTX
-    echo "0" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/d3cold_allowed"
+       # Seems to fix reset bug for 7900 XTX
+       echo "0" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/d3cold_allowed"
 
-    systemctl stop mountWin10Share.service
+       systemctl stop mountWin10Share.service
     
     
-    echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
-    echo ''$VIRSH_GPU_AUDIO > "/sys/bus/pci/devices/''${VIRSH_GPU_AUDIO}/driver/unbind"
+       echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
+       echo ''$VIRSH_GPU_AUDIO > "/sys/bus/pci/devices/''${VIRSH_GPU_AUDIO}/driver/unbind"
 
-    sleep 1s
+       sleep 1s
 
-    echo "10" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
-    echo "8" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
+       echo "10" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
+       echo "8" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
 
-    echo "3" > /proc/sys/vm/drop_caches
-    echo "1" > /proc/sys/vm/compact_memory
-   #echo "8192" >  /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
-
-
-
-    systemctl set-property --runtime -- user.slice AllowedCPUs=0-7,16-23
-    systemctl set-property --runtime -- system.slice AllowedCPUs=0-7,16-23
-    systemctl set-property --runtime -- init.scope AllowedCPUs=0-7,16-23
+       echo "3" > /proc/sys/vm/drop_caches
+       echo "1" > /proc/sys/vm/compact_memory
+      #echo "8192" >  /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
 
 
-  '';
+
+       systemctl set-property --runtime -- user.slice AllowedCPUs=0-7,16-23
+       systemctl set-property --runtime -- system.slice AllowedCPUs=0-7,16-23
+       systemctl set-property --runtime -- init.scope AllowedCPUs=0-7,16-23
+
+
+    '';
   stopHook = ''
 
     # Debugging

@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
   boot.kernelPackages = pkgs.linuxPackages_rpi4;
   boot.initrd.availableKernelModules = [ "xhci_pci" "usb_storage" ];
@@ -16,7 +17,8 @@
     "vm.swappiness" = 10;
   };
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/44444444-4444-4444-8888-888888888888";
+    {
+      device = "/dev/disk/by-uuid/44444444-4444-4444-8888-888888888888";
       fsType = "ext4";
     };
   fileSystems."/etc/nixos" =

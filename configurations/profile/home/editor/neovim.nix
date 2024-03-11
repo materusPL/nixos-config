@@ -1,6 +1,6 @@
 { config, lib, pkgs, materusArg, ... }:
 let
-cfg = config.materus.profile.editor.neovim;
+  cfg = config.materus.profile.editor.neovim;
 in
 {
   options.materus.profile.editor.neovim.enable = materusArg.pkgs.lib.mkBoolOpt config.materus.profile.enableTerminalExtra "Enable neovim with materus cfg";
@@ -14,21 +14,21 @@ in
 
 
       extraConfig = ''
-      set number
+        set number
       '';
-    
 
-    plugins = with pkgs.vimPlugins;[
-      syntastic
 
-      vim-fugitive
-      vim-airline
-      vim-nix
+      plugins = with pkgs.vimPlugins;[
+        syntastic
 
-      nvim-fzf
-      nvim-treesitter.withAllGrammars
-      
-    ];
+        vim-fugitive
+        vim-airline
+        vim-nix
+
+        nvim-fzf
+        nvim-treesitter.withAllGrammars
+
+      ];
     };
   };
 

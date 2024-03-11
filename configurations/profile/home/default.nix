@@ -20,9 +20,9 @@ in
   config =
     {
 
-      home.packages = (if cfg.enableDesktop then packages.list.desktopApps else []) ++
-        (if cfg.enableNixDevel then packages.list.nixRelated else []) ++
-        (if cfg.enableTerminal then packages.list.terminalApps else []);
+      home.packages = (if cfg.enableDesktop then packages.list.desktopApps else [ ]) ++
+        (if cfg.enableNixDevel then packages.list.nixRelated else [ ]) ++
+        (if cfg.enableTerminal then packages.list.terminalApps else [ ]);
       #Desktop
       programs.feh.enable = lib.mkDefault cfg.enableDesktop;
 

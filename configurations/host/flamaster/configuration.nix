@@ -115,7 +115,7 @@
     isNormalUser = true;
     description = "Mateusz Słodkowicz";
     extraGroups = [ "networkmanager" "wheel" ];
-    openssh.authorizedKeys.keyFiles = [  ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
+    openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
     packages = with pkgs; [
       kate
     ];
@@ -135,7 +135,7 @@
     lshw
     steamcmd
     distrobox
-    
+
 
     config.materus.profile.packages.firefox
     config.programs.java.package

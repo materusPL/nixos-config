@@ -136,8 +136,8 @@ in
 
   services.fstrim = {
     enable = true;
-    interval = "weekly"; 
-};
+    interval = "weekly";
+  };
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -163,12 +163,12 @@ in
 
   hardware.opengl.enable = true;
   hardware.opengl.driSupport32Bit = true;
- /* hardware.opengl.extraPackages = with pkgs; [
+  /* hardware.opengl.extraPackages = with pkgs; [
     vaapiVdpau
     nvidia-vaapi-driver
     libvdpau-va-gl
-  ];
-  hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [
+    ];
+    hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [
     vaapiVdpau
     nvidia-vaapi-driver
     libvdpau-va-gl
@@ -177,26 +177,26 @@ in
   #hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
 
   /*
-  #GNOME
-  services.xserver.displayManager.gdm.wayland = false;
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-  security.pam.services.gdm.enableGnomeKeyring = true;
+    #GNOME
+    services.xserver.displayManager.gdm.wayland = false;
+    services.xserver.displayManager.gdm.enable = true;
+    services.xserver.desktopManager.gnome.enable = true;
+    security.pam.services.gdm.enableGnomeKeyring = true;
 
 
-  services.gnome.rygel.enable = true;
-  services.gnome.sushi.enable = true;
-  services.gnome.tracker.enable = true;
-  services.gnome.gnome-online-accounts.enable = true;
-  services.gnome.gnome-browser-connector.enable = true;
-  services.gnome.gnome-settings-daemon.enable = true;
-  services.gnome.core-utilities.enable = true;
-  services.gnome.core-shell.enable = true;
-  services.gnome.core-os-services.enable = true;
+    services.gnome.rygel.enable = true;
+    services.gnome.sushi.enable = true;
+    services.gnome.tracker.enable = true;
+    services.gnome.gnome-online-accounts.enable = true;
+    services.gnome.gnome-browser-connector.enable = true;
+    services.gnome.gnome-settings-daemon.enable = true;
+    services.gnome.core-utilities.enable = true;
+    services.gnome.core-shell.enable = true;
+    services.gnome.core-os-services.enable = true;
 
-  programs.gnome-terminal.enable = true;
-  services.gnome.gnome-keyring.enable = true;
-  services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon gnome2.GConf ];
+    programs.gnome-terminal.enable = true;
+    services.gnome.gnome-keyring.enable = true;
+    services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon gnome2.GConf ];
   */
 
 
@@ -215,7 +215,7 @@ in
 
   # Enable the Plasma 5 Desktop Environment.
 
-  
+
 
   security.pam.services.sddm.enableKwallet = true;
 
@@ -628,20 +628,20 @@ in
 
     binutils
     /*
-    gnome3.adwaita-icon-theme
-    gnome3.gnome-tweaks
-    gnome3.gnome-color-manager
-    gnome3.gnome-shell-extensions
+      gnome3.adwaita-icon-theme
+      gnome3.gnome-tweaks
+      gnome3.gnome-color-manager
+      gnome3.gnome-shell-extensions
 
-    gnomeExtensions.appindicator
-    gnomeExtensions.desktop-clock
-    gnomeExtensions.gtk4-desktop-icons-ng-ding
-    gnomeExtensions.compiz-windows-effect
-    gnomeExtensions.burn-my-windows
-    gnomeExtensions.user-themes
-    gnomeExtensions.gsconnect
-    gnomeExtensions.dash-to-panel
-    gnomeExtensions.dash-to-dock
+      gnomeExtensions.appindicator
+      gnomeExtensions.desktop-clock
+      gnomeExtensions.gtk4-desktop-icons-ng-ding
+      gnomeExtensions.compiz-windows-effect
+      gnomeExtensions.burn-my-windows
+      gnomeExtensions.user-themes
+      gnomeExtensions.gsconnect
+      gnomeExtensions.dash-to-panel
+      gnomeExtensions.dash-to-dock
     */
 
 
@@ -665,7 +665,7 @@ in
   fonts.fontconfig.enable = true;
   fonts.fontconfig.cache32Bit = true;
   fonts.fontconfig.defaultFonts.sansSerif = [ "Noto Sans" "DejaVu Sans" "WenQuanYi Zen Hei" "Noto Color Emoji" ];
-  fonts.fontconfig.defaultFonts.serif = [ "Noto Serif" "DejaVu Serif" "WenQuanYi Zen Hei" "Noto Color Emoji"];
+  fonts.fontconfig.defaultFonts.serif = [ "Noto Serif" "DejaVu Serif" "WenQuanYi Zen Hei" "Noto Color Emoji" ];
   fonts.fontconfig.defaultFonts.emoji = [ "Noto Color Emoji" "OpenMoji Color" ];
   fonts.fontconfig.defaultFonts.monospace = [ "FiraCode Nerd Font Mono" "Noto Sans Mono" "WenQuanYi Zen Hei Mono" ];
 
@@ -753,8 +753,8 @@ in
   };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 24800 5900  5357 4656];
-  networking.firewall.allowedUDPPorts = [ 24800 5900  3702 4656];
+  networking.firewall.allowedTCPPorts = [ 24800 5900 5357 4656 ];
+  networking.firewall.allowedUDPPorts = [ 24800 5900 3702 4656 ];
   # Or disable the firewall altogether.
   networking.firewall.enable = true;
 

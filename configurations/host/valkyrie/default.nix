@@ -10,7 +10,7 @@
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./services
-          ];
+    ];
 
   materus.profile.nix.enable = true;
 

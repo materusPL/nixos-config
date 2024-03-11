@@ -6,7 +6,8 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
   environment.systemPackages = with pkgs; [
@@ -15,15 +16,15 @@
     git
   ];
   sound.enable = false;
-  boot.tmp.useTmpfs = true;  
-  services.xserver.enable = false;  
+  boot.tmp.useTmpfs = true;
+  services.xserver.enable = false;
   networking.hostName = "waffentrager";
   services.openssh.enable = true;
   users.users.materus = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keys = [
-     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPEDY+H8Hc/RSLE064AAh8IojvqxPd8BE5gec2aOfYMh materus@podkos.pl"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPEDY+H8Hc/RSLE064AAh8IojvqxPd8BE5gec2aOfYMh materus@podkos.pl"
     ];
   };
 
@@ -37,7 +38,7 @@
         "https://cache.nixos.org/"
         "https://nixerus.cachix.org/"
       ];
-      trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" "nixerus.cachix.org-1:2x7sIG7y1vAoxc8BNRJwsfapZsiX4hIl4aTi9V5ZDdE="];
+      trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" "nixerus.cachix.org-1:2x7sIG7y1vAoxc8BNRJwsfapZsiX4hIl4aTi9V5ZDdE=" ];
     };
   };
   # Use the extlinux boot loader. (NixOS wants to enable GRUB by default)
@@ -69,7 +70,7 @@
   # services.xserver.enable = true;
 
 
-  
+
 
   # Configure keymap in X11
   # services.xserver.layout = "us";

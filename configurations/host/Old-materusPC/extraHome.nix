@@ -4,14 +4,14 @@
   home.homeDirectory = "/home/materus";
 
   programs.git = {
-      userEmail = "materus@podkos.pl";
-      userName = "materus";
-      signing.signByDefault = true;
-      signing.key = "${materusArg.cfg.path}/extraFiles/keys/ssh/materus.pub";
-      extraConfig = {
-        commit.gpgsign = true;
-        gpg.format = "ssh";
-      };
+    userEmail = "materus@podkos.pl";
+    userName = "materus";
+    signing.signByDefault = true;
+    signing.key = "${materusArg.cfg.path}/extraFiles/keys/ssh/materus.pub";
+    extraConfig = {
+      commit.gpgsign = true;
+      gpg.format = "ssh";
+    };
   };
   materus.profile = {
     fonts.enable = lib.mkDefault true;
@@ -21,7 +21,7 @@
     enableTerminalExtra = lib.mkDefault true;
     enableNixDevel = lib.mkDefault true;
     editor.code.fhs.enable = true;
-    editor.code.fhs.packages = (ps: with ps; let llvmpkgs = llvmPackages_16; in[
+    editor.code.fhs.packages = (ps: with ps; let llvmpkgs = llvmPackages_16; in [
       llvmpkgs.clang
       llvmpkgs.llvm
       llvmpkgs.bintools
@@ -36,7 +36,7 @@
 
       cmake
       gnumake
-      ninja 
+      ninja
       binutils
       coreutils
       util-linux
@@ -70,7 +70,7 @@
     ]);
 
     editor.emacs.enable = false;
-    
+
   };
 
   home.packages = [

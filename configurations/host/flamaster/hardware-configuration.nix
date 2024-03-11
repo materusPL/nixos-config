@@ -20,7 +20,7 @@
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "ssd" "space_cache=v2" "compress=zstd" ];
     };
-   fileSystems."/nix" =
+  fileSystems."/nix" =
     {
       device = "/dev/disk/by-label/NixOS_Root_Laptop";
       fsType = "btrfs";

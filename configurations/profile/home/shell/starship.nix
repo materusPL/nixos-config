@@ -17,7 +17,7 @@ in
 
       format = "$username@$hostname$all";
       right_format = "$cmd_duration $time";
-      
+
       time = {
         disabled = false;
         style = "bold bright-black";
@@ -28,8 +28,8 @@ in
       shell = {
         disabled = false;
         fish_indicator = "fish";
-        bash_indicator= "bash";
-        zsh_indicator= "zsh";
+        bash_indicator = "bash";
+        zsh_indicator = "zsh";
         style = "blue bold";
       };
 

@@ -103,10 +103,10 @@
     XDG_BIN_HOME = "\${HOME}/.local/bin";
     XDG_DATA_HOME = "\${HOME}/.local/share";
     QT_XKB_CONFIG_ROOT = "\${XKB_CONFIG_ROOT}";
-    GTK_IM_MODULE="fcitx";
-    QT_IM_MODULE="fcitx";
-    XMODIFIERS="@im=fcitx";
-    SDL_IM_MODULE="fcitx";
+    GTK_IM_MODULE = "fcitx";
+    QT_IM_MODULE = "fcitx";
+    XMODIFIERS = "@im=fcitx";
+    SDL_IM_MODULE = "fcitx";
     #SDL_AUDIODRIVER = "pipewire";
 
     #SSH_ASKPASS_REQUIRE = "prefer";
@@ -122,7 +122,7 @@
   '';
 
   i18n.inputMethod.enabled = "fcitx5";
-  i18n.inputMethod.fcitx5.addons = [ pkgs.fcitx5-configtool pkgs.fcitx5-lua pkgs.fcitx5-mozc pkgs.fcitx5-gtk pkgs.kdePackages.fcitx5-qt];
+  i18n.inputMethod.fcitx5.addons = [ pkgs.fcitx5-configtool pkgs.fcitx5-lua pkgs.fcitx5-mozc pkgs.fcitx5-gtk pkgs.kdePackages.fcitx5-qt ];
 
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -260,7 +260,7 @@
     monkeysphere
     gparted
 
-    
+
 
     virt-viewer
 
@@ -274,7 +274,7 @@
     bubblewrap
     bindfs
 
-    
+
 
     binutils
     config.materus.profile.packages.firefox

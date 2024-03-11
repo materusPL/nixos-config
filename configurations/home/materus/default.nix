@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 {
 
-  home.username =  "materus";
+  home.username = "materus";
   home.packages = [ ];
 
   programs.git.signing.key = lib.mkDefault "28D140BCA60B4FD1";

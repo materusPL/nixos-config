@@ -1,8 +1,8 @@
-{path, pkgs}:
+{ path, pkgs }:
 {
 
   earlyInitText = ''
-  ${builtins.readFile (path + "early-init.el")}
+    ${builtins.readFile (path + "early-init.el")}
   '';
   initText = ''
       (defvar materus/init-from-home nil)
@@ -13,5 +13,5 @@
       ${builtins.readFile (path + "packages.el")}
       ${builtins.readFile (path + "init.el")}
   '';
-  
+
 }

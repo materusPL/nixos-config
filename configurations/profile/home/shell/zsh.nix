@@ -2,8 +2,9 @@
 let
 
   relToDotDir = file: (lib.optionalString (config.programs.zsh.dotDir != null) (config.programs.zsh.dotDir + "/")) + file;
-  pluginsDir = if config.programs.zsh.dotDir != null then
-    relToDotDir "plugins" else ".zsh/plugins";
+  pluginsDir =
+    if config.programs.zsh.dotDir != null then
+      relToDotDir "plugins" else ".zsh/plugins";
 
 
 
@@ -14,16 +15,16 @@ let
 
   makeEnv = name: val: ''${name}=''${${name}:-"${val}"}'';
   makeIfVar = var: val: ret: ''
-  if [ ''$${var} = "${val}" ]; then 
-  ${ret}
-  fi'';
+    if [ ''$${var} = "${val}" ]; then 
+    ${ret}
+    fi'';
 
 
 
 
 
 
-  makePlugin = nameArg: fileArg: srcArg:  rec {
+  makePlugin = nameArg: fileArg: srcArg: rec {
     name = nameArg;
     src = srcArg;
     path = pluginsDir + "/" + name;
@@ -33,20 +34,20 @@ let
 
   extraPlugins = {
     powerlevel10k = makePlugin "powerlevel10k" "powerlevel10k.zsh-theme" (pkgs.fetchFromGitHub {
-            owner = "romkatv";
-            repo = "powerlevel10k";
-            rev = "v1.20.0";
-            sha256 = "sha256-ES5vJXHjAKw/VHjWs8Au/3R+/aotSbY7PWnWAMzCR8E=";
-      });
+      owner = "romkatv";
+      repo = "powerlevel10k";
+      rev = "v1.20.0";
+      sha256 = "sha256-ES5vJXHjAKw/VHjWs8Au/3R+/aotSbY7PWnWAMzCR8E=";
+    });
 
   };
 in
 {
   options.materus.profile.zsh.enable = materusArg.pkgs.lib.mkBoolOpt config.materus.profile.enableTerminalExtra "Enable materus zsh config";
   options.materus.profile.zsh.prompt = lib.mkOption {
-      type = lib.types.enum ["p10k" "starship"];
-      example = "p10k";
-      default = "p10k";
+    type = lib.types.enum [ "p10k" "starship" ];
+    example = "p10k";
+    default = "p10k";
   };
 
 
@@ -54,8 +55,8 @@ in
     home.packages = [
       pkgs.ripgrep
     ];
-    
-    home.file =  builtins.foldl' (a: b: a // b) {} (builtins.map (plugin: {${plugin.path}.source = plugin.src;})(builtins.attrValues extraPlugins));
+
+    home.file = builtins.foldl' (a: b: a // b) { } (builtins.map (plugin: { ${plugin.path}.source = plugin.src; }) (builtins.attrValues extraPlugins));
 
     programs.zsh = {
       enable = true;
@@ -68,8 +69,8 @@ in
 
 
       envExtra = ''
-          ${makeEnv "__MATERUS_HM_ZSH" "1"}
-          ${makeEnv "__MATERUS_HM_ZSH_PROMPT" cfg.prompt}
+        ${makeEnv "__MATERUS_HM_ZSH" "1"}
+        ${makeEnv "__MATERUS_HM_ZSH_PROMPT" cfg.prompt}
       '';
 
 
@@ -88,7 +89,7 @@ in
 
       plugins = [
       ];
-      
+
       history = {
         extended = true;
         save = 100000;
@@ -106,8 +107,8 @@ in
         bindkey -r "^["
         bindkey ";5C" forward-word
         bindkey ";5D" backward-word
-        '' +
-        makeIfVar "__MATERUS_HM_ZSH_PROMPT" "p10k" ''
+      '' +
+      makeIfVar "__MATERUS_HM_ZSH_PROMPT" "p10k" ''
         if zmodload zsh/terminfo && (( terminfo[colors] >= 256 )); then
           [[ ! -f ${p10kcfg}/fullcolor.zsh ]] || source ${p10kcfg}/fullcolor.zsh
         else
@@ -117,7 +118,7 @@ in
 
     };
 
-    programs.starship.enableZshIntegration = lib.mkForce false; 
+    programs.starship.enableZshIntegration = lib.mkForce false;
   };
 
 

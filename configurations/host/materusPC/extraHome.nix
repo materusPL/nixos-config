@@ -30,7 +30,7 @@
       nixpkgs-fmt
       cmake
       gnumake
-      ninja 
+      ninja
       binutils
       coreutils
       util-linux
@@ -54,12 +54,12 @@
       libGLU.dev
       vulkan-loader.dev
       xorg.xorgproto
-      xorg.libX11.dev 
+      xorg.libX11.dev
       xorg.libXrandr.dev
       xorg.libXrender.dev
       rustup
       freetype.dev
-      
+
       fpc
       openjdk21
       bison
@@ -71,7 +71,7 @@
     ]);
 
     editor.emacs.enable = false;
-    
+
   };
 
   home.packages = [

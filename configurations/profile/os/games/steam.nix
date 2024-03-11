@@ -1,24 +1,24 @@
 { config, pkgs, lib, materusArg, inputs, ... }:
 let
   optHip = pkgs.stdenv.mkDerivation rec {
-  pname = "optHip";
-  version = pkgs.rocmPackages.clr.version;
+    pname = "optHip";
+    version = pkgs.rocmPackages.clr.version;
 
 
-  dontFixup = true;
-  dontBuild = true;
-  dontPatchELF = true;
-  dontUnpack = true;
-  sourceRoot = ".";
+    dontFixup = true;
+    dontBuild = true;
+    dontPatchELF = true;
+    dontUnpack = true;
+    sourceRoot = ".";
 
-  buildInputs = [
-    pkgs.rocmPackages.clr
-  ];
+    buildInputs = [
+      pkgs.rocmPackages.clr
+    ];
 
-  installPhase = ''
-    mkdir -p $out/opt/rocm
-    ln -s ${pkgs.rocmPackages.clr} $out/opt/rocm/hip
-  '';
+    installPhase = ''
+      mkdir -p $out/opt/rocm
+      ln -s ${pkgs.rocmPackages.clr} $out/opt/rocm/hip
+    '';
   };
 
   steamPkg = pkgs.steam.override {
@@ -83,7 +83,7 @@ let
       pkgs.fontconfig
       pkgs.libxcrypt
       pkgs.gnutls
-      pkgs.samba 
+      pkgs.samba
       pkgs.tdb
       pkgs.jemalloc
       pkgs.gperftools
@@ -109,7 +109,7 @@ in
     description = "Package used by steam";
   };
   options.materus.profile.steam.extraPkgs = lib.mkOption {
-    default = [];
+    default = [ ];
     description = "Extra packages for steam";
   };
 

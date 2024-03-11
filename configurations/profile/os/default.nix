@@ -6,8 +6,8 @@
 
     ./games
   ];
-/*
-  users.users.nixos-rebuild = {
+  /*
+    users.users.nixos-rebuild = {
     #isSystemUser = true;
     isNormalUser = true;
     group = "nixos-rebuild";
@@ -15,9 +15,9 @@
      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPEDY+H8Hc/RSLE064AAh8IojvqxPd8BE5gec2aOfYMh materus@podkos.pl"
     ];
     home = "/tmp/nixos-rebuild";
-  };
-  users.groups.nixos-rebuild = { };
-  security.sudo.extraRules = [
+    };
+    users.groups.nixos-rebuild = { };
+    security.sudo.extraRules = [
     {
       users = [ "nixos-rebuild" ];
       commands = let path = "/run/current-system/sw/bin/"; in
@@ -56,7 +56,7 @@
 
 
     }
-  ];
+    ];
   */
 }
  

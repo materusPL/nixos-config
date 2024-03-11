@@ -5,14 +5,15 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
-  boot.kernel.sysctl = {"vm.swappiness" = 10;};
+  boot.kernel.sysctl = { "vm.swappiness" = 10; };
   swapDevices = [
     {
       device = "/swapfile";
@@ -20,42 +21,49 @@
     }
   ];
   fileSystems."/" =
-    { device = "/dev/disk/by-label/NixOS_Root";
+    {
+      device = "/dev/disk/by-label/NixOS_Root";
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "ssd" "space_cache=v2" ];
     };
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-label/NixOS_Root";
+    {
+      device = "/dev/disk/by-label/NixOS_Root";
       fsType = "btrfs";
       options = [ "subvol=@nix" "noatime" "compress=zstd" "ssd" "space_cache=v2" ];
     };
 
   fileSystems."/materus" =
-    { device = "/dev/disk/by-label/NixOS_Root";
+    {
+      device = "/dev/disk/by-label/NixOS_Root";
       fsType = "btrfs";
-      options = [ "subvol=@materus" "noatime" "compress=zstd" "ssd" "space_cache=v2"];
+      options = [ "subvol=@materus" "noatime" "compress=zstd" "ssd" "space_cache=v2" ];
     };
 
- fileSystems."/etc/nixos" =
-    { device = "/materus/config/nixos-config";
+  fileSystems."/etc/nixos" =
+    {
+      device = "/materus/config/nixos-config";
       fsType = "none";
       options = [ "bind" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-label/NixOS_Home";
+    {
+      device = "/dev/disk/by-label/NixOS_Home";
       fsType = "btrfs";
       options = [ "subvol=@home" "nossd" "noatime" "compress=zstd" "space_cache=v2" "autodefrag" ];
     };
-    fileSystems."/materus/data" =
-    { device = "/dev/disk/by-label/NixOS_Home";
+  fileSystems."/materus/data" =
+    {
+      device = "/dev/disk/by-label/NixOS_Home";
       fsType = "btrfs";
       options = [ "subvol=@data" "nossd" "noatime" "compress=zstd" "space_cache=v2" "autodefrag" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-label/NixOS_Root";
+    {
+      device = "/dev/disk/by-label/NixOS_Root";
       fsType = "btrfs";
       options = [ "subvol=@boot" "ssd" ];
     };
@@ -63,7 +71,8 @@
 
 
   fileSystems."/boot/efi" =
-    { device = "/dev/disk/by-label/NixOS_EFI";
+    {
+      device = "/dev/disk/by-label/NixOS_EFI";
       fsType = "vfat";
     };
 
