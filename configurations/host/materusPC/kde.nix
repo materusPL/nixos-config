@@ -54,7 +54,7 @@ in
     KWIN_DRM_NO_DIRECT_SCANOUT = "1";
   };
   environment.systemPackages = with pkgs; [
-
+        kdePackages.ark
   ];
 
   materus.profile.steam.extraPkgs = [ pkgs.kdePackages.breeze pkgs.kdePackages.breeze-gtk pkgs.kdePackages.dolphin ];

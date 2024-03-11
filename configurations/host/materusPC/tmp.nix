@@ -122,7 +122,7 @@
   '';
 
   i18n.inputMethod.enabled = "fcitx5";
-  i18n.inputMethod.fcitx5.addons = [ pkgs.fcitx5-configtool pkgs.fcitx5-lua pkgs.fcitx5-mozc pkgs.fcitx5-gtk pkgs.kdePackages.fcitx5-qt ];
+  i18n.inputMethod.fcitx5.addons = [ pkgs.kdePackages.fcitx5-configtool pkgs.fcitx5-lua pkgs.fcitx5-mozc pkgs.fcitx5-gtk pkgs.kdePackages.fcitx5-qt ];
 
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -245,7 +245,7 @@
 
     nix-du
 
-    ark
+    
     kate
     krusader
 
