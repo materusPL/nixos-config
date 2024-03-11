@@ -5,7 +5,6 @@ in
 {
   options.materus.profile.nix.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable materus nix settings";
   config.nix = lib.mkIf cfg.enable {
-    package = lib.mkDefault pkgs.nixVersions.unstable;
 
     settings = {
       experimental-features = [ "nix-command" "flakes" "repl-flake" "no-url-literals" ];

@@ -21,9 +21,9 @@ in
   };
   config.nixpkgs.overlays = lib.mkIf cfg.enableOverlays [materusArg.cfg.configInputs.emacs-overlay.overlay];
 
-
+  config.nix.package = lib.mkDefault pkgs.nixUnstable;
   config.nix.registry = lib.mkIf config.materus.profile.nix.enableRegistry {
-        nixpkgs-stable = {
+       nixpkgs-stable = {
          from = { type = "indirect"; id = "nixpkgs-stable"; };
          flake = materusCfg.materusFlake.inputs.nixpkgs-stable;
        };

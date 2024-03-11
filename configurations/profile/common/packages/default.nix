@@ -8,7 +8,7 @@ with materusArg.pkgs.lib;
   #Single Packages
   options.materus.profile.packages.home-manager = mkPrivateVar materusArg.cfg.configInputs.home-manager.packages.${pkgs.system}.home-manager;
   options.materus.profile.packages.firefox = mkPrivateVar pkgs.firefox;
-  
+
   #Package Lists
   options.materus.profile.packages.list.nixRelated = mkPrivateVar (with pkgs; [
     nix-prefetch
@@ -20,14 +20,14 @@ with materusArg.pkgs.lib;
     nix-tree
     nix-diff
     nix-ld
-    rnix-hashes
-    rnix-lsp
+    nil
+    nixpkgs-fmt
     nixpkgs-review
   ]);
 
   options.materus.profile.packages.list.desktopApps = mkPrivateVar (with pkgs; [
     barrier
-    (discord.override { nss = nss_latest; withOpenASAR = true; withTTS = true;})
+    (discord.override { nss = nss_latest; withOpenASAR = true; withTTS = true; })
     tdesktop
     mpv
     ani-cli

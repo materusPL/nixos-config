@@ -82,7 +82,6 @@ in
       ./hardware-configuration.nix
     ];
   boot.supportedFilesystems = [ "ntfs" ];
-  nix.package = pkgs.nixFlakes;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.settings.auto-optimise-store = true;
   nix.settings.substituters = [

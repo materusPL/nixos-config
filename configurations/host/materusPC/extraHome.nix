@@ -13,7 +13,7 @@
     enableTerminalExtra = lib.mkDefault true;
     enableNixDevel = lib.mkDefault true;
     editor.code.fhs.enable = true;
-    editor.code.fhs.packages = (ps: with ps; let llvmpkgs = llvmPackages_16; in[
+    editor.code.fhs.packages = (ps: with ps; let llvmpkgs = llvmPackages_16; in [
       llvmpkgs.clang
       llvmpkgs.llvm
       llvmpkgs.bintools
@@ -26,6 +26,8 @@
       gcc
       gdb
       nil
+      nixfmt
+      nixpkgs-fmt
       cmake
       gnumake
       ninja 
