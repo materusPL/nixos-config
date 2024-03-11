@@ -107,13 +107,6 @@ in
     };*/
 
 
-
-  services.xserver.windowManager.awesome.enable = true;
-  services.xserver.windowManager.awesome.luaModules = with pkgs.luaPackages; [
-    luarocks
-    luadbi-mysql #
-  ];
-
   # Use the systemd-boot EFI boot loader.
   boot.loader.grub = {
     enable = true;
@@ -602,7 +595,7 @@ in
     #zenmonitor
 
     nix-du
-
+    git-crypt
     ark
     kate
     kwalletcli
