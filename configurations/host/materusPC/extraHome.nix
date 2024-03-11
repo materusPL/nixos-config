@@ -55,7 +55,7 @@
       xorg.libX11.dev 
       xorg.libXrandr.dev
       xorg.libXrender.dev
-      
+      rustup
       freetype.dev
       
       fpc
