@@ -34,7 +34,9 @@
       binutils
       coreutils
       util-linux
-
+      openssl
+      openssl.dev
+      pkg-config
       dotnet-sdk_8
       mono
       mold
@@ -82,7 +84,7 @@
   ];
 
   programs.obs-studio = {
-    enable = true;
+    enable = false;
     plugins = with pkgs.obs-studio-plugins; [ wlrobs obs-vaapi obs-vkcapture obs-gstreamer input-overlay obs-multi-rtmp obs-pipewire-audio-capture ];
     package = materusArg.pkgs.obs-amf;
   };

@@ -254,7 +254,7 @@
     protontricks
     gnupg
     pinentry
-    pinentry-gnome
+    pinentry-gnome3
     pinentry-curses
     ncurses
     monkeysphere

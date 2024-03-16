@@ -60,8 +60,7 @@ in
         enableZshIntegration = lib.mkDefault config.programs.zsh.enable;
       };
 
-      programs.exa.enable = lib.mkDefault cfg.enableTerminalExtra;
-      programs.exa.enableAliases = lib.mkDefault config.programs.exa.enable;
+      programs.eza.enable = lib.mkDefault cfg.enableTerminalExtra;
 
       programs.yt-dlp.enable = lib.mkDefault cfg.enableTerminalExtra;
 

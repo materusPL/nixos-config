@@ -42,7 +42,7 @@ in
   };
   services.xserver.desktopManager.plasma6.enable = true;
   services.xserver.desktopManager.plasma6.enableQt5Integration = true;
-  programs.gnupg.agent.pinentryFlavor = "gnome3";
+  #programs.gnupg.agent.pinentryPackage = pkgs.pinentry-gnome3;
   environment.plasma6.excludePackages = with pkgs.kdePackages; [ kwallet kwalletmanager kwallet-pam ];
 
   environment.variables = {
