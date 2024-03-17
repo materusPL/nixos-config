@@ -118,7 +118,7 @@ in
 
     };
 
-    programs.starship.enableZshIntegration = lib.mkForce false;
+    programs.starship.enableZshIntegration = lib.mkDefault false;
   };
 
 

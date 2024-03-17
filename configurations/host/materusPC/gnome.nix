@@ -17,7 +17,7 @@
   services.gnome.core-shell.enable = true;
   services.gnome.core-os-services.enable = true;
 
-  #programs.gnupg.agent.pinentryPackage = pkgs.pinentry-gnome3;
+  programs.gnupg.agent.pinentryPackage = lib.mkForce pkgs.pinentry-gnome3;
 
 
   programs.gnome-terminal.enable = true;
