@@ -26,6 +26,7 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPEDY+H8Hc/RSLE064AAh8IojvqxPd8BE5gec2aOfYMh materus@podkos.pl"
     ];
+    hashedPasswordFile = config.sops.secrets."users/materus".path;
   };
 
   nix = {
