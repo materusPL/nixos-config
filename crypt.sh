@@ -9,12 +9,13 @@ echo "Use \"unlock\" /path/to/key to unlock with symmetric key"
 echo "Use \"lock\": to lock repository"
 exit
 fi
-
+check_git () {
 if [ "$(git status --porcelain)" ]; then
 echo "Working directory not clean."
 echo "Please commit your changes or 'git stash' them before running this script"
 exit 1
 fi
+}
 
 create_decrypt () {
     touch decrypted
@@ -30,12 +31,14 @@ delete_decrypt () {
 if [ $# = 1 ]; then
 
     if [ $1 = "unlock" ]; then
+        check_git
         git-crypt unlock
         create_decrypt
         exit
     fi
 
     if [ $1 = "lock" ]; then
+        check_git
         delete_decrypt
         git-crypt lock
         exit
