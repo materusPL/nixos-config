@@ -13,5 +13,13 @@ in
   ];
   options.materus.materusArg = lib.mkOption { default = { }; };
   config._module.args.materusArg = config.materus.materusArg // materusArg;
-  config.warnings = lib.mkIf (!materusCfg.materusFlake.decrypted) [ "Repository not decrypted, private configs not loaded, use crypt.sh to decrypt" ];
+  config.assertions = [
+    {
+      assertion = materusCfg.materusFlake.decrypted;
+      message = "Repository not decrypted, use crypt.sh to decrypt";
+    }
+  ];
+
+
+
 }
