@@ -4,7 +4,7 @@ let
   relToDotDir = file: (lib.optionalString (config.programs.zsh.dotDir != null) (config.programs.zsh.dotDir + "/")) + file;
   pluginsDir =
     if config.programs.zsh.dotDir != null then
-      relToDotDir "plugins" else ".zsh/plugins";
+      relToDotDir "plugins" else "${config.home.homeDirectory}/.zsh/plugins";
 
 
 
