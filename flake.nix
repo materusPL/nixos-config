@@ -56,7 +56,7 @@
   outputs = inputs @ { self, nixpkgs, home-manager, nur, ... }:
     rec {
       nixosConfigurations = import ./configurations/host { inherit inputs; materusFlake = self; };
-      homeConfigurations = import ./configurations/home { inherit inputs; materusFlake = self; };
+      homeConfigurations = import ./configurations/shared/home { inherit inputs; materusFlake = self; };
       selfPath = self;
       decrypted = builtins.pathExists (selfPath + "/decrypted");
     };

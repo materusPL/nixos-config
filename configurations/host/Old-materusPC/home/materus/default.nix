@@ -60,7 +60,6 @@
       libGLU.dev
       vulkan-loader.dev
 
-      fpc
       jdk
 
 
