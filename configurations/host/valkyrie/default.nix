@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running `nixos-help`).
 
-{ config, pkgs, materusArg, ... }:
+{ pkgs, materusArg, ... }:
 
 {
   imports =
@@ -10,6 +10,7 @@
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./services
+      ./secrets
     ];
 
   materus.profile.nix.enable = true;
@@ -69,7 +70,7 @@
   users.users.materus = {
     isNormalUser = true;
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    packages = with pkgs; [
+    packages = [
     ];
     openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
   };

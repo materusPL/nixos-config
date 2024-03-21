@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ ... }:
 {
   home.stateVersion = "23.05";
   home.homeDirectory = "/home/materus";
@@ -10,7 +10,7 @@
     enableTerminalExtra = false;
     enableNixDevel = false;
 
-    fish.enable = true;
+    fish.enable = false;
     bash.enable = true;
   };
 }
