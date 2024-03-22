@@ -11,7 +11,11 @@
   sops.defaultSopsFile = materusCfg.hostPath + "/secrets/secrets.yaml";
 
   sops.secrets.wireguard = { };
-
+  sops.secrets.discord-token = {};
+  sops.secrets.spotify-client-id = {};
+  sops.secrets.spotify-client-secret = {};
+  sops.secrets.youtube-api = {};
+  
   services.openssh.hostKeys = [
     {
       bits = 4096;
