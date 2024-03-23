@@ -21,7 +21,7 @@
           cryptsetup luksOpen /dev/disk/by-uuid/${cfg.uuid} elements -d ${config.sops.secrets.elements.path}
           mount /dev/mapper/elements ${cfg.path}
         '' + lib.optionalString config.waffentragerService.postgresql.enable ''
-          mkdir -p ${config.services.postgresql.dataDir}
+          mkdir -p ${cfg.postgresqlDir}/${config.waffentragerService.postgresql.version}
           chown -R postgres:postgres ${cfg.postgresqlDir}
         ''
 
