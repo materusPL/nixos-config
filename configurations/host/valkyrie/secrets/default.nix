@@ -15,6 +15,7 @@
   sops.secrets.spotify-client-id = {};
   sops.secrets.spotify-client-secret = {};
   sops.secrets.youtube-api = {};
+  sops.secrets.certs = {};
   
   services.openssh.hostKeys = [
     {

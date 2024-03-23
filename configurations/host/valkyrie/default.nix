@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running `nixos-help`).
 
-{ pkgs, materusArg, ... }:
+{ pkgs, materusArg, config, ... }:
 
 {
   imports =
@@ -74,6 +74,7 @@
     ];
     openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
   };
+  users.users.acme.openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -142,12 +143,12 @@
 
   security.acme.acceptTerms = true;
   security.acme.defaults.email = "materus+acme@podkos.pl";
+  security.acme.defaults.credentialsFile = config.sops.secrets.certs.path ;
   security.acme.certs."materus.pl" = {
     domain = "materus.pl";
     group = "nginx";
     extraDomainNames = [ "*.materus.pl" ];
     dnsProvider = "ovh";
-    credentialsFile = "/materus/config/private/valkyrie/certs.secret";
   };
 
   security.acme.certs."podkos.pl" = {
@@ -155,7 +156,6 @@
     group = "nginx";
     extraDomainNames = [ "*.podkos.pl" ];
     dnsProvider = "ovh";
-    credentialsFile = "/materus/config/private/valkyrie/certs.secret";
   };
 
   security.acme.certs."podkos.xyz" = {
@@ -163,7 +163,6 @@
     group = "nginx";
     extraDomainNames = [ "*.podkos.xyz" ];
     dnsProvider = "ovh";
-    credentialsFile = "/materus/config/private/valkyrie/certs.secret";
   };
 
 }
