@@ -12,11 +12,11 @@
 
       services.postgresql.enable = true;
       services.postgresql.package = pkgs.postgresql_16;
-      services.postgresql.dataDir = "${config.waffentragerService.elements.path}/services/postgresql";
+      services.postgresql.dataDir = "${config.waffentragerService.elements.postgresqlDir}/16";
       systemd.services.postgresql = {
-        partOf = ["elements-mount.service"];
-        requires = ["elements-mount.service"];
-        after = ["elements-mount.service"];
+        partOf = [ "elements-mount.service" ];
+        requires = [ "elements-mount.service" ];
+        after = [ "elements-mount.service" ];
       };
     };
 }

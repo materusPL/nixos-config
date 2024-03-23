@@ -3,6 +3,7 @@
   options.waffentragerService.elements.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable elements drive";
   options.waffentragerService.elements.path = lib.mkOption { default = "/var/lib/elements"; };
   options.waffentragerService.elements.uuid = lib.mkOption { default = "e32039c6-e98d-44b0-8e7d-120994bf7be1"; };
+  options.waffentragerService.elements.postgresqlDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/postgresql"; };
 
   config =
     let
@@ -19,7 +20,12 @@
           mkdir -p ${cfg.path}
           cryptsetup luksOpen /dev/disk/by-uuid/${cfg.uuid} elements -d ${config.sops.secrets.elements.path}
           mount /dev/mapper/elements ${cfg.path}
-        '';
+        '' + lib.optionalString config.waffentragerService.postgresql.enable ''
+          mkdir -p ${config.services.postgresql.dataDir}
+          chown -R postgres:postgres ${cfg.postgresqlDir}
+        ''
+
+        ;
         preStop = ''
           umount ${cfg.path}
           cryptsetup luksClose elements
