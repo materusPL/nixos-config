@@ -1,6 +1,6 @@
 { config, pkgs, lib, materusArg, ... }:
 {
-  options.valkyrieService.muse.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable pihole";
+  options.valkyrieService.muse.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable muse bot";
 
 
 
