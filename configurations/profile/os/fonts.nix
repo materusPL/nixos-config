@@ -8,8 +8,8 @@ in
 
   config = lib.mkIf cfg.enable {
 
-    fonts.fonts = packages.list.fonts ++ packages.list.moreFonts;
-    fonts.enableDefaultFonts = lib.mkDefault true;
+    fonts.packages = packages.list.fonts ++ packages.list.moreFonts;
+    fonts.enableDefaultPackages = lib.mkDefault true;
 
     fonts.fontconfig.enable = lib.mkDefault true;
     fonts.fontconfig.cache32Bit = lib.mkDefault true;

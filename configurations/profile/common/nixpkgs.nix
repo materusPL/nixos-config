@@ -17,7 +17,6 @@ in
   config.nixpkgs.config = lib.mkIf cfg.enable {
     allowUnfree = lib.mkDefault true;
     joypixels.acceptLicense = lib.mkDefault true;
-    firefox.enablePlasmaBrowserIntegration = true;
   };
   config.nixpkgs.overlays = lib.mkIf cfg.enableOverlays [ materusArg.cfg.configInputs.emacs-overlay.overlay ];
 

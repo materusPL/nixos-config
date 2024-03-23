@@ -7,7 +7,11 @@ with materusArg.pkgs.lib;
 
   #Single Packages
   options.materus.profile.packages.home-manager = mkPrivateVar materusArg.cfg.configInputs.home-manager.packages.${pkgs.system}.home-manager;
-  options.materus.profile.packages.firefox = mkPrivateVar pkgs.firefox;
+  options.materus.profile.packages.firefox = mkPrivateVar (pkgs.firefox.override {
+    nativeMessagingHosts = [
+      pkgs.plasma-browser-integration
+    ];
+  });
 
   #Package Lists
   options.materus.profile.packages.list.nixRelated = mkPrivateVar (with pkgs; [

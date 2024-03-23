@@ -40,8 +40,8 @@ in
 
     };
   };
-  services.xserver.desktopManager.plasma6.enable = true;
-  services.xserver.desktopManager.plasma6.enableQt5Integration = true;
+  services.desktopManager.plasma6.enable = true;
+  services.desktopManager.plasma6.enableQt5Integration = true;
   programs.gnupg.agent.pinentryPackage = lib.mkForce pkgs.pinentry-gnome3;
   environment.plasma6.excludePackages = with pkgs.kdePackages; [ kwallet kwalletmanager kwallet-pam ];
 
