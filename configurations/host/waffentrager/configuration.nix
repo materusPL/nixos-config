@@ -19,7 +19,10 @@
   boot.tmp.useTmpfs = true;
   services.xserver.enable = false;
   networking.hostName = "waffentrager";
+
   services.openssh.enable = true;
+  services.openssh.settings.PermitRootLogin = "no";
+
   users.users.materus = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
@@ -46,7 +49,6 @@
   boot.loader.grub.enable = false;
   # Enables the generation of /boot/extlinux/extlinux.conf
   boot.loader.generic-extlinux-compatible.enable = true;
-
   # networking.hostName = "nixos"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
