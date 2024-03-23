@@ -60,8 +60,8 @@ in
 
     programs.zsh = {
       enable = true;
-      autosuggestion.enable = true;
-      syntaxHighlighting.enable = true;
+      enableAutosuggestions = true;
+      enableSyntaxHighlighting = true;
       enableVteIntegration = true;
       historySubstringSearch.enable = true;
       historySubstringSearch.searchUpKey = ";5A";
