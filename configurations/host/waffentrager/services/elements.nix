@@ -12,6 +12,7 @@
     lib.mkIf cfg.enable {
 
       systemd.services.elements-mount = {
+        description = "Decrypt and mount elements drive";
         wantedBy = [ "multi-user.target" ];
         path = [ pkgs.cryptsetup pkgs.coreutils pkgs.util-linux ];
         serviceConfig.Type = "oneshot";
