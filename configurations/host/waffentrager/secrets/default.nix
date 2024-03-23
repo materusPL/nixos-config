@@ -1,4 +1,4 @@
-{ config, pkgs, lib, materusCfg, ... }:
+{ materusCfg, ... }:
 {
   imports =
     [
@@ -23,5 +23,5 @@
   ];
   sops.secrets.wireguard = { };
   sops.secrets."users/materus" = { neededForUsers = true; };
-
+  sops.secrets.elements = { };
 }
