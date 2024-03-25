@@ -10,7 +10,7 @@
       waffentragerService.elements.enable = true;
       waffentragerService.postgresql.enable = true;
       waffentragerService.nginx.enable = true;
-      environment.systemPackages = [ pkgs.samba ];
+      environment.systemPackages = [ pkgs.samba pkgs.exiftool pkgs.ffmpeg-headless ];
       sops.secrets.nextcloud-adminpass.owner = config.users.users.nextcloud.name;
       sops.secrets.nextcloud-adminpass.group = config.users.users.nextcloud.group;
 
