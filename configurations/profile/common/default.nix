@@ -10,6 +10,7 @@ in
   imports = [
     ./nixpkgs.nix
     ./packages
+    ./private
   ];
   options.materus.materusArg = lib.mkOption { default = { }; };
   config._module.args.materusArg = config.materus.materusArg // materusArg;

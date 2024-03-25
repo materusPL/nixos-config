@@ -24,4 +24,5 @@
   sops.secrets.wireguard = { };
   sops.secrets."users/materus" = { neededForUsers = true; };
   sops.secrets.elements = { };
+  sops.secrets.nextcloud-adminpass = { };
 }

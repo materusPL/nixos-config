@@ -25,7 +25,6 @@ let
       system = arch;
       modules = [
         ./${host}
-        inputs.private.systemModule
         profiles.osProfile
         materusCfg.configInputs.sops-nix.nixosModules.sops
         (if hmAsModule then hm.nixosModules.home-manager else { })
