@@ -17,7 +17,7 @@
           services.gitea.lfs.enable = true;
           services.gitea.stateDir = "${config.waffentragerService.elements.path}/services/gitea";
           services.gitea.settings.service.DISABLE_REGISTRATION = true;
-          services.gitea.domain = "baka.materus.pl";
+          services.gitea.settings.server.DOMAIN = "baka.materus.pl";
           services.gitea.settings.server.ROOT_URL = lib.mkForce "https://baka.materus.pl/";
           services.gitea.settings.server.PROTOCOL = "fcgi+unix";
           services.gitea.database.type = "postgres";
