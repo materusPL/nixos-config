@@ -20,6 +20,11 @@
           services.gitea.settings.server.DOMAIN = "baka.materus.pl";
           services.gitea.settings.server.ROOT_URL = lib.mkForce "https://baka.materus.pl/";
           services.gitea.settings.server.PROTOCOL = "fcgi+unix";
+          services.gitea.settings.cors = {
+            ENABLED = true;
+            X_FRAME_OPTIONS = "ALLOW-FROM https://*.materus.pl/";
+          };
+
           services.gitea.database.type = "postgres";
           services.gitea.database.socket = "/var/run/postgresql/";
 
