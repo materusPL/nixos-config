@@ -50,8 +50,8 @@
         };
       };
       services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
-        addSSL = true;
-        http2 = false;
+        forceSSL = true;
+        http3 = true;
         sslTrustedCertificate = "/var/lib/mnt_acme/materus.pl/chain.pem";
         sslCertificateKey = "/var/lib/mnt_acme/materus.pl/key.pem";
         sslCertificate = "/var/lib/mnt_acme/materus.pl/fullchain.pem";
