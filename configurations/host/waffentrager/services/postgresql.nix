@@ -13,6 +13,7 @@
       services.postgresql.enable = true;
       services.postgresql.package = pkgs."postgresql_${cfg.version}";
       services.postgresql.dataDir = "${config.waffentragerService.elements.postgresqlDir}/${cfg.version}";
+      services.postgresql.enableJIT = true;
       systemd.services.postgresql = {
         partOf = [ "elements-mount.service" ];
         requires = [ "elements-mount.service" ];
