@@ -45,6 +45,21 @@
         extraOptions = {
           mail_smtpmode = "sendmail";
           mail_sendmailmode = "pipe";
+          enable_previews = true;
+          enabledPreviewProviders = [
+            ''OC\Preview\Movie''
+            ''OC\Preview\PNG''
+            ''OC\Preview\JPEG''
+            ''OC\Preview\GIF''
+            ''OC\Preview\BMP''
+            ''OC\Preview\XBitmap''
+            ''OC\Preview\MP3''
+            ''OC\Preview\MP4''
+            ''OC\Preview\TXT''
+            ''OC\Preview\MarkDown''
+            ''OC\Preview\PDF''
+          ];
+          "overwrite.cli.url" = "https://${config.services.nextcloud.hostName}";
         };
         globalProfiles = true;
 
