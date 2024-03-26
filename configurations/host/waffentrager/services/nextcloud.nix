@@ -45,8 +45,8 @@
         extraOptions = {
           mail_smtpmode = "sendmail";
           mail_sendmailmode = "pipe";
-          profile.enabled = true;
         };
+        globalProfiles = true;
 
         phpOptions = {
           "opcache.interned_strings_buffer" = "10";
