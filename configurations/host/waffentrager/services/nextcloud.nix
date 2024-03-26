@@ -54,6 +54,7 @@
           "opcache.revalidate_freq" = "60";
           "opcache.save_comments" = "1";
         };
+        phpExtraExtensions = ex: [ ex.zip ex.zlib ex.tidy ];
       };
       services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
         forceSSL = true;
