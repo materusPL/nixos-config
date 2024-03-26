@@ -58,6 +58,10 @@
             ''OC\Preview\TXT''
             ''OC\Preview\MarkDown''
             ''OC\Preview\PDF''
+            ''OC\Preview\WebP''
+            ''OC\Preview\OpenDocument''
+            ''OC\Preview\Krita''
+            ''OC\Preview\AVIF''
           ];
           "overwrite.cli.url" = "https://${config.services.nextcloud.hostName}";
         };
