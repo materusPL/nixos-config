@@ -213,7 +213,11 @@
     aspellDicts.en-computers
     steamtinkerlaunch
     distrobox
+    # WebP support
+    libwebp
+    webp-pixbuf-loader
 
+    # Compression
     p7zip
     unrar
     bzip2

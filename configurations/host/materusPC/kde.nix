@@ -52,9 +52,10 @@ in
     #Fix for amdgpu crashes
     KWIN_DRM_USE_MODIFIERS = "0";
     KWIN_DRM_NO_DIRECT_SCANOUT = "1";
+    QT_PLUGIN_PATH = [ "${pkgs.qt6.qtimageformats}/${pkgs.qt6.qtbase.qtPluginPrefix}" ];
   };
   environment.systemPackages = with pkgs; [
-        kdePackages.ark
+    kdePackages.ark
   ];
 
   materus.profile.steam.extraPkgs = [ pkgs.kdePackages.breeze pkgs.kdePackages.breeze-gtk pkgs.kdePackages.dolphin ];
