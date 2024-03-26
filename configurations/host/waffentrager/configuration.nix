@@ -10,10 +10,22 @@
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
+
+  materus.profile.nixpkgs.enable = true;
   environment.systemPackages = with pkgs; [
     libraspberrypi
     raspberrypi-eeprom
     git
+
+    p7zip
+    unrar
+    bzip2
+    unzip
+    zstd
+    xz
+    zip
+    gzip
+
   ];
   sound.enable = false;
   boot.tmp.useTmpfs = true;

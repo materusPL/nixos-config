@@ -39,13 +39,15 @@
         appstoreEnable = true;
         database.createLocally = true;
         nginx.recommendedHttpHeaders = true;
-        extraApps = { notify_push = pkgs.nextcloud28Packages.apps.notify_push; };
+        extraApps = with pkgs.nextcloud28Packages.apps; {
+          inherit notify_push previewgenerator;
+        };
         extraOptions = {
           mail_smtpmode = "sendmail";
           mail_sendmailmode = "pipe";
         };
 
-        phpOptions =  {
+        phpOptions = {
           "opcache.interned_strings_buffer" = "10";
         };
       };
