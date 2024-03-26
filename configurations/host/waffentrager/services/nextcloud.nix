@@ -49,6 +49,10 @@
 
         phpOptions = {
           "opcache.interned_strings_buffer" = "10";
+          "opcache.jit" = "1255";
+          "opcache.jit_buffer_size" = "128M";
+          "opcache.revalidate_freq" = "60";
+          "opcache.save_comments" = "1";
         };
       };
       services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
