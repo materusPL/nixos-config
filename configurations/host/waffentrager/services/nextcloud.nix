@@ -45,6 +45,7 @@
         extraOptions = {
           mail_smtpmode = "sendmail";
           mail_sendmailmode = "pipe";
+          profile.enabled = true;
         };
 
         phpOptions = {
