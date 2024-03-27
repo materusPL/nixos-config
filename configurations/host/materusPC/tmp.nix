@@ -177,7 +177,7 @@
     config = { config, pkgs, ... }: { environment.systemPackages = with pkgs; [ wayfire ]; };
     autoStart = false;
     };*/
-
+  services.davfs2.enable = true;
   environment.systemPackages = with pkgs; [
     gamescope
     #(pkgs.lutris.override { extraLibraries = pkgs: with pkgs;  [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
