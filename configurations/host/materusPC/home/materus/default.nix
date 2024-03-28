@@ -4,7 +4,10 @@
   home.homeDirectory = "/home/materus";
 
   programs.git.signing.signByDefault = true;
-
+  xdg.portal.enable = true;
+  xdg.userDirs.enable = true;
+  xdg.portal.extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
+  xdg.portal.configPackages = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
   materus.profile = {
     fonts.enable = lib.mkDefault true;
     nixpkgs.enable = lib.mkDefault false;

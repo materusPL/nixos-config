@@ -7,6 +7,7 @@ in
   imports = [
     ./fonts.nix
     ./browser.nix
+    ./xdg.nix
 
     ./shell
     ./editor
