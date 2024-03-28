@@ -46,6 +46,7 @@
           mail_smtpmode = "sendmail";
           mail_sendmailmode = "pipe";
           enable_previews = true;
+          preview_format = "webp";
           enabledPreviewProviders = [
             ''OC\Preview\Movie''
             ''OC\Preview\PNG''
@@ -68,13 +69,17 @@
         globalProfiles = true;
 
         phpOptions = {
-          "opcache.interned_strings_buffer" = "10";
+          "opcache.memory_consumption" = "512";
+          "opcache.interned_strings_buffer" = "64";
+          "opcache.max_accelerated_files"="50000";
           "opcache.jit" = "1255";
           "opcache.jit_buffer_size" = "128M";
-          "opcache.revalidate_freq" = "60";
+          "opcache.validate_timestamps" = "0";
+          "opcache.revalidate_freq" = "0";
+          "opcache.fast_shutdown" = "1";
           "opcache.save_comments" = "1";
         };
-        phpExtraExtensions = ex: [ ex.zip ex.zlib ex.tidy ];
+        phpExtraExtensions = ex: [ ex.zip ex.zlib ex.tidy ex.smbclient ];
       };
       services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
         forceSSL = true;
