@@ -17,7 +17,8 @@ let
   makeIfVar = var: val: ret: ''
     if [ ''$${var} = "${val}" ]; then 
     ${ret}
-    fi'';
+    fi
+    '';
 
 
 
@@ -71,6 +72,7 @@ in
       envExtra = ''
         ${makeEnv "__MATERUS_HM_ZSH" "1"}
         ${makeEnv "__MATERUS_HM_ZSH_PROMPT" cfg.prompt}
+        ${makeEnv "__MATERUS_HM_ZSH_PRIVATE" "0"}
       '';
 
 
@@ -94,7 +96,7 @@ in
         extended = true;
         save = 100000;
         size = 100000;
-        share = false;
+        share = true;
         ignoreDups = true;
         ignoreSpace = true;
       };
@@ -107,6 +109,12 @@ in
         bindkey -r "^["
         bindkey ";5C" forward-word
         bindkey ";5D" backward-word
+
+        zsh-private() {
+          __MATERUS_HM_ZSH_PRIVATE=1 ${lib.getExe config.programs.zsh.package}
+        }
+
+
       '' +
       makeIfVar "__MATERUS_HM_ZSH_PROMPT" "p10k" ''
         if zmodload zsh/terminfo && (( terminfo[colors] >= 256 )); then
@@ -114,7 +122,12 @@ in
         else
           [[ ! -f ${p10kcfg}/compatibility.zsh ]] || source ${p10kcfg}/compatibility.zsh
         fi
-      '';
+      '' + makeIfVar "__MATERUS_HM_ZSH_PRIVATE" "1" ''
+        unset HISTFILE
+        ${lib.optionalString config.programs.zsh.history.share "unsetopt SHARE_HISTORY"}
+      ''
+      
+      ;
 
     };
 
