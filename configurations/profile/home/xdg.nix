@@ -12,8 +12,6 @@
     in
     lib.mkIf cfg.enable {
       xdg.enable = true;
-      xdg.portal.enable = lib.mkDefault false;
-      xdg.portal.xdgOpenUsePortal = lib.mkDefault config.xdg.portal.enable;
 
       xdg.userDirs.enable = lib.mkDefault true;
       xdg.userDirs.createDirectories = lib.mkDefault config.xdg.userDirs.enable;
