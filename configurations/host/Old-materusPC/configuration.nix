@@ -90,7 +90,6 @@ in
   ];
   nix.settings.trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" ];
   nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.firefox.enablePlasmaBrowserIntegration = true;
 
   services.xserver.displayManager.startx.enable = true;
 
@@ -542,7 +541,8 @@ in
   i18n.inputMethod.fcitx5.addons = [ pkgs.fcitx5-configtool pkgs.fcitx5-lua pkgs.fcitx5-mozc pkgs.libsForQt5.fcitx5-qt ];
 
   environment.systemPackages = with pkgs; [
-    firefox
+    config.materus.profile.packages.firefox
+
     steam
     steam.run
     gamescope
@@ -606,7 +606,7 @@ in
     openal
     gnupg
     pinentry
-    pinentry-gnome
+    pinentry-gnome3
     pinentry-curses
     ncurses
     monkeysphere
