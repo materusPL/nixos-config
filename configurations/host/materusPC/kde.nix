@@ -1,13 +1,20 @@
 { config, pkgs, lib, ... }:
 let
-  westonSddm = pkgs.writeText "weston.ini"
+  westonSddm = let xcfg = config.services.xserver; in  pkgs.writeText "weston.ini"
     ''
       [core]
-      xwayland=true
+      xwayland=false
       shell=fullscreen-shell.so
 
       [keyboard]
-      keymap_layout=pl
+      keymap_model = ${builtins.toString xcfg.xkb.model};
+      keymap_layout = ${builtins.toString xcfg.xkb.layout};
+      keymap_variant = ${builtins.toString xcfg.xkb.variant};
+      keymap_options = ${builtins.toString xcfg.xkb.options};
+
+      [libinput]
+      enable-tap = ${builtins.toString xcfg.libinput.mouse.tapping};
+      left-handed = ${builtins.toString xcfg.libinput.mouse.leftHanded};
 
       [output]
       name=DP-3
@@ -20,24 +27,27 @@ let
       [output]
       name=HDMI-A-3
       mode=off
-    ''
-  ;
+
+    '';
 in
 {
   services.xserver.displayManager.defaultSession = "plasma";
   services.xserver.displayManager.sddm.enable = true;
+  services.xserver.displayManager.sddm.wayland.enable = true;
+  services.xserver.displayManager.sddm.wayland.compositor = lib.mkForce "weston";
+  services.xserver.displayManager.sddm.wayland.compositorCommand = lib.concatStringsSep " " [
+    "${lib.getExe pkgs.weston}"
+    "--shell=kiosk"
+    "-c ${westonSddm}"
+  ];
+
   services.xserver.displayManager.sddm.settings = {
     General = {
-      #DisplayServer = "wayland";
       InputMethod = "";
     };
     Theme = {
       CursorTheme = "breeze_cursors";
       CursorSize = "24";
-    };
-    Wayland = {
-      #CompositorCommand = "${pkgs.weston}/bin/weston  -c ${westonSddm}";
-
     };
   };
   services.desktopManager.plasma6.enable = true;

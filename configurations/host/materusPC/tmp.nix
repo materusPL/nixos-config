@@ -27,6 +27,7 @@
 
   time.timeZone = "Europe/Warsaw";
   i18n.defaultLocale = "pl_PL.UTF-8";
+  services.xserver.xkb.layout = "pl";
   console = {
     font = "lat2-16";
     #     keyMap = "pl";
