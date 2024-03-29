@@ -65,8 +65,8 @@ in
       enableSyntaxHighlighting = true;
       enableVteIntegration = true;
       historySubstringSearch.enable = true;
-      historySubstringSearch.searchUpKey = ";5A";
-      historySubstringSearch.searchDownKey = ";5B";
+      historySubstringSearch.searchUpKey = "$key[Up]";
+      historySubstringSearch.searchDownKey = "$key[Down]";
 
 
       envExtra = ''
@@ -105,10 +105,24 @@ in
       initExtra = ''
         . ${zshcfg}/zinputrc
         source ${zshcfg}/zshcompletion.zsh
-        
+
+        history-substring-search-up-prefixed(){
+          HISTORY_SUBSTRING_SEARCH_PREFIXED=1 history-substring-search-up
+        }
+        history-substring-search-down-prefixed(){
+          HISTORY_SUBSTRING_SEARCH_PREFIXED=1 history-substring-search-down
+        }
+
+
+        zle -N history-substring-search-up-prefixed
+        zle -N history-substring-search-down-prefixed
+
+
         bindkey -r "^["
         bindkey ";5C" forward-word
         bindkey ";5D" backward-word
+        bindkey ";5A" history-substring-search-up-prefixed
+        bindkey ";5B" history-substring-search-down-prefixed
 
         zsh-private() {
           __MATERUS_HM_ZSH_PRIVATE=1 ${lib.getExe config.programs.zsh.package}
