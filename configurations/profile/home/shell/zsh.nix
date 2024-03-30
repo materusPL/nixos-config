@@ -70,6 +70,11 @@ in
 
 
       envExtra = ''
+        
+        if zmodload zsh/terminfo && (( "$terminfo[colors]" >= "256" )); then 
+          __MATERUS_HM_ZSH_256COLORS="''${__MATERUS_HM_ZSH_256COLORS:-1}"; else
+          __MATERUS_HM_ZSH_256COLORS="''${__MATERUS_HM_ZSH_256COLORS:-0}"; 
+        fi
         ${makeEnv "__MATERUS_HM_ZSH" "1"}
         ${makeEnv "__MATERUS_HM_ZSH_PROMPT" cfg.prompt}
         ${makeEnv "__MATERUS_HM_ZSH_PRIVATE" "0"}
@@ -131,7 +136,7 @@ in
 
       '' +
       makeIfVar "__MATERUS_HM_ZSH_PROMPT" "p10k" ''
-        if zmodload zsh/terminfo && (( terminfo[colors] >= 256 )); then
+        if [[ "$__MATERUS_HM_ZSH_256COLORS" = "1" ]] ; then
           [[ ! -f ${p10kcfg}/fullcolor.zsh ]] || source ${p10kcfg}/fullcolor.zsh
         else
           [[ ! -f ${p10kcfg}/compatibility.zsh ]] || source ${p10kcfg}/compatibility.zsh
