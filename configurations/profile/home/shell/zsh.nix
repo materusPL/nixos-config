@@ -40,6 +40,7 @@ let
       rev = "v1.20.0";
       sha256 = "sha256-ES5vJXHjAKw/VHjWs8Au/3R+/aotSbY7PWnWAMzCR8E=";
     });
+    sudo = makePlugin "sudo" "sudo.plugin.zsh" "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/sudo";
 
   };
 in
@@ -89,6 +90,9 @@ in
             if [[ -f "${extraPlugins.powerlevel10k.fullPath}" ]]; then
               source "${extraPlugins.powerlevel10k.fullPath}"
             fi
+            if [[ -f "${extraPlugins.sudo.fullPath}" ]]; then
+              source "${extraPlugins.sudo.fullPath}"
+            fi
             ''
         }'';
 
@@ -131,6 +135,10 @@ in
 
         zsh-private() {
           __MATERUS_HM_ZSH_PRIVATE=1 ${lib.getExe config.programs.zsh.package}
+        }
+
+        myip() {
+          wget -qO- https://wtfismyip.com/text
         }
 
 
