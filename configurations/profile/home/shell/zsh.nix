@@ -138,7 +138,11 @@ in
         }
 
         myip() {
-          wget -qO- https://wtfismyip.com/text
+          ${lib.getExe pkgs.wget} -qO- https://wtfismyip.com/text
+        }
+
+        speedtest() {
+          ${lib.getExe pkgs.curl} -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | ${lib.getExe pkgs.python3} 
         }
 
 
