@@ -1,6 +1,6 @@
 { inputs, materusFlake, ... }:
 let
-  profiles = import ../profile;
+  profiles = import (materusFlake.selfPath + "/configurations/profile");
 
   hosts = builtins.attrNames materusFlake.nixosConfigurations;
   genHomes = username:

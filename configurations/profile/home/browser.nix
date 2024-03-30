@@ -11,11 +11,13 @@ in
 
   };
   #TODO: Make some config
-  config.home.packages = [
-    (lib.mkIf cfg.firefox.enable config.materus.profile.packages.firefox)
-    (lib.mkIf cfg.vivaldi.enable pkgs.vivaldi)
-    (lib.mkIf cfg.brave.enable pkgs.brave)
-  ];
+  config = {
+      home.packages = [
+      (lib.mkIf cfg.firefox.enable config.materus.profile.packages.firefox)
+      (lib.mkIf cfg.vivaldi.enable pkgs.vivaldi)
+      (lib.mkIf cfg.brave.enable pkgs.brave)
+    ];
+  };
 
 
 }
