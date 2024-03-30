@@ -3,6 +3,8 @@
   imports =
     [
       ./configuration.nix
+      ./nvidia.nix
+      ./plasma.nix
     ];
 
 

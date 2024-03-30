@@ -92,10 +92,7 @@ let
     then [ package ] ++ extraPackages
     else [ package32 ] ++ extraPackages32);
 
-    extraEnv = {
-      XDG_DATA_DIRS = "/usr/share:\${XDG_DATA_DIRS}";
-      OBS_VKCAPTURE = "1";
-    };
+    extraEnv = config.materus.profile.steam.extraEnv;
 
   };
 
@@ -112,10 +109,18 @@ in
     default = [ ];
     description = "Extra packages for steam";
   };
+  options.materus.profile.steam.extraEnv = lib.mkOption {
+    default = { };
+    description = "Extra Env for steam";
+  };
 
 
   config = lib.mkIf cfg.enable {
     hardware.steam-hardware.enable = lib.mkDefault true;
+    materus.profile.steam.extraEnv = {
+      XDG_DATA_DIRS = "/usr/share:\${XDG_DATA_DIRS}";
+      OBS_VKCAPTURE = "1";
+    };
     programs.steam = {
       enable = lib.mkDefault true;
       dedicatedServer.openFirewall = lib.mkDefault true;

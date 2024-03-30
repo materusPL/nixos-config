@@ -11,54 +11,15 @@
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
+  boot.kernelModules = [ "kvm-intel" "vfio-pci" ];
   boot.extraModulePackages = [ ];
   boot.kernel.sysctl = { "vm.swappiness" = 10; };
-  swapDevices = [
-    {
-      device = "/swapfile";
-      size = 32 * 1024;
-    }
-  ];
+  boot.kernelParams = [ "ibt=off" "intel_iommu=on" "iommu=pt" "pcie_acs_override=downstream,multifunction" ];
   fileSystems."/" =
     {
       device = "/dev/disk/by-label/NixOS_Root";
       fsType = "btrfs";
       options = [ "subvol=@" "noatime" "ssd" "space_cache=v2" ];
-    };
-
-  fileSystems."/nix" =
-    {
-      device = "/dev/disk/by-label/NixOS_Root";
-      fsType = "btrfs";
-      options = [ "subvol=@nix" "noatime" "compress=zstd" "ssd" "space_cache=v2" ];
-    };
-
-  fileSystems."/materus" =
-    {
-      device = "/dev/disk/by-label/NixOS_Root";
-      fsType = "btrfs";
-      options = [ "subvol=@materus" "noatime" "compress=zstd" "ssd" "space_cache=v2" ];
-    };
-
-  fileSystems."/etc/nixos" =
-    {
-      device = "/materus/config/nixos-config";
-      fsType = "none";
-      options = [ "bind" ];
-    };
-
-  fileSystems."/home" =
-    {
-      device = "/dev/disk/by-label/NixOS_Home";
-      fsType = "btrfs";
-      options = [ "subvol=@home" "nossd" "noatime" "compress=zstd" "space_cache=v2" "autodefrag" ];
-    };
-  fileSystems."/materus/data" =
-    {
-      device = "/dev/disk/by-label/NixOS_Home";
-      fsType = "btrfs";
-      options = [ "subvol=@data" "nossd" "noatime" "compress=zstd" "space_cache=v2" "autodefrag" ];
     };
 
   fileSystems."/boot" =
@@ -68,13 +29,50 @@
       options = [ "subvol=@boot" "ssd" ];
     };
 
+  fileSystems."/materus" =
+    {
+      device = "/dev/disk/by-label/NixOS_Root";
+      fsType = "btrfs";
+      options = [ "subvol=@materus" "noatime" "compress=zstd" "ssd" "space_cache=v2" ];
+    };
 
+  fileSystems."/nix" =
+    {
+      device = "/dev/disk/by-label/NixOS_Root";
+      fsType = "btrfs";
+      options = [ "subvol=@nix" "noatime" "compress=zstd" "ssd" "space_cache=v2" ];
+    };
+
+  fileSystems."/home" =
+    {
+      device = "/dev/disk/by-label/NixOS_Home";
+      fsType = "btrfs";
+      options = [ "subvol=@home" "nossd" "noatime" "compress=zstd" "space_cache=v2" "autodefrag" ];
+    };
+
+  fileSystems."/materus/data" =
+    {
+      device = "/dev/disk/by-label/NixOS_Home";
+      fsType = "btrfs";
+      options = [ "subvol=@data" "nossd" "noatime" "compress=zstd" "space_cache=v2" "autodefrag" ];
+    };
 
   fileSystems."/boot/efi" =
     {
-      device = "/dev/disk/by-label/NixOS_EFI";
+      device = "/dev/disk/by-uuid/A5C2-31D1";
       fsType = "vfat";
     };
+
+  swapDevices =
+    [{ device = "/dev/disk/by-label/NixOS_Swap"; }];
+
+  fileSystems."/etc/nixos" =
+    {
+      device = "/materus/config/nixos-config";
+      fsType = "none";
+      options = [ "bind" ];
+    };
+
 
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
@@ -86,5 +84,5 @@
   # networking.interfaces.wlp6s0.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.cpu.intel.updateMicrocode = lib.mkForce true;
 }
