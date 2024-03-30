@@ -144,6 +144,7 @@ in
       '' + makeIfVar "__MATERUS_HM_ZSH_PRIVATE" "1" ''
         unset HISTFILE
         ${lib.optionalString config.programs.zsh.history.share "unsetopt SHARE_HISTORY"}
+        alias -- 'zsh'="__MATERUS_HM_ZSH_PRIVATE=0 zsh "
       ''
       
       ;
