@@ -5,8 +5,8 @@ in
 {
 
   options = let mkBoolOpt = materusArg.pkgs.lib.mkBoolOpt; in {
-    materus.profile.browser.firefox.enable = mkBoolOpt config.materus.profile.enableDesktop "Enable Firefox with materus cfg";
-    materus.profile.browser.vivaldi.enable = mkBoolOpt config.materus.profile.enableDesktop "Enable Vivaldi with materus cfg";
+    materus.profile.browser.firefox.enable = mkBoolOpt false "Enable Firefox with materus cfg";
+    materus.profile.browser.vivaldi.enable = mkBoolOpt false "Enable Vivaldi with materus cfg";
     materus.profile.browser.brave.enable = mkBoolOpt false "Enable Brave with materus cfg";
 
   };
