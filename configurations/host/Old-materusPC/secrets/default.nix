@@ -9,7 +9,7 @@
   sops.gnupg.home = null;
   sops.gnupg.sshKeyPaths = [ ];
   sops.defaultSopsFile = materusCfg.hostPath + "/secrets/secrets.yaml";
-
+  sops.secrets."wg-key" = { };
   services.openssh.hostKeys = [
     {
       bits = 4096;
