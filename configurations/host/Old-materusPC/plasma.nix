@@ -14,6 +14,7 @@
   };
   environment.variables = {
     QT_PLUGIN_PATH = [ "${pkgs.qt6.qtimageformats}/${pkgs.qt6.qtbase.qtPluginPrefix}" ];
+    XCURSOR_THEME = "breeze_cursors";
   };
   services.desktopManager.plasma6.enable = true;
   services.desktopManager.plasma6.enableQt5Integration = true;

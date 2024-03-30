@@ -63,6 +63,7 @@ in
     KWIN_DRM_USE_MODIFIERS = "0";
     KWIN_DRM_NO_DIRECT_SCANOUT = "1";
     QT_PLUGIN_PATH = [ "${pkgs.qt6.qtimageformats}/${pkgs.qt6.qtbase.qtPluginPrefix}" ];
+    XCURSOR_THEME = "breeze_cursors";
   };
   environment.systemPackages = with pkgs; [
     kdePackages.ark
