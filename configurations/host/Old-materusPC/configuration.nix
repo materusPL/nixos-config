@@ -285,10 +285,10 @@
 
   programs.gnupg.agent = {
     enable = true;
-    enableSSHSupport = true;
+    enableSSHSupport = false;
     enableBrowserSocket = true;
   };
-  programs.ssh.startAgent = false;
+  programs.ssh.startAgent = true;
 
   # List services that you want to enable:
 
