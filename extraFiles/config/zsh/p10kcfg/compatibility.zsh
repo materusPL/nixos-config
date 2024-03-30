@@ -97,6 +97,7 @@
     timewarrior             # timewarrior tracking status (https://timewarrior.net/)
     taskwarrior             # taskwarrior task count (https://taskwarrior.org/)
     # cpu_arch              # CPU architecture
+    private
     time                    # current time
     # ip                    # ip address and bandwidth usage for a specified network interface
     # public_ip             # public IP address
@@ -1575,7 +1576,11 @@
   function prompt_example() {
     p10k segment -f 2 -i '*' -t 'hello, %n'
   }
-
+    function prompt_private() {
+    if [ $__MATERUS_HM_ZSH_PRIVATE = "1" ]; then
+      p10k segment -f 5  -t 'PRIVATE'
+    fi
+  }
   # User-defined prompt segments may optionally provide an instant_prompt_* function. Its job
   # is to generate the prompt segment for display in instant prompt. See
   # https://github.com/romkatv/powerlevel10k/blob/master/README.md#instant-prompt.
