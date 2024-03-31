@@ -41,6 +41,8 @@ let
       sha256 = "sha256-ES5vJXHjAKw/VHjWs8Au/3R+/aotSbY7PWnWAMzCR8E=";
     });
     sudo = makePlugin "sudo" "sudo.plugin.zsh" "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/sudo";
+    extract = makePlugin "extract" "extract.plugin.zsh" "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/extract";
+
 
   };
 in
@@ -97,6 +99,9 @@ in
             fi
             if [[ -f "${extraPlugins.sudo.fullPath}" ]]; then
               source "${extraPlugins.sudo.fullPath}"
+            fi
+            if [[ -f "${extraPlugins.extract.fullPath}" ]]; then
+              source "${extraPlugins.extract.fullPath}"
             fi
             ''
         }'';
