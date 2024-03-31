@@ -106,6 +106,8 @@ in
         fi
         if [[ -f "${extraPlugins.extract.fullPath}" ]]; then
           source "${extraPlugins.extract.fullPath}"
+          path+="${extraPlugins.extract.path}"
+          fpath+="${extraPlugins.extract.path}"
         fi
         '';
 
