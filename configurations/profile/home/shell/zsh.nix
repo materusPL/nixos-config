@@ -53,6 +53,11 @@ in
     example = "p10k";
     default = "p10k";
   };
+  options.materus.profile.zsh.endConfig = lib.mkOption {
+    default = "";
+    description = "Zsh config after all of config";
+    type = lib.types.lines;
+  };
 
 
   config = lib.mkIf cfg.enable {
@@ -62,9 +67,7 @@ in
 
     home.file = lib.mkMerge [
       (builtins.foldl' (a: b: a // b) { } (builtins.map (plugin: { ${plugin.path}.source = plugin.src; }) (builtins.attrValues extraPlugins)))
-      { "${relToDotDir ".zshrc"}".text = lib.mkAfter ''
-      ${lib.optionalString config.programs.wezterm.enable "source \"${config.programs.wezterm.package}/etc/profile.d/wezterm.sh\""}
-      ''; }
+      { "${relToDotDir ".zshrc"}".text = lib.mkAfter cfg.endConfig; }
     ];
 
     programs.zsh = {
