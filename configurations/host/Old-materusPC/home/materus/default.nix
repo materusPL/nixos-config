@@ -2,7 +2,7 @@
 {
   home.stateVersion = "22.11";
   home.homeDirectory = "/home/materus";
-
+  programs.wezterm.enable = true;
   programs.git = {
     userEmail = "materus@podkos.pl";
     userName = "materus";

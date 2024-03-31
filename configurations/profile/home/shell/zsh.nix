@@ -18,7 +18,7 @@ let
     if [ ''$${var} = "${val}" ]; then 
     ${ret}
     fi
-    '';
+  '';
 
 
 
@@ -58,7 +58,12 @@ in
       pkgs.ripgrep
     ];
 
-    home.file = builtins.foldl' (a: b: a // b) { } (builtins.map (plugin: { ${plugin.path}.source = plugin.src; }) (builtins.attrValues extraPlugins));
+    home.file = lib.mkMerge [
+      (builtins.foldl' (a: b: a // b) { } (builtins.map (plugin: { ${plugin.path}.source = plugin.src; }) (builtins.attrValues extraPlugins)))
+      { "${relToDotDir ".zshrc"}".text = lib.mkAfter ''
+      ${lib.optionalString config.programs.wezterm.enable "source \"${config.programs.wezterm.package}/etc/profile.d/wezterm.sh\""}
+      ''; }
+    ];
 
     programs.zsh = {
       enable = true;
@@ -158,7 +163,7 @@ in
         ${lib.optionalString config.programs.zsh.history.share "unsetopt SHARE_HISTORY"}
         alias -- 'zsh'="__MATERUS_HM_ZSH_PRIVATE=0 zsh "
       ''
-      
+
       ;
 
     };
