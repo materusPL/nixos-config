@@ -8,7 +8,7 @@ in
   options.materus.profile.wezterm.extraConfig = lib.mkOption {
     default = "";
     description = "Config for wezterm";
-    type = lib.types.string;
+    type = lib.types.lines;
   };
   config = lib.mkIf cfg.enable {
     programs.wezterm.enable = true;

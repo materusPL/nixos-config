@@ -87,24 +87,24 @@ in
       initExtraFirst = ''
 
         ${makeIfVar "__MATERUS_HM_ZSH_PROMPT" "p10k" ''
-            if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
-              source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
-            fi
-            if zmodload zsh/terminfo && (( "$terminfo[colors]" >= "256" )); then 
-              __MATERUS_HM_ZSH_256COLORS="''${__MATERUS_HM_ZSH_256COLORS:-1}"; else
-              __MATERUS_HM_ZSH_256COLORS="''${__MATERUS_HM_ZSH_256COLORS:-0}"; 
-            fi
-            if [[ -f "${extraPlugins.powerlevel10k.fullPath}" ]]; then
-              source "${extraPlugins.powerlevel10k.fullPath}"
-            fi
-            if [[ -f "${extraPlugins.sudo.fullPath}" ]]; then
-              source "${extraPlugins.sudo.fullPath}"
-            fi
-            if [[ -f "${extraPlugins.extract.fullPath}" ]]; then
-              source "${extraPlugins.extract.fullPath}"
-            fi
-            ''
-        }'';
+              if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+                source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+              fi''
+        }
+        if zmodload zsh/terminfo && (( "$terminfo[colors]" >= "256" )); then 
+          __MATERUS_HM_ZSH_256COLORS="''${__MATERUS_HM_ZSH_256COLORS:-1}"; else
+          __MATERUS_HM_ZSH_256COLORS="''${__MATERUS_HM_ZSH_256COLORS:-0}"; 
+        fi
+        if [[ -f "${extraPlugins.powerlevel10k.fullPath}" ]]; then
+          source "${extraPlugins.powerlevel10k.fullPath}"
+        fi
+        if [[ -f "${extraPlugins.sudo.fullPath}" ]]; then
+          source "${extraPlugins.sudo.fullPath}"
+        fi
+        if [[ -f "${extraPlugins.extract.fullPath}" ]]; then
+          source "${extraPlugins.extract.fullPath}"
+        fi
+        '';
 
 
 
