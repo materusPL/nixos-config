@@ -11,6 +11,7 @@ in
 
     ./shell
     ./editor
+    ./terminal
 
   ];
   options.materus.profile.enableDesktop = materusArg.pkgs.lib.mkBoolOpt false "Enable settings for desktop";

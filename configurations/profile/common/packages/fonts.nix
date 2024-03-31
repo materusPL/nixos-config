@@ -16,15 +16,15 @@ let
     pkgs.noto-fonts-cjk-serif
     pkgs.wqy_zenhei
     pkgs.corefonts
-    (pkgs.nerdfonts.override { fonts = [ "FiraCode" ]; })
+    pkgs.hack-font
+    (pkgs.nerdfonts.override { fonts = [ "Hack" ]; })
 
   ] ++ defaultFonts;
 
   moreFonts = [
     pkgs.ubuntu_font_family
     pkgs.monocraft
-    pkgs.hack-font
-    (pkgs.nerdfonts.override { fonts = [ "DroidSansMono" "Meslo" "ProFont" ]; })
+    (pkgs.nerdfonts.override { fonts = [ "DroidSansMono" "Meslo" "ProFont" "FiraCode"]; })
   ];
 in
 {
