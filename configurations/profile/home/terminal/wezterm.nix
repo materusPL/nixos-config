@@ -3,7 +3,6 @@ let
   cfg = config.materus.profile.wezterm;
   zshCfg = ''
     source "${config.programs.wezterm.package}/etc/profile.d/wezterm.sh"
-    alias 'wezcraft'="wezterm --config font=\"wezterm.font 'Monocraft Nerd Font'\""
   '';
 in
 {
@@ -35,6 +34,9 @@ in
           fonts = [ "Hack" ];
         }))
         (lib.mkIf cfg.enableWezcraft (pkgs.monocraft))
+        (lib.mkIf cfg.enableWezcraft (pkgs.writeShellScriptBin "wezcraft" ''
+          ${lib.getExe config.programs.wezterm.package} --config font="wezterm.font 'Monocraft Nerd Font'" $@
+        ''))
       ];
 
       materus.profile.zsh.endConfig = lib.optionalString cfg.enableWezcraft zshCfg;
