@@ -93,7 +93,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home.activation.emacsCompile = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-      ${config.programs.emacs.finalPackage}/bin/emacs --batch \
+      run ${config.programs.emacs.finalPackage}/bin/emacs --batch \
       --eval '(setq warning-minimum-log-level :error)' \
       --eval '(byte-compile-file "${config.xdg.configHome}/emacs/early-init.el")' \
       --eval '(byte-compile-file "${config.xdg.configHome}/emacs/init.el")'
