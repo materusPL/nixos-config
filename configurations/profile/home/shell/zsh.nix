@@ -85,10 +85,7 @@ in
         ${makeEnv "__MATERUS_HM_ZSH_PROMPT" cfg.prompt}
         ${makeEnv "__MATERUS_HM_ZSH_PRIVATE" "0"}
       '';
-
-
       initExtraFirst = ''
-
         ${makeIfVar "__MATERUS_HM_ZSH_PROMPT" "p10k" ''
               if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
                 source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"

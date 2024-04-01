@@ -18,6 +18,7 @@ in
     {
       programs.wezterm.enable = true;
       programs.wezterm.colorSchemes = { };
+      programs.wezterm.enableZshIntegration = false;
       programs.wezterm.extraConfig = ''
 
       package.path = package.path .. ";${materusArg.cfg.path}/extraFiles/config/wezterm/?.lua"
