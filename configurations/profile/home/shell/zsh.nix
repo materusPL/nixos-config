@@ -124,6 +124,7 @@ in
         size = 100000;
         share = true;
         ignoreDups = true;
+        ignoreAllDups = true;
         ignoreSpace = true;
       };
 
