@@ -48,7 +48,7 @@ in
         enable = lib.mkDefault (cfg.enableTerminalExtra || cfg.enableNixDevel);
         nix-direnv.enable = lib.mkDefault (cfg.enableNixDevel && (config.programs.direnv.enable == true));
         enableBashIntegration = lib.mkDefault config.programs.bash.enable;
-        enableFishIntegration = lib.mkDefault config.programs.fish.enable;
+        #enableFishIntegration = lib.mkDefault config.programs.fish.enable;
         enableZshIntegration = lib.mkDefault config.programs.zsh.enable;
       };
 
