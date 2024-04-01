@@ -49,7 +49,7 @@ in
 {
   options.materus.profile.zsh.enable = materusArg.pkgs.lib.mkBoolOpt config.materus.profile.enableTerminalExtra "Enable materus zsh config";
   options.materus.profile.zsh.prompt = lib.mkOption {
-    type = lib.types.enum [ "p10k" "starship" ];
+    type = lib.types.enum [ "p10k" ];
     example = "p10k";
     default = "p10k";
   };
