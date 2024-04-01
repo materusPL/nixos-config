@@ -3,7 +3,8 @@
   imports = [
     ./nix.nix
     ./fonts.nix
-
+    
+    ./shell
     ./games
   ];
   

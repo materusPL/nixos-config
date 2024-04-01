@@ -152,17 +152,6 @@
   environment.shells = with pkgs; [ zsh bashInteractive fish ];
   programs = {
     fish.enable = true;
-    zsh = {
-      enable = true;
-      interactiveShellInit = ''
-        if [[ ''${__MATERUS_HM_ZSH:-0} == 0 ]]; then
-          source ${pkgs.grml-zsh-config}/etc/zsh/zshrc
-        fi
-      '';
-      promptInit = ''
-
-      '';
-    };
     java.enable = true;
     java.package = pkgs.graalvm-ce;
     java.binfmt = true;

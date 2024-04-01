@@ -254,17 +254,6 @@
       remotePlay.openFirewall = true;
     };
     fish.enable = true;
-    zsh = {
-      enable = true;
-      interactiveShellInit = ''
-        if [[ ''${__MATERUS_HM_ZSH:-0} == 0 ]]; then
-          source ${pkgs.grml-zsh-config}/etc/zsh/zshrc
-        fi
-      '';
-      promptInit = ''
-      
-      '';
-    };
     java.enable = true;
     command-not-found.enable = false;
     dconf.enable = true;

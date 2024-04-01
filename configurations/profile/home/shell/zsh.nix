@@ -11,12 +11,11 @@ let
   p10kcfg = "${zshcfg}/p10kcfg";
   zshcfg = "${materusArg.cfg.path}" + "/extraFiles/config/zsh";
   cfg = config.materus.profile.zsh;
-  #enableStarship = config.materus.starship.enable;
 
   makeEnv = name: val: ''${name}=''${${name}:-"${val}"}'';
   makeIfVar = var: val: ret: ''
-    if [ ''$${var} = "${val}" ]; then 
-    ${ret}
+    if [[ "''$${var}" = "${val}" ]]; then 
+      ${ret}
     fi
   '';
 
@@ -125,9 +124,14 @@ in
         ignoreSpace = true;
       };
 
-
+      completionInit = ''
+      ZSH_COMPDUMP="''${ZSH_COMPDUMP:-''${XDG_CACHE_HOME:-${config.home.homeDirectory}/.cache}/.zcompdump-''${HOST}-''${ZSH_VERSION}}"
+      autoload -U compinit && compinit -d $ZSH_COMPDUMP
+      '';
       initExtra = ''
-        . ${zshcfg}/zinputrc
+        if [[ "$__ETC_ZSHRC_SOURCED" != "1" ]]; then
+          . ${zshcfg}/zinputrc
+        fi
         source ${zshcfg}/zshcompletion.zsh
 
         history-substring-search-up-prefixed(){
