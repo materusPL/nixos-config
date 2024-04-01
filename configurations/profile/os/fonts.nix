@@ -17,7 +17,7 @@ in
     fonts.fontconfig.defaultFonts.sansSerif = [ "Noto Sans" "DejaVu Sans" "WenQuanYi Zen Hei" "Noto Color Emoji" ];
     fonts.fontconfig.defaultFonts.serif = [ "Noto Serif" "DejaVu Serif" "WenQuanYi Zen Hei" "Noto Color Emoji" ];
     fonts.fontconfig.defaultFonts.emoji = [ "Noto Color Emoji" "OpenMoji Color" ];
-    fonts.fontconfig.defaultFonts.monospace = [ "FiraCode Nerd Font Mono" "Noto Sans Mono" "WenQuanYi Zen Hei Mono" ];
+    fonts.fontconfig.defaultFonts.monospace = [ "Hack Nerd Font" "Noto Sans Mono" "WenQuanYi Zen Hei Mono" ];
 
     fonts.fontDir.enable = lib.mkDefault true;
   };
