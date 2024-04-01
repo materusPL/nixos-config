@@ -9,7 +9,7 @@ in
   config = lib.mkIf cfg.enable {
 
     programs.bash = {
-      enable = lib.mkDefault true;
+      enable = true;
       enableCompletion = lib.mkDefault true;
       enableVteIntegration = lib.mkDefault true;
       historyControl = lib.mkDefault [ "erasedups" "ignorespace" ];

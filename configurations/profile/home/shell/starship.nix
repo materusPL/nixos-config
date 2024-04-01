@@ -4,10 +4,10 @@ let
   cfg = config.materus.profile.starship;
 in
 {
-  options.materus.profile.starship.enable = materusArg.pkgs.lib.mkBoolOpt (profile.zsh.enable || profile.bash.enable || profile.fish.enable) "Enable materus fish config";
+  options.materus.profile.starship.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable materus starship config";
 
   config = lib.mkIf cfg.enable {
-    programs.starship.enable = lib.mkDefault cfg.enable;
+    programs.starship.enable = true;
 
     programs.starship.settings = {
 
