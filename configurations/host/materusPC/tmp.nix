@@ -89,8 +89,22 @@
 
   users.users.materus = {
     isNormalUser = true;
-    extraGroups = [ "audio" "video" "render" "pipewire" "wheel" "networkmanager" "input" "kvm" "libvirt-qemu" "libvirt" "libvirtd" "podman" "lxd" ]; # Enable ‘sudo’ for the user.
-    shell = pkgs.bashInteractive;
+    extraGroups = [
+      "audio"
+      "video"
+      "render"
+      "pipewire"
+      "wheel"
+      "networkmanager"
+      "input"
+      "kvm"
+      "libvirt-qemu"
+      "libvirt"
+      "libvirtd"
+      "podman"
+      "lxd"
+    ]; # Enable ‘sudo’ for the user.
+    shell = pkgs.zsh;
     description = "Mateusz Słodkowicz";
     #   packages = with pkgs; [
     #     firefox
@@ -237,7 +251,7 @@
 
     nix-du
 
-    
+
     kate
     krusader
 
