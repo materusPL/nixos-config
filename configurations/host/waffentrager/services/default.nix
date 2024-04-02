@@ -8,6 +8,7 @@
       ./gitea.nix
       ./nginx.nix
       ./nextcloud.nix
+      ./auth.nix
     ];
   waffentragerService.elements.enable = true;
   waffentragerService.postgresql.enable = true;
@@ -15,4 +16,5 @@
   waffentragerService.gitea.enable = true;
   waffentragerService.nginx.enable = true;
   waffentragerService.nextcloud.enable = true;
+  waffentragerService.auth.enable = true;
 }
