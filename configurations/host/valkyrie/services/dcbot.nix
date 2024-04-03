@@ -23,7 +23,7 @@
         "d    /var/lib/muse  0776    root    root     -"
       ];
 
-      virtualisation.oci-containers.containers.muse = {
+      virtualisation.oci-containers.containers.dcbot = {
         image = "eritislami/evobot:latest";
         volumes = [
         ];
