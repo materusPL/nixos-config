@@ -169,7 +169,7 @@
     dconf.enable = true;
   };
 
-
+  materus.profile.browser.enable = true;
 
 
 
@@ -279,7 +279,7 @@
 
 
     binutils
-    config.materus.profile.packages.firefox
+    
   ];
 
 

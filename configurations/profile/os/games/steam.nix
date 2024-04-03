@@ -23,7 +23,6 @@ let
 
   steamPkg = pkgs.steam.override {
     extraPkgs = pkgs: [
-      #config.materus.profile.packages.firefox
       #optHip #for blender
       pkgs.libdecor
       pkgs.obs-studio-plugins.obs-vkcapture

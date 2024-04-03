@@ -6,6 +6,7 @@
     
     ./shell
     ./games
+    ./desktop
   ];
   
 }
