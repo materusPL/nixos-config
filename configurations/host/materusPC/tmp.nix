@@ -103,13 +103,9 @@
       "libvirtd"
       "podman"
       "lxd"
-    ]; # Enable ‘sudo’ for the user.
+    ]; 
     shell = pkgs.zsh;
     description = "Mateusz Słodkowicz";
-    #   packages = with pkgs; [
-    #     firefox
-    #     thunderbird
-    #   ];
   };
 
   environment.sessionVariables = {
