@@ -16,6 +16,9 @@
   sops.secrets.spotify-client-secret = {};
   sops.secrets.youtube-api = {};
   sops.secrets.certs = {};
+  sops.secrets.steamladder-api = {};
+  sops.secrets.webarchive-accesskey = {};
+  sops.secrets.webarchive-secretkey = {};
   
   services.openssh.hostKeys = [
     {
