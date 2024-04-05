@@ -52,8 +52,7 @@ in
         enableZshIntegration = lib.mkDefault config.programs.zsh.enable;
       };
 
-      programs.tmux.enable = lib.mkDefault cfg.enableTerminal;
-      programs.tmux.clock24 = lib.mkDefault config.programs.tmux.enable;
+
 
       programs.fzf = {
         enable = lib.mkDefault cfg.enableTerminalExtra;
