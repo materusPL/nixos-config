@@ -11,6 +11,8 @@
     enableTerminalExtra = lib.mkDefault true;
     enableNixDevel = lib.mkDefault true;
 
+    zsh.enable = true;
+
   };
 
   home.packages = [

@@ -12,5 +12,6 @@
 
     fish.enable = false;
     bash.enable = true;
+    zsh.enable = true;
   };
 }

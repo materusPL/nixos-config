@@ -119,6 +119,7 @@
     packages = with pkgs; [
       kate
     ];
+    shell = pkgs.zsh;
   };
 
   # Allow unfree packages

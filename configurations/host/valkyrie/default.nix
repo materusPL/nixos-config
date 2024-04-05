@@ -73,6 +73,7 @@
     packages = [
     ];
     openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
+    shell = pkgs.zsh;
   };
   users.users.acme.openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/waffentrager.pub") ];
   users.users.acme.shell = pkgs.scponly;
@@ -99,7 +100,7 @@
   services.openssh.enable = true;
   services.openssh.openFirewall = false;
   services.openssh.settings.PermitRootLogin = "no";
-  services.openssh.settings.PasswordAuthentication = true;
+  services.openssh.settings.PasswordAuthentication = false;
 
 
 
