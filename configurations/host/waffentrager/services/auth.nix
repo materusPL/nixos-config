@@ -4,7 +4,7 @@
 
   config =
     let
-      cfg = config.auth.postgresql;
+      cfg = config.waffentragerService.auth;
     in
     lib.mkIf cfg.enable {
       waffentragerService.elements.enable = true;
