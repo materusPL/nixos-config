@@ -12,7 +12,7 @@
     lib.mkIf cfg.enable {
       sops.templates."dcbot.env".content = ''
           TOKEN=${config.sops.placeholder.discord-token}
-          MAX_PLAYLIST_SIZE=10
+          MAX_PLAYLIST_SIZE=100
           PRUNING=false
           LOCALE=pl
           DEFAULT_VOLUME=100
