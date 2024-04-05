@@ -39,8 +39,7 @@
 
 ;Graphical
 (when (display-graphic-p)
-  (set-frame-font "FiraCode Nerd Font" nil t)
-  
+  (set-frame-font "Hack Nerd Font" nil t)
 )
 
 

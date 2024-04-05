@@ -113,7 +113,7 @@ in
 
     programs.emacs = {
       enable = true;
-      package = with pkgs; lib.mkDefault (emacs29.override { withX = true; withGTK3 = true; withAlsaLib = true; withGconf = true; withImageMagick = true; withXwidgets = true; });
+      package = with pkgs; lib.mkDefault materusArg.pkgs.emacs-materus;
       extraPackages = epkgs: ((packages epkgs));
       extraConfig = default-config;
     };

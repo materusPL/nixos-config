@@ -77,7 +77,7 @@
       dub
     ]);
 
-    editor.emacs.enable = false;
+    editor.emacs.enable = true;
 
   };
 
