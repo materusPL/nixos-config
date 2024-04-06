@@ -1,25 +1,25 @@
 { config, pkgs, lib, materusArg, ... }:
 {
-  options.valkyrieService.saveyoursoul.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable saveyoursoul, web archive";
+  options.valkyrieService.secureyoursoul.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable secureyoursoul, web archive";
 
 
 
 
   config =
     let
-      cfg = config.valkyrieService.saveyoursoul;
+      cfg = config.valkyrieService.secureyoursoul;
     in
     lib.mkIf cfg.enable {
-      systemd.timers.saveyoursoul = {
+      systemd.timers.secureyoursoul = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
           OnCalendar = "*-*-1,7,14,21 3:00:00";
           Persistent = true; 
-          Unit = "saveyoursoul.service";
+          Unit = "secureyoursoul.service";
         };
       };
 
-      systemd.services.saveyoursoul = {
+      systemd.services.secureyoursoul = {
         description = "Make curl requests to archive related things";
         path = [ pkgs.coreutils pkgs.util-linux pkgs.curl ];
         serviceConfig.Type = "oneshot";
