@@ -29,9 +29,10 @@
   i18n.defaultLocale = "pl_PL.UTF-8";
   services.xserver.xkb.layout = "pl";
   console = {
+    enable = true;
+    earlySetup = true;
     font = "lat2-16";
-    #     keyMap = "pl";
-    useXkbConfig = true; # use xkbOptions in tty.
+    keyMap = "pl";
   };
 
   services.xserver.enable = true;
