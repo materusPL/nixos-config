@@ -6,6 +6,7 @@ in
   options.materus.profile.zsh.enable = materusArg.pkgs.lib.mkBoolOpt true "Enable materus system zsh config";
   config =  lib.mkIf cfg.enable {
     users.defaultUserShell = pkgs.zsh;
+    environment.shells = [ pkgs.zsh ];
     programs.zsh = {
       enable = true;
       enableGlobalCompInit=false;
