@@ -31,7 +31,7 @@
   console = {
     enable = true;
     earlySetup = true;
-    font = "lat2-16";
+    font = "${pkgs.kbd}/share/consolefonts/lat2-16.psfu.gz";
     keyMap = "pl";
   };
 
