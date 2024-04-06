@@ -11,9 +11,11 @@ in
       enable = true;
       enableGlobalCompInit=false;
       interactiveShellInit = ''
-        if [[ $(${pkgs.coreutils}/bin/echo $TTY | ${pkgs.gnugrep}/bin/grep "/dev/tty") ]] && [[ "$TERM" == "linux"  ]]; then
-           setfont lat2-16 -m 8859-2
-        fi
+       ${ lib.optionalString (config.console.font != null)
+        ''if [[ $(${pkgs.coreutils}/bin/echo $TTY | ${pkgs.gnugrep}/bin/grep "/dev/tty") ]] && [[ "$TERM" == "linux"  ]]; then
+           setfont ${config.console.font}
+        fi''
+       }
 
         if [[ ''${__MATERUS_HM_ZSH:-0} == 0 ]]; then
           source ${pkgs.grml-zsh-config}/etc/zsh/zshrc

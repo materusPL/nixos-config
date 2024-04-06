@@ -24,16 +24,8 @@
   services.gvfs.enable = true;
 
 
-
-  time.timeZone = "Europe/Warsaw";
-  i18n.defaultLocale = "pl_PL.UTF-8";
   services.xserver.xkb.layout = "pl";
-  console = {
-    enable = true;
-    earlySetup = true;
-    font = "${pkgs.kbd}/share/consolefonts/lat2-16.psfu.gz";
-    keyMap = "pl";
-  };
+
 
   services.xserver.enable = true;
   services.xserver.videoDrivers = [ "amdgpu" ];
