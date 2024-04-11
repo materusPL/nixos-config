@@ -19,6 +19,10 @@
       systemd.services.nginx = {
         requires = [ "var-lib-mnt_acme.mount" ];
         after = [ "var-lib-mnt_acme.mount" ];
+        serviceConfig = {
+          restart = "always";
+          restartSec = 60;
+        };
       };
     };
 
