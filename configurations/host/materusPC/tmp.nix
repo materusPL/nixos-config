@@ -45,7 +45,7 @@
   xdg.portal.wlr.enable = true;
   xdg.portal.xdgOpenUsePortal = true;
 
-  services.xserver.exportConfiguration = false;
+  services.xserver.exportConfiguration = true;
   services.xserver.extraConfig = pkgs.lib.mkDefault ''
     Section "OutputClass"
       Identifier "amd-options"
@@ -53,6 +53,7 @@
       Option "SWCursor" "True"
       Option "VariableRefresh" "true"
       Option "AsyncFlipSecondaries" "true"
+      Option "DRI3" "1"
       MatchDriver "amdgpu"
     EndSection
 
