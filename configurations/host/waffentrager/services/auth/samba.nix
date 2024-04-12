@@ -44,6 +44,9 @@
       networking.firewall.allowedUDPPorts = [ 135 137 138 389 88 53 123 464];
       systemd.tmpfiles.rules = [
         "d    ${servicePath}/tls/  0600    root    3000000     -"
+        "d    ${servicePath}/private/  0600    root    3000000     -"
+        "d    ${servicePath}/lock/  0600    root    3000000     -"
+        "d    ${servicePath}/cache/  0600    root    3000000     -"
       ];
       services.samba = {
         enable = true;
@@ -60,6 +63,10 @@
               workgroup = ${materusArg.waffentrager.samba.workgroup}
               idmap_ldb:use rfc2307 = yes
               ldap server require strong auth = yes
+              private dir = ${servicePath}/private
+              lock dir = ${servicePath}/lock
+              state directory = ${servicePath}/lock
+              cache directory = ${servicePath}/cache
               tls enabled  = yes
               tls keyfile  = ${servicePath}/tls/key.pem
               tls certfile = ${servicePath}/tls/fullchain.pem
