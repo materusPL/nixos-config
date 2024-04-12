@@ -144,7 +144,8 @@
 
   security.acme.acceptTerms = true;
   security.acme.defaults.email = "materus+acme@podkos.pl";
-  security.acme.defaults.credentialsFile = config.sops.secrets.certs.path ;
+  security.acme.defaults.credentialsFile = config.sops.secrets.certs.path;
+  security.acme.defaults.dnsResolver = "9.9.9.9:53";
   security.acme.certs."materus.pl" = {
     domain = "materus.pl";
     group = "nginx";
@@ -163,6 +164,15 @@
     domain = "podkos.xyz";
     group = "nginx";
     extraDomainNames = [ "*.podkos.xyz" ];
+    dnsProvider = "ovh";
+  };
+
+
+  security.acme.certs."${materusArg.waffentrager.samba.domain}" = {
+    domain = materusArg.waffentrager.samba.domain;
+    extraDomainNames = [
+      "${materusArg.waffentrager.samba.netbiosName}.${materusArg.waffentrager.samba.domain}"
+    ];
     dnsProvider = "ovh";
   };
 

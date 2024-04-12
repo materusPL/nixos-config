@@ -1,12 +1,12 @@
 { materusArg, config, lib, pkgs, ... }:
 {
-  options.waffentragerService.auth.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable auth";
+  
 
   config =
     let
       cfg = config.waffentragerService.auth;
       sambaCfg = config.services.samba;
-      servicePath = "/var/lib/elements/services/samba";
+      servicePath = materusArg.waffentrager.samba.servicePath;
       smbToString = x:
         if builtins.typeOf x == "bool"
         then lib.boolToString x
@@ -20,25 +20,12 @@
         ));
     in
     lib.mkIf cfg.enable {
-      waffentragerService.elements.enable = true;
-      waffentragerService.nginx.enable = true;
-
-
-
-      systemd.services.resolvconf.enable = false;
-      environment.etc = {
-        resolvconf = {
-          text = ''
-            search ${materusArg.waffentrager.samba.domain}
-            nameserver ${materusArg.waffentrager.samba.dnsIp}
-            nameserver 9.9.9.9
-          '';
-        };
-      };
+      
       systemd.services.samba-smbd.enable = false;
       systemd.services.samba = {
         description = "Samba Service Daemon";
-
+        requires = [ "rsync-acme.service" ];
+        after = [ "rsync-acme.service" ];
         requiredBy = [ "samba.target" ];
         partOf = [ "samba.target" ];
 
@@ -55,7 +42,9 @@
       # https://wiki.samba.org/index.php/Samba_AD_DC_Port_Usage
       networking.firewall.allowedTCPPorts = [ 139 445 389 88 53 464 636 3268];
       networking.firewall.allowedUDPPorts = [ 135 137 138 389 88 53 123 464];
-
+      systemd.tmpfiles.rules = [
+        "d    ${servicePath}/tls/  0600    root    3000000     -"
+      ];
       services.samba = {
         enable = true;
         enableNmbd = false;
@@ -70,7 +59,11 @@
               server role = active directory domain controller
               workgroup = ${materusArg.waffentrager.samba.workgroup}
               idmap_ldb:use rfc2307 = yes
-              ldap server require strong auth = no
+              ldap server require strong auth = yes
+              tls enabled  = yes
+              tls keyfile  = ${servicePath}/tls/key.pem
+              tls certfile = ${servicePath}/tls/fullchain.pem
+              tls cafile   = ${servicePath}/tls/chain.pem
 
           [sysvol]
               path = ${servicePath}/sysvol

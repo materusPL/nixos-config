@@ -8,7 +8,7 @@
       ./gitea.nix
       ./nginx.nix
       ./nextcloud.nix
-      ./auth.nix
+      ./auth
     ];
   waffentragerService.elements.enable = true;
   waffentragerService.postgresql.enable = true;
