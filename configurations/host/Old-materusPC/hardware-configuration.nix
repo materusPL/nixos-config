@@ -34,6 +34,8 @@
       device = "/dev/disk/by-label/NixOS_Root";
       fsType = "btrfs";
       options = [ "subvol=@materus" "noatime" "compress=zstd" "ssd" "space_cache=v2" ];
+      neededForBoot = true;
+
     };
 
   fileSystems."/nix" =
@@ -71,6 +73,7 @@
       device = "/materus/config/nixos-config";
       fsType = "none";
       options = [ "bind" ];
+      depends = [ "/materus" ];
     };
 
 

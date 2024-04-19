@@ -1,5 +1,9 @@
 { config, pkgs, lib, materusArg, ... }:
 {
+  sops.templates."networkmanager.env".content = ''
+    WIREGUARD_PRIVATEKEY="${config.sops.placeholder.wireguard}"
+  '';
+
   networking.useDHCP = lib.mkDefault true;
   networking.hostName = "materusPC";
   networking.wireless.iwd.enable = true;
@@ -13,9 +17,7 @@
     [connectivity]
     uri=http://nmcheck.gnome.org/check_network_status.txt
   '';
-  sops.templates."networkmanager.env".content = ''
-          WIREGUARD_PRIVATEKEY="${config.sops.placeholder.wireguard}"
-  '';
+
   networking.networkmanager.ensureProfiles.environmentFiles = [
     config.sops.templates."networkmanager.env".path
   ];
@@ -34,7 +36,7 @@
         allowed-ips = "${materusArg.ip-masks.wireguard.general};";
       };
       ipv4 = {
-        address1 = "${materusArg.ips.wireguard.materusPC}/23"; 
+        address1 = "${materusArg.ips.wireguard.materusPC}/23";
         dns = "${materusArg.ips.wireguard.valkyrie};";
         method = "manual";
         never-default = "true";
