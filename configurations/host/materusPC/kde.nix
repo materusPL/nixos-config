@@ -31,17 +31,17 @@ let
     '';
 in
 {
-  services.xserver.displayManager.defaultSession = "plasma";
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.displayManager.sddm.wayland.enable = true;
-  services.xserver.displayManager.sddm.wayland.compositor = lib.mkForce "weston";
-  services.xserver.displayManager.sddm.wayland.compositorCommand = lib.concatStringsSep " " [
+  services.displayManager.defaultSession = "plasma";
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.sddm.wayland.compositor = lib.mkForce "weston";
+  services.displayManager.sddm.wayland.compositorCommand = lib.concatStringsSep " " [
     "${lib.getExe pkgs.weston}"
     "--shell=kiosk"
     "-c ${westonSddm}"
   ];
 
-  services.xserver.displayManager.sddm.settings = {
+  services.displayManager.sddm.settings = {
     General = {
       InputMethod = "";
     };
