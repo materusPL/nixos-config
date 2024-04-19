@@ -14,6 +14,7 @@
       ./kde.nix
 
       ./audio.nix
+      ./apps.nix
     ];
 
 
