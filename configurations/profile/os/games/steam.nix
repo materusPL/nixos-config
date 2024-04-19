@@ -1,29 +1,7 @@
 { config, pkgs, lib, materusArg, inputs, ... }:
 let
-  optHip = pkgs.stdenv.mkDerivation rec {
-    pname = "optHip";
-    version = pkgs.rocmPackages.clr.version;
-
-
-    dontFixup = true;
-    dontBuild = true;
-    dontPatchELF = true;
-    dontUnpack = true;
-    sourceRoot = ".";
-
-    buildInputs = [
-      pkgs.rocmPackages.clr
-    ];
-
-    installPhase = ''
-      mkdir -p $out/opt/rocm
-      ln -s ${pkgs.rocmPackages.clr} $out/opt/rocm/hip
-    '';
-  };
-
   steamPkg = pkgs.steam.override {
     extraPkgs = pkgs: [
-      #optHip #for blender
       pkgs.libdecor
       pkgs.obs-studio-plugins.obs-vkcapture
       pkgs.steamcmd
@@ -54,7 +32,7 @@ let
       pkgs.libinput
       pkgs.openvdb
       pkgs.openssl
-      pkgs.tbb_2021_8
+      pkgs.tbb
       pkgs.gtk4
       pkgs.gtk3
       pkgs.glib
