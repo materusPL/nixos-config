@@ -10,6 +10,7 @@
   sops.gnupg.sshKeyPaths = [ ];
   sops.defaultSopsFile = materusCfg.hostPath + "/secrets/secrets.yaml";
   sops.secrets."users/materus" = { };
+  sops.secrets.wireguard = { };
 
   services.openssh.hostKeys = [
     {
