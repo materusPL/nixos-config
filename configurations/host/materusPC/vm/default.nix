@@ -3,7 +3,14 @@
   imports = [
     ./win10
   ];
-
+  materus.materusArg.materusPC = {
+    allCores = "0-31";
+    allCoresMask = "ffffffff";
+    hostCores = "0-7,16-23";
+    hostCoresMask = "00ff00ff";
+    vmCores = "8-15,24-31";
+    vmCoresMask = "ff00ff00";
+  };
   systemd.mounts = [
     {
       where = "/dev/hugepages";
@@ -69,6 +76,7 @@
             bindfs
             qemu-utils
             psmisc
+            procps
           ];
         };
       in
