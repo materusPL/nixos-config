@@ -21,7 +21,7 @@ let
        # Seems to fix reset bug for 7900 XTX
        echo "0" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/d3cold_allowed"
 
-       systemctl stop mountWin10Share.service
+       systemctl stop windows-share-mount.service
     
     
        echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
@@ -29,12 +29,11 @@ let
 
        sleep 1s
 
-       echo "10" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
+       echo "15" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
        echo "8" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
 
        echo "3" > /proc/sys/vm/drop_caches
        echo "1" > /proc/sys/vm/compact_memory
-      #echo "8192" >  /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
 
 
 
@@ -72,9 +71,8 @@ let
     echo ''$VIRSH_GPU_VIDEO > /sys/bus/pci/drivers/amdgpu/bind
     echo ''$VIRSH_GPU_AUDIO > /sys/bus/pci/drivers/snd_hda_intel/bind
     
-   #echo "0" >  /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
 
-    systemctl start mountWin10Share.service
+    systemctl start windows-share-mount.service
 
     systemctl set-property --runtime -- user.slice AllowedCPUs=0-31
     systemctl set-property --runtime -- system.slice AllowedCPUs=0-31
@@ -114,21 +112,19 @@ in
     '';
   };
 
-  systemd.services.mountWin10Share = {
+  systemd.services.windows-share-mount = {
     wantedBy = [ "multi-user.target" ];
     path = [ config.virtualisation.libvirtd.qemu.package pkgs.util-linux pkgs.kmod pkgs.coreutils ];
     serviceConfig.Type = "oneshot";
     serviceConfig.RemainAfterExit = true;
     script = ''
-      modprobe nbd max_part=16
-      sleep 1
-      qemu-nbd -c /dev/nbd0 /materus/data/VM/data.qcow2 --cache=unsafe --discard=unmap
-      sleep 1
-      mount /dev/nbd0p1 /materus/data/Windows -o uid=1000,gid=100
+
+      losetup -P /dev/loop6 /materus/data/VM/data.raw
+      mount /dev/loop6p1 /materus/data/Windows -o uid=1000,gid=100
     '';
     preStop = ''
-      umount /materus/data/Windows
-      qemu-nbd -d /dev/nbd0
+      umount -lf /materus/data/Windows
+      losetup -d /dev/loop6
     '';
   };
 }

@@ -87,7 +87,7 @@
       "libvirtd"
       "podman"
       "lxd"
-    ]; 
+    ];
     shell = pkgs.zsh;
     description = "Mateusz Słodkowicz";
   };
@@ -120,13 +120,37 @@
 
 
   services.pcscd.enable = true;
+  
   services.samba-wsdd.enable = true;
-
+  services.samba-wsdd.openFirewall = true;
   services.samba = {
     enable = true;
     package = pkgs.sambaFull;
+    securityType = "user";
+    openFirewall = true;
+    extraConfig = ''
+      workgroup = WORKGROUP
+      server string = smbmaterus
+      netbios name = smbmaterus
+      security = user 
+      hosts allow = 192.168.122. 127.0.0.1 localhost
+      hosts deny = 0.0.0.0/0
+      guest account = nobody
+      map to guest = bad user
+    '';
+    shares = {
+      windows = {
+        path = "/materus/data/VM/windows_shared";
+        browseable = "yes";
+        "read only" = "no";
+        "guest ok" = "no";
+        "create mask" = "0644";
+        "directory mask" = "0755";
+        "force user" = "materus";
+        "force group" = "users";
+      };
+    };
   };
-
 
   programs.gnupg.agent = {
     enable = true;
@@ -153,6 +177,7 @@
 
 
   services.davfs2.enable = true;
+
 
 
 }
