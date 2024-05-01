@@ -12,11 +12,11 @@
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 24800 5900 5357 4656 8080 9943 9944 ];
   networking.firewall.allowedUDPPorts = [ 24800 5900 3702 4656 6000 9943 9944 ];
-  #Fix warning
-  networking.networkmanager.extraConfig = lib.mkDefault ''
-    [connectivity]
-    uri=http://nmcheck.gnome.org/check_network_status.txt
-  '';
+  networking.networkmanager.settings = {
+    connectivity = {
+      uri = "http://nmcheck.gnome.org/check_network_status.txt";
+    };
+  };
 
   networking.networkmanager.ensureProfiles.environmentFiles = [
     config.sops.templates."networkmanager.env".path

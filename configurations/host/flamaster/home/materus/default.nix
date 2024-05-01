@@ -10,11 +10,12 @@
     enableTerminal = lib.mkDefault true;
     enableTerminalExtra = lib.mkDefault true;
     enableNixDevel = lib.mkDefault true;
-
+    
+    bash.enable = true;
     zsh.enable = true;
 
   };
-
+  
   home.packages = [
     pkgs.papirus-icon-theme
     (materusArg.pkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; })

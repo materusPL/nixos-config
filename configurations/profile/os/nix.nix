@@ -1,4 +1,4 @@
-{ config, pkgs, lib, materusArg, ... }:
+{ config, pkgs, lib, materusArg, materusCfg, ... }:
 let
   cfg = config.materus.profile.nix;
 in
@@ -7,7 +7,7 @@ in
   config.nix = lib.mkIf cfg.enable {
 
     settings = {
-      experimental-features = [ "nix-command" "flakes" "repl-flake" "no-url-literals" ];
+      experimental-features = lib.mkMerge [[ "nix-command" "flakes" "no-url-literals" ] (lib.mkIf (materusCfg.stable) ["repl-flake"])];
       auto-optimise-store = true;
       trusted-users = [ "root" "@wheel" ];
 

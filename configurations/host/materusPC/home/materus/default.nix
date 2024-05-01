@@ -86,6 +86,7 @@
     materusArg.pkgs.ffmpeg6-amf-full
     (materusArg.pkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; extraLibs = [ ]; })
     pkgs.git-crypt
+    pkgs.obsidian
   ];
 
   programs.obs-studio = {

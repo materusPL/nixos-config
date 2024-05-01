@@ -34,7 +34,6 @@ with materusArg.pkgs.lib;
     tdesktop
     mpv
     ani-cli
-    obsidian
     nextcloud-client
     spotify
     thunderbird
