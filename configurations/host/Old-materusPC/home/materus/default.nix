@@ -77,6 +77,7 @@
     ''__NV_PRIME_RENDER_OFFLOAD_PROVIDER="NVIDIA-G0"''
     ''__GLX_VENDOR_LIBRARY_NAME="nvidia"''
     ''__VK_LAYER_NV_optimus="NVIDIA_only"''
+    ''NIXOS_OZONE_WL="1"''
   ]; 
   script = pkgs.writeShellScript "brave" ''
   ${env} brave "$@"
@@ -120,7 +121,7 @@
   };
   home.packages = [
     pkgs.papirus-icon-theme
-    (materusArg.pkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; })
+    (materusArg.pkgs.polymc-qt5.wrap { withWaylandGLFW=true; extraJDKs = [ pkgs.graalvm-ce ]; })
   ];
 
 }
