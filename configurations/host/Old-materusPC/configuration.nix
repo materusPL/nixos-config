@@ -9,6 +9,7 @@
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./network.nix
     ];
   boot.supportedFilesystems = [ "ntfs" ];
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -38,10 +39,6 @@
   services.flatpak.enable = true;
   services.gvfs.enable = true;
 
-  networking.hostName = "Old-materusPC"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
   # Set your time zone.
   time.timeZone = "Europe/Warsaw";
@@ -103,7 +100,13 @@
     jack.enable = true;
   };
   hardware.pulseaudio.enable = false;
-
+  services.udev = {
+    extraRules = ''
+      KERNEL=="rtc0", GROUP="audio"
+      KERNEL=="hpet", GROUP="audio"
+      DEVPATH=="/devices/virtual/misc/cpu_dma_latency", OWNER="root", GROUP="audio", MODE="0660"
+    '';
+  };
 
 
   virtualisation.podman = {
@@ -115,7 +118,7 @@
 
   users.users.materus = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "kvm" "input" "libvirt" "libvirtd" "podman" ];
+    extraGroups = [ "wheel" "networkmanager" "kvm" "input" "libvirt" "libvirtd" "podman" "audio" "pipewire" ];
     shell = pkgs.zsh;
     description = "Mateusz Słodkowicz";
 
@@ -177,6 +180,7 @@
     xz
     zip
     gzip
+    sops
 
     tree
     mc
@@ -285,11 +289,7 @@
   services.openssh.enable = true;
 
 
-  # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 24800 5900 5357 4656 ];
-  networking.firewall.allowedUDPPorts = [ 24800 5900 3702 4656 ];
-  # Or disable the firewall altogether.
-  networking.firewall.enable = true;
+
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you

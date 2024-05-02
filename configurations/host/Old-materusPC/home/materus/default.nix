@@ -74,6 +74,7 @@
 
   home.packages = [
     pkgs.papirus-icon-theme
+    (materusArg.pkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; })
   ];
 
 }
