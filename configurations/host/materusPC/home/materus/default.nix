@@ -94,4 +94,51 @@
     plugins = with pkgs.obs-studio-plugins; [ wlrobs obs-vaapi obs-vkcapture obs-gstreamer input-overlay obs-multi-rtmp obs-pipewire-audio-capture ];
     package = materusArg.pkgs.obs-amf;
   };
+
+
+  xdg.desktopEntries.brave-browser = let env = lib.concatStringsSep " " [
+    ''DRI_PRIME="1002:744c"'' 
+    ''MESA_VK_DEVICE_SELECT="1002:744c"''
+    ''NIXOS_OZONE_WL="1"''
+  ]; 
+  script = pkgs.writeShellScript "brave" ''
+  ${env} brave "$@"
+  '';
+  
+  in
+  {
+    name = "Brave Web Browser";
+    genericName = "Przeglądarka WWW";
+    comment = "Skorzystaj z internetu";
+    exec = "${script} %U";
+    icon = "brave-browser";
+    terminal = false;
+    categories = [ "Application" "Network" "WebBrowser" ];
+    mimeType = [
+      "application/pdf"
+      "application/rdf+xml"
+      "application/rss+xml"
+      "application/xhtml+xml"
+      "application/xhtml_xml"
+      "application/xml"
+      "image/gif"
+      "image/jpeg"
+      "image/png"
+      "image/webp"
+      "text/html"
+      "text/xml"
+      "x-scheme-handler/http"
+      "x-scheme-handler/https"
+      "x-scheme-handler/ipfs"
+      "x-scheme-handler/ipns"
+    ];
+    actions.new-windows = {
+      exec = "${script}";
+      name = "Nowe okno";
+    };
+    actions.new-private-windows = {
+      exec = "${script} --incognito";
+      name = "Nowe okno incognito";
+    };
+  };
 }
