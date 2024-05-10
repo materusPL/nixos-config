@@ -8,7 +8,7 @@
     ];
   hardware.firmware = with pkgs; [
     materusArg.pkgs.amdgpu-pro-libs.firmware.vcn
-    #materusArg.pkgs.amdgpu-pro-libs.firmware
+    materusArg.pkgs.amdgpu-pro-libs.firmware
     linux-firmware
     alsa-firmware
     sof-firmware
@@ -44,12 +44,12 @@
     materusArg.pkgs.i686Linux.amdgpu-pro-libs.vulkan
     libvdpau-va-gl
   ];
-  services.udev.extraRules = ''
+  /*services.udev.extraRules = ''
 
     #GPU bar size
     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1002", ATTR{device}=="0x744c", ATTR{resource0_resize}="15"
     ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1002", ATTR{device}=="0x744c", ATTR{resource2_resize}="8"
-  '';
+  '';*/
 
 
   #Trim

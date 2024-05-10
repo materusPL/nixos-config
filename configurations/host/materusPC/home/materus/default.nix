@@ -97,8 +97,6 @@
 
 
   xdg.desktopEntries.brave-browser = let env = lib.concatStringsSep " " [
-    ''DRI_PRIME="1002:744c"'' 
-    ''MESA_VK_DEVICE_SELECT="1002:744c"''
     ''NIXOS_OZONE_WL="1"''
   ]; 
   script = pkgs.writeShellScript "brave" ''

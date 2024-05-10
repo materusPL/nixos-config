@@ -17,7 +17,20 @@ in
 {
   #Kernel
   boot.kernelPackages = pkgs.linuxPackages_zen;
-  boot.kernelParams = [ "rcu_nocbs=${materusArg.materusPC.vmCores}" "nohz_full=${materusArg.materusPC.vmCores}" "vfio_iommu_type1.allow_unsafe_interrupts=1" "pcie_acs_override=downstream,multifunction" /*"pci-stub.ids=1002:744c"*/ "nox2apic" "nvme_core.default_ps_max_latency_us=0" "nvme_core.io_timeout=255" "nvme_core.max_retries=10" "nvme_core.shutdown_timeout=10" "amd_iommu=on" "iommu=pt" ] ++ video;
+  boot.kernelParams = [
+    "rcu_nocbs=${materusArg.materusPC.vmCores}"
+    "nohz_full=${materusArg.materusPC.vmCores}"
+    "vfio_iommu_type1.allow_unsafe_interrupts=1"
+    "pcie_acs_override=downstream,multifunction" /*"pci-stub.ids=1002:744c"*/
+    "nox2apic"
+    "nvme_core.default_ps_max_latency_us=0"
+    "nvme_core.io_timeout=255"
+    "nvme_core.max_retries=10"
+    "nvme_core.shutdown_timeout=10"
+    "amd_iommu=on"
+    "amdgpu.ppfeaturemask=0xffffffff"
+    "iommu=pt"
+  ] ++ video;
   boot.kernelModules = [ "pci-stub" "amdgpu" "i2c_dev" "kvm_amd" "vfio" "vfio_iommu_type1" "vfio-pci" ];
   boot.extraModprobeConfig = ''
     options kvm_amd nested=1 avic=1 npt=1 sev=0

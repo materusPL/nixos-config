@@ -82,7 +82,16 @@ let
     #  exec 3>&1 4>&2
     #  trap 'exec 2>&4 1>&3' 0 1 2 3
     #  exec 1>/home/materus/stoplogfile.out 2>&1
+    echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 
+    sysctl vm.stat_interval=1
+    sysctl -w kernel.watchdog=1
+    echo "${materusArg.materusPC.allCoresMask}" > /proc/irq/default_smp_affinity
+    for irq in /proc/irq/[0-9]*/smp_affinity; do 
+      if [ $(cat $irq) = "${materusArg.materusPC.hostCoresMask}" ] || [ $(cat $irq) = "${materusArg.materusPC.vmCoresMask}" ]; then
+        echo "${materusArg.materusPC.allCoresMask}" > $irq 2> /dev/null 
+      fi;
+    done;
 
         
     sleep 1s
@@ -107,17 +116,6 @@ let
     systemctl set-property --runtime -- system.slice AllowedCPUs=${materusArg.materusPC.allCores}
     systemctl set-property --runtime -- init.scope AllowedCPUs=${materusArg.materusPC.allCores}
     echo "${materusArg.materusPC.allCoresMask}" > /sys/bus/workqueue/devices/writeback/cpumask
-    echo powersave | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
-
-    sysctl vm.stat_interval=1
-    sysctl -w kernel.watchdog=1
-    echo "${materusArg.materusPC.allCoresMask}" > /proc/irq/default_smp_affinity
-    for irq in /proc/irq/[0-9]*/smp_affinity; do 
-      if [ $(cat $irq) = "${materusArg.materusPC.hostCoresMask}" ] || [ $(cat $irq) = "${materusArg.materusPC.vmCoresMask}" ]; then
-        echo "${materusArg.materusPC.allCoresMask}" > $irq 2> /dev/null 
-      fi;
-    done;
-  
 
   '';
 in

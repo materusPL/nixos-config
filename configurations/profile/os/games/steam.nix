@@ -11,7 +11,6 @@ let
       pkgs.keyutils
       pkgs.libGL
       pkgs.libglvnd
-      pkgs.gamescope
       pkgs.steamPackages.steam
       pkgs.libxcrypt
       pkgs.gnutls
@@ -93,6 +92,8 @@ in
 
 
   config = lib.mkIf cfg.enable {
+    programs.gamescope.enable = lib.mkDefault true;
+    programs.gamescope.capSysNice = lib.mkDefault true;
     hardware.steam-hardware.enable = lib.mkDefault true;
     materus.profile.steam.extraEnv = {
       XDG_DATA_DIRS = "/usr/share:\${XDG_DATA_DIRS}";
@@ -102,6 +103,7 @@ in
       enable = lib.mkDefault true;
       dedicatedServer.openFirewall = lib.mkDefault true;
       remotePlay.openFirewall = lib.mkDefault true;
+      gamescopeSession.enable = lib.mkDefault true;
     };
     environment.sessionVariables = rec {
       STEAM_EXTRA_COMPAT_TOOLS_PATHS = lib.mkDefault "\${HOME}/.steam/root/compatibilitytools.d";

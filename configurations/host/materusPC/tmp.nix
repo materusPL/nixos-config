@@ -6,7 +6,7 @@
   virtualisation.lxd.enable = true;
 
   programs.gamemode.enable = true;
-
+  programs.corectrl.enable = true;
 
 
 
@@ -90,6 +90,7 @@
     ];
     shell = pkgs.zsh;
     description = "Mateusz Słodkowicz";
+    openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
   };
 
   environment.sessionVariables = {
@@ -120,7 +121,7 @@
 
 
   services.pcscd.enable = true;
-  
+
   services.samba-wsdd.enable = true;
   services.samba-wsdd.openFirewall = true;
   services.samba = {
@@ -160,6 +161,16 @@
   };
   programs.ssh.startAgent = true;
   services.openssh.enable = true;
+  services.openssh.settings.PermitRootLogin = "no";
+  services.openssh.settings.PasswordAuthentication = false;
+  services.openssh.openFirewall = true;
+
+  services.sunshine = {
+    enable = true;
+    capSysAdmin = true;
+    openFirewall = true;
+    autoStart = false;
+  };
 
   environment.enableAllTerminfo = true;
   environment.pathsToLink = [ "/share/zsh" "/share/bash-completion" "/share/fish" ];
