@@ -1,5 +1,10 @@
 { config, pkgs, materusArg, ... }:
 let
+  bar0_guest="15";
+  bar2_guest="8";
+  bar0_host="15";
+  bar2_host="8";
+
   VM_UUID = "ad2632db-0da0-4204-98b3-0592a185ebd0";
 
   startedHook = ''
@@ -36,6 +41,8 @@ let
     ''
     +*/
     ''
+      systemctl stop windows-share-mount.service
+
       # Make sure nothing renders on gpu to prevent "sysfs: cannot create duplicate filename" after rebinding to amdgpu
       chmod 0 /dev/dri/renderD128 
       fuser -k /dev/dri/renderD128
@@ -43,23 +50,36 @@ let
       # Seems to fix reset bug for 7900 XTX
       echo "0" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/d3cold_allowed"
 
-      systemctl stop windows-share-mount.service
-    
-    
+      #####################################################################
+      # Weird bug on kernel 6.7+, after changing bar sizes and binding to vfio driver, performance after returning to host will be lower than expected
+      # binding to amdgpu after changing bar sizes and binding after it to vfio will work as expected.
+      # I could skip changing bar sizes since I'm able to use full bar, but keeping it just in case
+      echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
+      sleep 1s
+      echo "${bar0_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
+      echo "${bar2_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
+
+      echo ''$VIRSH_GPU_VIDEO > /sys/bus/pci/drivers/amdgpu/bind
+      
+      sleep 1s
+
+      chmod 0 /dev/dri/renderD128 
+      fuser -k /dev/dri/renderD128
+      #####################################################################
+      
       echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
       echo ''$VIRSH_GPU_AUDIO > "/sys/bus/pci/devices/''${VIRSH_GPU_AUDIO}/driver/unbind"
 
-      sleep 1s
-
-      echo "15" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
-      echo "8" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
+      echo "${bar0_guest}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
+      echo "${bar2_guest}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
 
       sync
       echo "3" > /proc/sys/vm/drop_caches
       sync
       echo "1" > /proc/sys/vm/compact_memory
+      
 
-
+      
 
       systemctl set-property --runtime -- user.slice AllowedCPUs=${materusArg.materusPC.hostCores}
       systemctl set-property --runtime -- system.slice AllowedCPUs=${materusArg.materusPC.hostCores}
@@ -69,6 +89,9 @@ let
 
       sysctl vm.stat_interval=120
       sysctl -w kernel.watchdog=0
+
+
+      
 
 
     '';
@@ -101,8 +124,8 @@ let
         
     
 
-    echo "15" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
-    echo "8" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
+    echo "${bar0_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
+    echo "${bar2_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
     echo "1" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/d3cold_allowed"
 
 
