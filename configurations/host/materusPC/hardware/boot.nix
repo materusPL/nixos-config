@@ -13,10 +13,13 @@ let
 
 
   ];
+
 in
 {
   #Kernel
-  boot.kernelPackages = pkgs.linuxPackages_zen;
+
+  boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linux_lqx;
+
   boot.kernelParams = [
     "rcu_nocbs=${materusArg.materusPC.vmCores}"
     "nohz_full=${materusArg.materusPC.vmCores}"
