@@ -20,7 +20,7 @@ in
   };
   config.nixpkgs.overlays = lib.mkIf cfg.enableOverlays [ materusArg.cfg.configInputs.emacs-overlay.overlay ];
 
-  config.nix.package = lib.mkDefault  (if (!materusCfg.stable) then pkgs.nixVersions.${"latest"} else pkgs.nixVersions.stable);
+  config.nix.package = lib.mkDefault  pkgs.nixVersions.latest;
   config.nix.registry = lib.mkIf config.materus.profile.nix.enableRegistry {
     nixpkgs-stable = {
       from = { type = "indirect"; id = "nixpkgs-stable"; };

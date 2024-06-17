@@ -56,9 +56,9 @@
   services.printing.enable = true;
 
 
+  config.nix.package = pkgs.nixVersions.latest;
 
-
-  services.xserver.libinput.enable = true;
+  services.libinput.enable = true;
 
   virtualisation.waydroid.enable = false;
   virtualisation.podman = {

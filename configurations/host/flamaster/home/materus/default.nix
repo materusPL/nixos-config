@@ -27,7 +27,7 @@
       gcc
       gdb
       nil
-      nixfmt
+      nixfmt-classic
       nixpkgs-fmt
       cmake
       gnumake

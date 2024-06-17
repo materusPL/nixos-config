@@ -44,8 +44,10 @@ let
       systemctl stop windows-share-mount.service
 
       # Make sure nothing renders on gpu to prevent "sysfs: cannot create duplicate filename" after rebinding to amdgpu
-      chmod 0 /dev/dri/renderD128 
-      fuser -k /dev/dri/renderD128
+      chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render 
+      chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
+      fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
+      pkill Xwayland
 
       # Seems to fix reset bug for 7900 XTX
       echo "0" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/d3cold_allowed"

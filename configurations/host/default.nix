@@ -52,10 +52,10 @@ let
     }) // { inherit materusCfg; };
 in
 {
-  materusPC = makeSystem { host = "materusPC"; stable = false; };
+  materusPC = makeSystem { host = "materusPC"; stable = true; };
   flamaster = makeSystem { host = "flamaster"; stable = true; };
   valkyrie = makeSystem { host = "valkyrie"; stable = true; };
   waffentrager = makeSystem { host = "waffentrager"; stable = true; arch = "aarch64-linux"; };
 
-  Old-materusPC = makeSystem { host = "Old-materusPC"; stable = false; };
+  Old-materusPC = makeSystem { host = "Old-materusPC"; stable = true; };
 }

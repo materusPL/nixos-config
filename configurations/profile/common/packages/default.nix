@@ -19,7 +19,7 @@ with materusArg.pkgs.lib;
     nix-prefetch-scripts
     nix-prefetch-github
     nix-prefetch-docker
-    nixfmt
+    nixfmt-classic
     nix-top
     nix-tree
     nix-diff
