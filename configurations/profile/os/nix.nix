@@ -7,7 +7,7 @@ in
   config.nix = lib.mkIf cfg.enable {
 
     settings = {
-      experimental-features = lib.mkMerge [[ "nix-command" "flakes" "no-url-literals" ] (lib.mkIf (materusCfg.stable) ["repl-flake"])];
+      experimental-features = lib.mkMerge [[ "nix-command" "flakes" "no-url-literals" ]];
       auto-optimise-store = true;
       trusted-users = [ "root" "@wheel" ];
 

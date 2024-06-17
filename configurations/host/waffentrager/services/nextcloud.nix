@@ -22,14 +22,12 @@
       services.nextcloud = {
         enable = true;
         notify_push.enable = true;
-        package = pkgs.nextcloud28;
+        package = pkgs.nextcloud29;
         hostName = "waffentrager.materus.pl";
         home = config.waffentragerService.elements.nextcloudDir;
         config.adminuser = "master";
         config.adminpassFile = config.sops.secrets.nextcloud-adminpass.path;
         config.dbtype = "pgsql";
-        config.defaultPhoneRegion = "PL";
-        config.trustedProxies = [ materusArg.ips.valkyrie materusArg.ips.wireguard.valkyrie materusArg.ips.wireguard.waffentrager ];
         extraAppsEnable = true;
         maxUploadSize = "4G";
         https = true;
@@ -39,10 +37,13 @@
         appstoreEnable = true;
         database.createLocally = true;
         nginx.recommendedHttpHeaders = true;
-        extraApps = with pkgs.nextcloud28Packages.apps; {
+        extraApps = with pkgs.nextcloud29Packages.apps; {
           inherit notify_push previewgenerator;
         };
-        extraOptions = {
+        settings = {
+          "profile.enabled" = true;
+          default_phone_region = "PL";
+          trusted_proxies = [ materusArg.ips.valkyrie materusArg.ips.wireguard.valkyrie materusArg.ips.wireguard.waffentrager ];
           mail_smtpmode = "sendmail";
           mail_sendmailmode = "pipe";
           enable_previews = true;
@@ -66,7 +67,6 @@
           ];
           "overwrite.cli.url" = "https://${config.services.nextcloud.hostName}";
         };
-        globalProfiles = true;
 
         phpOptions = {
           "opcache.memory_consumption" = "512";

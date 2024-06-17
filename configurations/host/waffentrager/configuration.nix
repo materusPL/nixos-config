@@ -48,7 +48,7 @@
   nix = {
     settings = {
       auto-optimise-store = true;
-      experimental-features = [ "nix-command" "flakes" "repl-flake" "no-url-literals" ];
+      experimental-features = [ "nix-command" "flakes" "no-url-literals" ];
       trusted-users = [ "root" "@wheel" ];
       substituters = [
         "https://nix-community.cachix.org"
