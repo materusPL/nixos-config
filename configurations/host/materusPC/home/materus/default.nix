@@ -83,16 +83,15 @@
 
   home.packages = [
     pkgs.papirus-icon-theme
-    materusArg.pkgs.ffmpeg6-amf-full
+    materusArg.pkgs.ffmpeg_7-amf-full
     (materusArg.pkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; extraLibs = [ ]; })
     pkgs.git-crypt
     pkgs.obsidian
   ];
 
   programs.obs-studio = {
-    enable = false;
+    enable = true;
     plugins = with pkgs.obs-studio-plugins; [ wlrobs obs-vaapi obs-vkcapture obs-gstreamer input-overlay obs-multi-rtmp obs-pipewire-audio-capture ];
-    package = materusArg.pkgs.obs-amf;
   };
 
 
