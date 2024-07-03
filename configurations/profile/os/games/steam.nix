@@ -93,7 +93,7 @@ in
 
   config = lib.mkIf cfg.enable {
     programs.gamescope.enable = lib.mkDefault true;
-    programs.gamescope.capSysNice = lib.mkDefault true;
+    programs.gamescope.capSysNice = lib.mkDefault false;
     hardware.steam-hardware.enable = lib.mkDefault true;
     materus.profile.steam.extraEnv = {
       XDG_DATA_DIRS = "/usr/share:\${XDG_DATA_DIRS}";
