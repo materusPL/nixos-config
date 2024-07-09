@@ -1,5 +1,9 @@
 #/usr/bin/env bash
 IFS=$'\n'
+convert_cmd () {
+if  ! command -v convert &> /dev/null; then nix shell nixpkgs\#imagemagick -c convert "$@"; else convert "$@"; fi
+}
+
 
 
 change_to_webp() {
@@ -7,7 +11,7 @@ change_to_webp() {
  file="${f%.*}"
  file_webp="${file}.webp"
  echo "Trying to convert to $file_webp"
- if convert "$f" "$file_webp"; then
+ if convert_cmd "$f" "$file_webp"; then
   if touch -r "$f" "$file_webp"; then
    rm "$f"
    echo "Finished converting $f"
