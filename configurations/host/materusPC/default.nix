@@ -6,6 +6,7 @@
       ./hardware
       ./vm
       ./secrets
+      ./containers
 
       ./scripts.nix
       ./tmp.nix

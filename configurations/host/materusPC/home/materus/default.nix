@@ -62,6 +62,7 @@
       libGL.dev
       libGLU.dev
       vulkan-loader.dev
+      vulkan-headers
       xorg.xorgproto
       xorg.libX11.dev
       xorg.libXrandr.dev
@@ -86,7 +87,7 @@
   home.packages = [
     pkgs.papirus-icon-theme
     materusArg.pkgs.ffmpeg_7-amf-full
-    (materusArg.pkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; extraLibs = [ ]; })
+    (materusArg.pkgs.polymc-qt5.wrap { extraJDKs = [ pkgs.graalvm-ce ]; extraLibs = [ ]; })
     pkgs.git-crypt
     pkgs.obsidian
   ];

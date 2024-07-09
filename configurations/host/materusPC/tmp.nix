@@ -1,9 +1,7 @@
 { config, pkgs, materusArg, ... }:
 
 {
-  virtualisation.lxc.enable = true;
-  virtualisation.lxc.lxcfs.enable = true;
-  virtualisation.lxd.enable = true;
+
 
   programs.gamemode.enable = true;
   programs.corectrl.enable = true;
@@ -57,12 +55,7 @@
 
   services.libinput.enable = true;
 
-  virtualisation.waydroid.enable = false;
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-    dockerSocket.enable = true;
-  };
+
 
 
 
