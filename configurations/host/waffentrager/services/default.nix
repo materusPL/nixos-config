@@ -16,5 +16,5 @@
   waffentragerService.gitea.enable = true;
   waffentragerService.nginx.enable = true;
   waffentragerService.nextcloud.enable = true;
-  waffentragerService.auth.enable = true;
+  
 }
