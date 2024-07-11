@@ -56,6 +56,8 @@
             ''OC\Preview\BMP''
             ''OC\Preview\XBitmap''
             ''OC\Preview\MP3''
+            ''OC\Preview\OGG''
+            ''OC\Preview\OPUS''
             ''OC\Preview\MP4''
             ''OC\Preview\TXT''
             ''OC\Preview\MarkDown''
