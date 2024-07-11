@@ -11,10 +11,20 @@
     in
     lib.mkIf cfg.enable {
 
-
-
+      systemd.tmpfiles.rules = [
+        "d    /var/lib/dcbot   0776    dcbot    dcbot     -"
+      ];
+      users.groups.dcbot = { };
+      users.users.dcbot = {
+        group = "dcbot";
+        isSystemUser = true;
+      };
       systemd.services.dcbot = {
         description = "Make some noise!";
+        serviceConfig = {
+          User="dcbot";
+          Group="dcbot";
+        };
         wantedBy = [ "multi-user.target" ];
         path = [ pkgs.jdk ];
         script = let 
@@ -24,13 +34,15 @@
             });
         
         in ''
+          cd /var/lib/dcbot
           java -Dconfig=${config.sops.templates."dcbot.config.txt".path} -Xmx1G -Dnogui=true -Djava.util.concurrent.ForkJoinPool.common.parallelism=1 -jar ${musicbot}
         '';
       };
 
 
 
-
+      sops.templates."dcbot.config.txt".owner = "dcbot";
+      sops.templates."dcbot.config.txt".group = "dcbot";
       sops.templates."dcbot.config.txt".content = ''
 /////////////////////////////////////////////////////////
 // Config for the JMusicBot                            //
@@ -85,13 +97,13 @@ status = ONLINE
 // "Playing" status. Note that this will ONLY work if the bot is playing music on ONE guild;
 // if the bot is playing on multiple guilds, this will not work.
 
-songinstatus=false
+songinstatus=true
 
 
 // If you set this, the bot will also use this prefix in addition to
 // the one provided above
 
-altprefix = "NONE"
+altprefix = "-"
 
 
 // If you set these, it will change the various emojis
@@ -152,7 +164,7 @@ skipratio = 0.55
 // automatically leaves the voice channel and clears the queue. If not set or set
 // to any number less than or equal to zero, the bot won't leave when alone.
 
-alonetimeuntilstop = 0
+alonetimeuntilstop = 120
 
 
 // This sets an alternative folder to be used as the Playlists folder
