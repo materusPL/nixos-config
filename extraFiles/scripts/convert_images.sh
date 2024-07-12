@@ -1,7 +1,9 @@
 #/usr/bin/env bash
 IFS=$'\n'
+
+CONVERT="$(nix eval nixpkgs\#imagemagick.outPath | tr -d '"')/bin/convert"
 convert_cmd () {
-if  ! command -v convert &> /dev/null; then nix shell nixpkgs\#imagemagick -c convert "$@"; else convert "$@"; fi
+if  ! command -v convert &> /dev/null; then $CONVERT "$@"; else convert "$@"; fi
 }
 
 
