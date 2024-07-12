@@ -8,6 +8,8 @@
       ./gitea.nix
       ./nginx.nix
       ./nextcloud.nix
+      ./samba.nix
+      ./syncthing.nix
       ./auth
     ];
   waffentragerService.elements.enable = true;
@@ -16,5 +18,6 @@
   waffentragerService.gitea.enable = true;
   waffentragerService.nginx.enable = true;
   waffentragerService.nextcloud.enable = true;
-  
+  waffentragerService.samba.enable = true;
+  waffentragerService.syncthing.enable = true;
 }

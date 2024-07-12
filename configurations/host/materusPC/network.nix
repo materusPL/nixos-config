@@ -10,8 +10,14 @@
   networking.networkmanager.enable = true;
   #networking.networkmanager.wifi.backend = "iwd";
   networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 24800 5900 5357 4656 8080 9943 9944 ];
-  networking.firewall.allowedUDPPorts = [ (lib.strings.toInt materusArg.wireguard.port) 24800 5900 3702 4656 6000 9943 9944 ];
+  networking.firewall.allowedTCPPorts = [ 
+    24800 5900 5357 4656 8080 9943 9944 
+    22000 config.services.syncthing.relay.statusPort config.services.syncthing.relay.port # Syncthing
+  ];
+  networking.firewall.allowedUDPPorts = [ (lib.strings.toInt materusArg.wireguard.port) 
+    24800 5900 3702 4656 6000 9943 9944 
+    22000 21027 # Syncthing
+  ];
   networking.networkmanager.settings = {
     connectivity = {
       uri = "http://nmcheck.gnome.org/check_network_status.txt";
@@ -48,4 +54,11 @@
       proxy = { };
     };
   };
+      services = {
+        syncthing = {
+            enable = true;
+            user = "materus";
+            dataDir = "/home/materus";
+        };
+      };
 }

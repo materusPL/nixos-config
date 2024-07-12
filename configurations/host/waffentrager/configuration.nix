@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running `nixos-help`).
 
-{ config, pkgs, ... }:
+{ config, pkgs, materusArg, ... }:
 
 {
   imports =
@@ -38,9 +38,7 @@
   users.users.materus = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPEDY+H8Hc/RSLE064AAh8IojvqxPd8BE5gec2aOfYMh materus@podkos.pl"
-    ];
+    openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
     hashedPasswordFile = config.sops.secrets."users/materus".path;
     shell = pkgs.zsh;
   };
