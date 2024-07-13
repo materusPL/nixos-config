@@ -48,7 +48,7 @@
       sops.secrets.jwt = { owner = "lldap"; group = "lldap"; };
       sops.secrets."lldap-database" = { owner = "lldap"; group = "lldap"; };
       services.lldap.enable = true;
-      services.lldap.environmentFile = config.sops.templates."lldap.env".file;
+      services.lldap.environmentFile = config.sops.templates."lldap.env".path;
       sops.templates."lldap.env" = {
         content = ''
           LLDAP_JWT_SECRET_FILE="${config.sops.secrets.jwt.path}"
@@ -60,7 +60,6 @@
 
       services.lldap.settings = {
         ldap_base_dn = "dc=podkos,dc=pl";
-        #database_url = "sqlite://${config.waffentragerService.elements.lldapDir}/users.db?mode=rwc";
         http_url = "https://mamba.podkos.pl";
         ldap_user_dn = "master";
         ldap_user_email = "materus@podkos.pl";
