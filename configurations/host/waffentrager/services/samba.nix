@@ -7,6 +7,18 @@
       cfg = config.waffentragerService.samba;
     in
     lib.mkIf cfg.enable {
+      waffentragerService.elements.enable = true;
+
+      systemd.services.samba-nmbd = {
+        partOf = [ "elements-mount.service" ];
+        requires = [ "elements-mount.service" ];
+        after = [ "elements-mount.service" ];
+      };
+      systemd.services.samba-wsdd = {
+        partOf = [ "elements-mount.service" ];
+        requires = [ "elements-mount.service" ];
+        after = [ "elements-mount.service" ];
+      };
       services.samba-wsdd.enable = true;
       services.samba-wsdd.openFirewall = true;
       services.samba = {

@@ -5,6 +5,7 @@
   options.waffentragerService.elements.uuid = lib.mkOption { default = "e32039c6-e98d-44b0-8e7d-120994bf7be1"; };
   options.waffentragerService.elements.postgresqlDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/postgresql"; };
   options.waffentragerService.elements.nextcloudDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/nextcloud"; };
+  options.waffentragerService.elements.lldapDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/lldap"; };
   config =
     let
       cfg = config.waffentragerService.elements;
@@ -27,6 +28,9 @@
         '' + lib.optionalString config.waffentragerService.nextcloud.enable ''
           mkdir -p ${cfg.nextcloudDir}
           chown -R nextcloud:nextcloud ${cfg.nextcloudDir}
+        '' + lib.optionalString config.waffentragerService.auth.lldap.enable ''
+          mkdir -p ${cfg.lldapDir}
+          chown -R lldap:lldap ${cfg.lldapDir}
         ''
 
         ;

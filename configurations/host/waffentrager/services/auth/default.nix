@@ -2,9 +2,10 @@
 {
   imports =
     [
+      ./lldap.nix
     ];
   config = 
     {
-
+      waffentragerService.auth.lldap.enable = true;
     };
 }
