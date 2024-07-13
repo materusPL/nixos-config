@@ -184,13 +184,15 @@ in
     serviceConfig.Type = "oneshot";
     serviceConfig.RemainAfterExit = true;
     script = ''
-
-      losetup -P /dev/loop6 /materus/data/VM/data.raw
-      mount /dev/loop6p1 /materus/data/Windows -o uid=1000,gid=100
+      modprobe nbd max_part=16
+      sleep 1
+      qemu-nbd -c /dev/nbd10 /materus/data/VM/data.qcow2 --discard=unmap
+      sleep 1
+      mount /dev/nbd10p1 /materus/data/Windows -o uid=1000,gid=100
     '';
     preStop = ''
-      umount -lf /materus/data/Windows
-      losetup -d /dev/loop6
+      umount -r /dev/nbd10p1
+      qemu-nbd -d /dev/nbd10
     '';
   };
 }
