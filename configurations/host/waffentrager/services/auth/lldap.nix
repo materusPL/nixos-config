@@ -45,7 +45,7 @@
         group = "lldap";
         isSystemUser = true;
       };
-      sops.secrets.jwt = { owner = "lldap"; group = "lldap"; };
+      sops.secrets.jwt = { owner = "lldap"; group = "lldap"; mode = "0440"; };
       sops.secrets."lldap-database" = { owner = "lldap"; group = "lldap"; };
       services.lldap.enable = true;
       services.lldap.environmentFile = config.sops.templates."lldap.env".path;
@@ -60,6 +60,8 @@
 
       services.lldap.settings = {
         ldap_base_dn = "dc=podkos,dc=pl";
+
+        ldap_host = "127.0.0.1";
         http_url = "https://mamba.podkos.pl";
         ldap_user_dn = "master";
         ldap_user_email = "materus@podkos.pl";

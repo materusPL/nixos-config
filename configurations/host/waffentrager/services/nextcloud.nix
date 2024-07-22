@@ -25,11 +25,11 @@
         package = pkgs.nextcloud29;
         hostName = "waffentrager.materus.pl";
         home = config.waffentragerService.elements.nextcloudDir;
-        config.adminuser = "master";
+        config.adminuser = "nextcloud-master";
         config.adminpassFile = config.sops.secrets.nextcloud-adminpass.path;
         config.dbtype = "pgsql";
         extraAppsEnable = true;
-        maxUploadSize = "4G";
+        maxUploadSize = "8G";
         https = true;
         enableImagemagick = true;
         configureRedis = true;

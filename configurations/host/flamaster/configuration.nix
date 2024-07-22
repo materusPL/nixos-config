@@ -164,29 +164,28 @@
   # Or disable the firewall altogether.
   networking.firewall.enable = true;
 
-  networking.networkmanager.extraConfig = lib.mkDefault ''
-    [connectivity]
-    uri=http://nmcheck.gnome.org/check_network_status.txt
-  '';
+  networking.networkmanager.settings = {
+    connectivity = { uri = lib.mkDefault "http://nmcheck.gnome.org/check_network_status.txt"; };
+      };
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.05"; # Did you read the comment?
+    # This value determines the NixOS release from which the default
+    # settings for stateful data, like file locations and database versions
+    # on your system were taken. It‘s perfectly fine and recommended to leave
+    # this value at the release version of the first install of this system.
+    # Before changing this value read the documentation for this option
+    # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+    system.stateVersion = "23.05"; # Did you read the comment?
 
 
-  programs.neovim.enable = true;
-  programs.neovim.vimAlias = true;
-  programs.neovim.viAlias = true;
+    programs.neovim.enable = true;
+    programs.neovim.vimAlias = true;
+    programs.neovim.viAlias = true;
 
-  services.flatpak.enable = true;
-  xdg.portal.enable = true;
+    services.flatpak.enable = true;
+    xdg.portal.enable = true;
 
-  virtualisation.podman.enable = true;
-  virtualisation.podman.dockerCompat = true;
-  virtualisation.podman.enableNvidia = true;
-  virtualisation.podman.dockerSocket.enable = true;
-}
+    virtualisation.podman.enable = true;
+    virtualisation.podman.dockerCompat = true;
+    virtualisation.podman.enableNvidia = true;
+    virtualisation.podman.dockerSocket.enable = true;
+  }

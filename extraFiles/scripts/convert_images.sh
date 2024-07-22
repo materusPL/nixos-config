@@ -7,6 +7,12 @@ if  ! command -v convert &> /dev/null; then $CONVERT "$@"; else convert "$@"; fi
 }
 
 
+function max16 {
+   while [ `jobs | wc -l` -ge 16 ]
+   do
+      sleep 2
+   done
+}
 
 change_to_webp() {
  f="$1"
@@ -31,7 +37,7 @@ pushd $XDG_PICTURES_DIR
 for f in `find "." \( -name "*.png" -type f -o -name "*.jpg" -type f -o -name "*.jpeg" -type f -o -name "*.avif" -type f \) \
         -a -not \( -path "./Inne/Special/*" -o -path "./Inne/Emojis/*" -o -path "./Inne/MCSkins/*" -o -path "./Avatar/*" -o -path "./Inne/GIF/*" \)`; 
 do
- change_to_webp "$f" & 
+ max16; change_to_webp "$f" & 
 done
 	
 

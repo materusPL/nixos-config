@@ -35,6 +35,9 @@
           hosts deny = 0.0.0.0/0
           guest account = nobody
           map to guest = bad user
+          mangled names = no
+          dos charset = CP850
+          unix charset = UTF-8
         '';
         shares = {
           materus = {
@@ -42,10 +45,10 @@
             browseable = "yes";
             "read only" = "no";
             "guest ok" = "no";
-            "create mask" = "0644";
-            "directory mask" = "0755";
+            "create mask" = "0770";
+            "directory mask" = "0770";
             "force user" = "materus";
-            "force group" = "users";
+            "force group" = "nextcloud";
           };
         };
       };
