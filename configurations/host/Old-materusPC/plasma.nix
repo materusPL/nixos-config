@@ -1,9 +1,9 @@
 { pkgs, ... }:
 {
 
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.displayManager.sddm.wayland.enable = true;
-  services.xserver.displayManager.sddm.settings = {
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.sddm.settings = {
     General = {
       InputMethod = "";
     };

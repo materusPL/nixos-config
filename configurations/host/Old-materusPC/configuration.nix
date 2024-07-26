@@ -34,7 +34,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
   boot.kernelPackages = pkgs.linuxPackages_zen;
-  boot.tmpOnTmpfs = true;
+  boot.tmp.useTmpfs = true;
 
   services.flatpak.enable = true;
   services.gvfs.enable = true;
@@ -79,7 +79,7 @@
 
 
   # Configure keymap in X11
-  services.xserver.layout = "pl";
+  services.xserver.xkb.layout = "pl";
   # services.xserver.xkbOptions = {
   #   "eurosign:e";
   #   "caps:escape" # map caps to escape.
@@ -226,7 +226,7 @@
   ];
 
   fonts.fontDir.enable = true;
-  fonts.enableDefaultFonts = true;
+  fonts.enableDefaultPackages = true;
   fonts.fonts = with pkgs; [
     dejavu_fonts
     hack-font
