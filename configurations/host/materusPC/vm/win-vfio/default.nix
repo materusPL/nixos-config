@@ -154,12 +154,12 @@ in
 
 
   virtualisation.libvirtd.hooks.qemu = {
-    "win10" = pkgs.writeShellScript "win10.sh" ''
+    "windows-vfio" = pkgs.writeShellScript "windows.sh" ''
       VIRSH_GPU_VIDEO="0000:03:00.0"
       VIRSH_GPU_AUDIO="0000:03:00.1"
       VIRSH_USB1="0000:10:00.0"
 
-      if [ ''$1 = "win10" ] || [ ''$1 = "win11" ]; then
+      if [ ''$1 = "windows-vfio" ]; then
         if [ ''$2 = "prepare" ] && [ ''$3 = "begin" ]; then
           ${startHook}
         fi

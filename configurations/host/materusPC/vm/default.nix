@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 {
   imports = [
-    ./win10
+    ./win-vfio
   ];
   materus.materusArg.materusPC = {
     allCores = "0-31";

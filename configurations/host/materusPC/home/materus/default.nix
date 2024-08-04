@@ -4,7 +4,7 @@
   home.homeDirectory = "/home/materus";
 
   programs.git.signing.signByDefault = true;
-  
+
   xdg.userDirs.enable = true;
   xdg.portal.enable = true;
   xdg.portal.xdgOpenUsePortal = true;
@@ -94,51 +94,65 @@
 
   programs.obs-studio = {
     enable = true;
-    plugins = with pkgs.obs-studio-plugins; [ wlrobs obs-vaapi obs-vkcapture obs-gstreamer input-overlay obs-multi-rtmp obs-pipewire-audio-capture ];
-  };
+    plugins = with pkgs.obs-studio-plugins; [
+      wlrobs
+      input-overlay
 
-
-  xdg.desktopEntries.brave-browser = let env = lib.concatStringsSep " " [
-    ''NIXOS_OZONE_WL="1"''
-  ]; 
-  script = pkgs.writeShellScript "brave" ''
-  ${env} brave "$@"
-  '';
-  
-  in
-  {
-    name = "Brave Web Browser";
-    genericName = "Przeglądarka WWW";
-    comment = "Skorzystaj z internetu";
-    exec = "${script} %U";
-    icon = "brave-browser";
-    terminal = false;
-    categories = [ "Application" "Network" "WebBrowser" ];
-    mimeType = [
-      "application/pdf"
-      "application/rdf+xml"
-      "application/rss+xml"
-      "application/xhtml+xml"
-      "application/xhtml_xml"
-      "application/xml"
-      "image/gif"
-      "image/jpeg"
-      "image/png"
-      "image/webp"
-      "text/html"
-      "text/xml"
-      "x-scheme-handler/http"
-      "x-scheme-handler/https"
-      "x-scheme-handler/ipfs"
-      "x-scheme-handler/ipns"
+      obs-source-switcher
+      obs-tuna
+      obs-vaapi
+      obs-vkcapture
+      obs-gstreamer
+      obs-backgroundremoval
+      obs-multi-rtmp
+      obs-pipewire-audio-capture
     ];
-    actions.new-windows = {
-      exec = "${script}";
-      name = "Nowe okno";
-    };
-    actions.new-private-windows = {
-      exec = "${script} --incognito";
-      name = "Nowe okno incognito";
-    };
   };
+
+
+  xdg.desktopEntries.brave-browser =
+    let
+      env = lib.concatStringsSep " " [
+        ''NIXOS_OZONE_WL="1"''
+      ];
+      script = pkgs.writeShellScript "brave" ''
+        ${env} brave "$@"
+      '';
+
+    in
+    {
+      name = "Brave Web Browser";
+      genericName = "Przeglądarka WWW";
+      comment = "Skorzystaj z internetu";
+      exec = "${script} %U";
+      icon = "brave-browser";
+      terminal = false;
+      categories = [ "Application" "Network" "WebBrowser" ];
+      mimeType = [
+        "application/pdf"
+        "application/rdf+xml"
+        "application/rss+xml"
+        "application/xhtml+xml"
+        "application/xhtml_xml"
+        "application/xml"
+        "image/gif"
+        "image/jpeg"
+        "image/png"
+        "image/webp"
+        "text/html"
+        "text/xml"
+        "x-scheme-handler/http"
+        "x-scheme-handler/https"
+        "x-scheme-handler/ipfs"
+        "x-scheme-handler/ipns"
+      ];
+      actions.new-windows = {
+        exec = "${script}";
+        name = "Nowe okno";
+      };
+      actions.new-private-windows = {
+        exec = "${script} --incognito";
+        name = "Nowe okno incognito";
+      };
+    };
 }

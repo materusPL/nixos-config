@@ -18,7 +18,7 @@ in
 {
   #Kernel
 
-  boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linux_lqx;
+  boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linux_zen;
 
   boot.kernelParams = [
     "rcu_nocbs=${materusArg.materusPC.vmCores}"
@@ -33,6 +33,7 @@ in
     "amd_iommu=on"
     "amdgpu.ppfeaturemask=0xffffffff"
     "iommu=pt"
+    "psi=1"
   ] ++ video;
   boot.kernelModules = [ "pci-stub" "amdgpu" "i2c_dev" "kvm_amd" "vfio" "vfio_iommu_type1" "vfio-pci" ];
   boot.extraModprobeConfig = ''
