@@ -65,6 +65,7 @@
         http_url = "https://mamba.podkos.pl";
         ldap_user_dn = "master";
         ldap_user_email = "materus@podkos.pl";
+        ldap_port = 3890;
         key_seed = materusArg.waffentrager.lldap.seed;
       };
     };

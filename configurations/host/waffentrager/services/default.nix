@@ -10,6 +10,7 @@
       ./nextcloud.nix
       ./samba.nix
       ./syncthing.nix
+      ./jellyfin.nix
       ./auth
     ];
   waffentragerService.elements.enable = true;
@@ -19,5 +20,6 @@
   waffentragerService.nginx.enable = true;
   waffentragerService.nextcloud.enable = true;
   waffentragerService.samba.enable = true;
+  waffentragerService.jellyfin.enable = true;
   waffentragerService.syncthing.enable = true;
 }

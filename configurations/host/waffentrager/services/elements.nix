@@ -6,6 +6,7 @@
   options.waffentragerService.elements.postgresqlDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/postgresql"; };
   options.waffentragerService.elements.nextcloudDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/nextcloud"; };
   options.waffentragerService.elements.lldapDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/lldap"; };
+  options.waffentragerService.elements.jellyfinDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/jellyfin"; };
   config =
     let
       cfg = config.waffentragerService.elements;
@@ -31,6 +32,9 @@
         '' + lib.optionalString config.waffentragerService.auth.lldap.enable ''
           mkdir -p ${cfg.lldapDir}
           chown -R lldap:lldap ${cfg.lldapDir}
+        '' + lib.optionalString config.waffentragerService.jellyfin.enable ''
+          mkdir -p ${cfg.jellyfinDir}
+          chown -R materus:nextcloud ${cfg.jellyfinDir}
         ''
 
         ;
