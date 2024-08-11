@@ -167,14 +167,5 @@
     dnsProvider = "ovh";
   };
 
-
-  security.acme.certs."${materusArg.waffentrager.samba.domain}" = {
-    domain = materusArg.waffentrager.samba.domain;
-    extraDomainNames = [
-      "${materusArg.waffentrager.samba.netbiosName}.${materusArg.waffentrager.samba.domain}"
-    ];
-    dnsProvider = "ovh";
-  };
-
 }
 
