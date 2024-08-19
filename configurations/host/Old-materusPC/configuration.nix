@@ -38,12 +38,16 @@
 
   services.flatpak.enable = true;
   services.gvfs.enable = true;
-
+  programs.kdeconnect.enable = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Warsaw";
 
-
+  services.syncthing = {
+    enable = true;
+    user = "materus";
+    dataDir = "/home/materus";
+  };
   services.fstrim = {
     enable = true;
     interval = "weekly";
