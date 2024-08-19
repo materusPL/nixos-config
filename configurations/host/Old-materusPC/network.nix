@@ -9,8 +9,12 @@
   networking.wireless.iwd.enable = true;
   networking.networkmanager.enable = true;
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 24800 5900 5357 4656 ];
-  networking.firewall.allowedUDPPorts = [ 24800 5900 3702 4656 ];
+  networking.firewall.allowedTCPPorts = [ 24800 5900 5357 4656 
+  22000 config.services.syncthing.relay.statusPort config.services.syncthing.relay.port # Syncthing
+  ];
+  networking.firewall.allowedUDPPorts = [ 24800 5900 3702 4656 
+  22000 21027 # Syncthing
+  ];
   # Or disable the firewall altogether.
   networking.firewall.enable = true;
   networking.networkmanager.settings = {
