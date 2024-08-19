@@ -102,5 +102,11 @@
 
     binutils
     
+    qbittorrent
+    mkvtoolnix
+    nicotine-plus
+    picard
+    opusTools
+    aegisub
   ];
 }
