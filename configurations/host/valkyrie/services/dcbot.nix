@@ -176,7 +176,7 @@ playlistsfolder = "Playlists"
 // By default, the bot will DM the owner if the bot is running and a new version of the bot
 // becomes available. Set this to false to disable this feature.
 
-updatealerts=true
+updatealerts=false
 
 
 // Changing this changes the lyrics provider
