@@ -3,7 +3,7 @@ IFS=$'\n'
 
 CONVERT="$(nix eval nixpkgs\#imagemagick.outPath | tr -d '"')/bin/convert"
 convert_cmd () {
-if  ! command -v convert &> /dev/null; then $CONVERT "$@"; else convert "$@"; fi
+if  ! command -v magick &> /dev/null; then $CONVERT "$@"; else convert "$@"; fi
 }
 
 
@@ -19,7 +19,7 @@ change_to_webp() {
  file="${f%.*}"
  file_webp="${file}.webp"
  echo "Trying to convert to $file_webp"
- if convert_cmd "$f" "$file_webp"; then
+ if convert_cmd "$f" -define webp:thread-level=1 -define webp:method=6 -quality 99 "$file_webp"; then
   if touch -r "$f" "$file_webp"; then
    rm "$f"
    echo "Finished converting $f"
