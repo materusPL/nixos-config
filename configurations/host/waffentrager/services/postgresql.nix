@@ -20,7 +20,6 @@
         host all all ::1/128 scram-sha-256
       '';
       systemd.services.postgresql = {
-        partOf = [ "elements-mount.service" ];
         requires = [ "elements-mount.service" ];
         after = [ "elements-mount.service" ];
       };

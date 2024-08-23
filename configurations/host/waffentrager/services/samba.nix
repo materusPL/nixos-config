@@ -10,12 +10,10 @@
       waffentragerService.elements.enable = true;
 
       systemd.services.samba-nmbd = {
-        partOf = [ "elements-mount.service" ];
         requires = [ "elements-mount.service" ];
         after = [ "elements-mount.service" ];
       };
       systemd.services.samba-wsdd = {
-        partOf = [ "elements-mount.service" ];
         requires = [ "elements-mount.service" ];
         after = [ "elements-mount.service" ];
       };

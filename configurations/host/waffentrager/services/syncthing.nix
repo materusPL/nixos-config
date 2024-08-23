@@ -10,7 +10,6 @@
       waffentragerService.elements.enable = true;      networking.firewall.allowedTCPPorts = [ 22000 config.services.syncthing.relay.statusPort config.services.syncthing.relay.port];
       networking.firewall.allowedUDPPorts = [ 22000 21027 ];
       systemd.services.syncthing = {
-        partOf = [ "elements-mount.service" ];
         requires = [ "elements-mount.service" ];
         after = [ "elements-mount.service" ];
       };

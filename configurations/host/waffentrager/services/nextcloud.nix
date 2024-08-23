@@ -41,6 +41,7 @@
           inherit notify_push previewgenerator;
         };
         settings = {
+          log_type = "file";
           "profile.enabled" = true;
           default_phone_region = "PL";
           trusted_proxies = [ materusArg.ips.valkyrie materusArg.ips.wireguard.valkyrie materusArg.ips.wireguard.waffentrager ];
@@ -81,7 +82,7 @@
           "opcache.fast_shutdown" = "1";
           "opcache.save_comments" = "1";
         };
-        phpExtraExtensions = ex: [ ex.zip ex.zlib ex.tidy ex.smbclient ];
+        phpExtraExtensions = ex: [ ex.zip ex.zlib ex.tidy ex.smbclient ex.sodium ];
       };
       services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
         forceSSL = true;
@@ -91,6 +92,10 @@
         sslCertificate = "/var/lib/mnt_acme/materus.pl/fullchain.pem";
         extraConfig = ''
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          dav_methods PUT DELETE MKCOL COPY MOVE;
+          dav_ext_methods PROPFIND OPTIONS;
+          create_full_put_path on;
+          dav_access user:rw group:rw all:r;
         '';
       };
     };

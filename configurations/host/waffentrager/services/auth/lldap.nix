@@ -32,7 +32,6 @@
       };
 
       systemd.services.lldap = {
-        partOf = [ "elements-mount.service" ];
         requires = [ "elements-mount.service" ];
         after = [ "elements-mount.service" ];
         serviceConfig = {
