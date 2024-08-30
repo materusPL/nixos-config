@@ -1,5 +1,8 @@
 {config, pkgs, materusArg, ...}:
 {
+
+    services.jackett.enable = true;
+
     environment.systemPackages = with pkgs; [
     #(pkgs.lutris.override { extraLibraries = pkgs: with pkgs;  [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
     materusArg.pkgs.amdgpu-pro-libs.prefixes
@@ -108,5 +111,6 @@
     picard
     opusTools
     aegisub
+    audacity
   ];
 }
