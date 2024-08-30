@@ -11,7 +11,7 @@
 
   boot.initrd.availableKernelModules = [ "ata_piix" "virtio_pci" "floppy" "sr_mod" "virtio_blk" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernel.sysctl = { "net.ipv4.ip_forward" = 1; };
+  boot.kernel.sysctl = { "net.ipv4.ip_forward" = 1; "net.ipv6.conf.all.forwarding" = 1; };
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
   boot.tmp.useTmpfs = true;
