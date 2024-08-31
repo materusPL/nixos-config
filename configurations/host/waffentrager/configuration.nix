@@ -10,7 +10,8 @@
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
-
+  networking.firewall.allowedTCPPorts = [ 1900 ];
+  networking.firewall.allowedUDPPorts = [ 1900 7359];
   materus.profile.nixpkgs.enable = true;
   environment.systemPackages = with pkgs; [
     libraspberrypi
