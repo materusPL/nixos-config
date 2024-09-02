@@ -11,6 +11,7 @@
       ./samba.nix
       ./syncthing.nix
       ./jellyfin.nix
+      ./grafana.nix
       ./auth
     ];
   waffentragerService.elements.enable = true;
@@ -22,4 +23,5 @@
   waffentragerService.samba.enable = true;
   waffentragerService.jellyfin.enable = true;
   waffentragerService.syncthing.enable = true;
+  waffentragerService.grafana.enable = false;
 }
