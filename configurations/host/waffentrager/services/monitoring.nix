@@ -1,9 +1,9 @@
 { materusArg, config, lib, ... }:
 {
-  options.waffentragerService.grafana.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable grafana";
+  options.waffentragerService.monitoring.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable monitoring";
   config =
     let
-      cfg = config.waffentragerService.grafana;
+      cfg = config.waffentragerService.monitoring;
     in
     lib.mkIf cfg.enable {
       services.grafana = {
@@ -21,7 +21,25 @@
           };
         };
       };
-
+      services.prometheus = {
+        enable = true;
+        port = 3233;
+        globalConfig.scrape_interval = "30s";
+        scrapeConfigs = [
+          {
+            job_name = "node";
+            static_configs = [{
+              targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
+            }];
+          }
+        ];
+      };
+      services.prometheus.exporters.node = {
+        enable = true;
+        port = 3234;
+        enabledCollectors = [ "systemd" ];
+        extraFlags = [ "--collector.ethtool" "--collector.softirqs" "--collector.tcpstat" "--collector.wifi" ];
+      };
       services.nginx.virtualHosts."watchman.materus.pl" = {
         addSSL = true;
         sslTrustedCertificate = "/var/lib/mnt_acme/materus.pl/chain.pem";
