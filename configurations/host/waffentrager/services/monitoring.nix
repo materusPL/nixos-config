@@ -25,6 +25,7 @@
         enable = true;
         port = 3233;
         globalConfig.scrape_interval = "30s";
+        stateDir = "elements/services/prometheus";
         scrapeConfigs = [
           {
             job_name = "node";
@@ -39,6 +40,7 @@
         port = 3234;
         enabledCollectors = [ "systemd" ];
         extraFlags = [ "--collector.ethtool" "--collector.softirqs" "--collector.tcpstat" "--collector.wifi" ];
+        
       };
       services.nginx.virtualHosts."watchman.materus.pl" = {
         addSSL = true;
