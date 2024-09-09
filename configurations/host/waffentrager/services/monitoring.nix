@@ -11,11 +11,9 @@
         enable = true;
         settings = {
           server = {
-            # Listening Address
             http_addr = "127.0.0.1";
-            # and Port
             http_port = 3232;
-            # Grafana needs to know on which domain and URL it's running
+            
             domain = "watchman.materus.pl";
             serve_from_sub_path = true;
           };

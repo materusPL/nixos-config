@@ -28,9 +28,9 @@
         wantedBy = [ "multi-user.target" ];
         path = [ pkgs.jdk ];
         script = let 
-          musicbot = let version = "0.4.2"; in (pkgs.fetchurl {
+          musicbot = let version = "0.4.3"; in (pkgs.fetchurl {
               url = "https://github.com/jagrosh/MusicBot/releases/download/${version}/JMusicBot-${version}.jar";
-              sha256 = "sha256-Jg6/ju3ADBd7fc3njRzoEDVjIL4SzAzlTc02I4Q9hz4=";
+              sha256 = "sha256-7CHFc94Fe6ip7RY+XJR9gWpZPKM5JY7utHp8C3paU9s=";
             });
         
         in ''
