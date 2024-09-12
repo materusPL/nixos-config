@@ -2,16 +2,17 @@
 {
   imports =
     [
-      ./elements.nix
-      ./postgresql.nix
-      ./mount-acme.nix
-      ./gitea.nix
-      ./nginx.nix
-      ./nextcloud.nix
-      ./samba.nix
-      ./syncthing.nix
-      ./jellyfin.nix
+      ./storage/elements.nix
+      ./storage/mount-acme.nix
+      ./storage/gitea.nix
+      ./storage/nextcloud.nix
+      ./storage/samba.nix
+      ./storage/syncthing.nix
+      ./multimedia/jellyfin.nix
+      ./multimedia/scrobbling.nix
       ./monitoring.nix
+      ./nginx.nix
+      ./postgresql.nix
       ./auth
     ];
   waffentragerService.elements.enable = true;
@@ -22,6 +23,8 @@
   waffentragerService.nextcloud.enable = true;
   waffentragerService.samba.enable = true;
   waffentragerService.jellyfin.enable = true;
+  waffentragerService.scrobbling.enable = true;
+
   waffentragerService.syncthing.enable = true;
   waffentragerService.monitoring.enable = true;
 }

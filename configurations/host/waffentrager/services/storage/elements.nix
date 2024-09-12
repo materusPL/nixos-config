@@ -7,6 +7,8 @@
   options.waffentragerService.elements.nextcloudDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/nextcloud"; };
   options.waffentragerService.elements.lldapDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/lldap"; };
   options.waffentragerService.elements.jellyfinDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/jellyfin"; };
+  options.waffentragerService.elements.malojaDir = lib.mkOption { default = "${config.waffentragerService.elements.path}/services/maloja"; };
+
   config =
     let
       cfg = config.waffentragerService.elements;
@@ -35,7 +37,11 @@
         '' + lib.optionalString config.waffentragerService.jellyfin.enable ''
           mkdir -p ${cfg.jellyfinDir}
           chown -R materus:nextcloud ${cfg.jellyfinDir}
+        '' + lib.optionalString config.waffentragerService.scrobbling.enable ''
+          mkdir -p ${cfg.malojaDir}/multi-scrobbler
+          chown -R ${cfg.malojaDir}
         ''
+
 
         ;
         preStop = ''

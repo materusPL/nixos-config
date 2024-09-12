@@ -7,4 +7,9 @@
     ./secrets
     ./services
   ];
+
+  virtualisation.podman.autoPrune.enable = true;
+  virtualisation.podman.autoPrune.dates = "daily";
+  virtualisation.oci-containers.backend = "podman";
+
 }

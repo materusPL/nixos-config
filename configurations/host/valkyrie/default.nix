@@ -142,6 +142,11 @@
   };
 
 
+  virtualisation.podman.autoPrune.enable = true;
+  virtualisation.podman.autoPrune.dates = "daily";
+  virtualisation.oci-containers.backend = "podman";
+
+
   security.acme.acceptTerms = true;
   security.acme.defaults.email = "materus+acme@podkos.pl";
   security.acme.defaults.credentialsFile = config.sops.secrets.certs.path;
