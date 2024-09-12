@@ -25,7 +25,22 @@
           mkdir -p ${cfg.path}
           cryptsetup luksOpen /dev/disk/by-uuid/${cfg.uuid} elements -d ${config.sops.secrets.elements.path}
           mount /dev/mapper/elements ${cfg.path}
-        '' + lib.optionalString config.waffentragerService.postgresql.enable ''
+        ''
+
+        ;
+        preStop = ''
+          umount ${cfg.path}
+          cryptsetup luksClose elements
+        '';
+      };
+
+      systemd.services.elements-dirmake = {
+        description = "Create dirs in elements drive";
+        path = [ pkgs.cryptsetup pkgs.coreutils pkgs.util-linux ];
+
+        serviceConfig.Type = "oneshot";
+        serviceConfig.RemainAfterExit = false;
+        script = lib.optionalString config.waffentragerService.postgresql.enable ''
           mkdir -p ${cfg.postgresqlDir}/${config.waffentragerService.postgresql.version}
           chown -R postgres:postgres ${cfg.postgresqlDir}
         '' + lib.optionalString config.waffentragerService.nextcloud.enable ''
@@ -39,15 +54,11 @@
           chown -R materus:nextcloud ${cfg.jellyfinDir}
         '' + lib.optionalString config.waffentragerService.scrobbling.enable ''
           mkdir -p ${cfg.malojaDir}/multi-scrobbler
-          chown -R ${cfg.malojaDir}
+          chown -R scrobbler:scrobbler ${cfg.malojaDir}
         ''
 
 
         ;
-        preStop = ''
-          umount ${cfg.path}
-          cryptsetup luksClose elements
-        '';
       };
 
     };
