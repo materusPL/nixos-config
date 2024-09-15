@@ -1,6 +1,6 @@
 #/usr/bin/env bash
 IFS=$'\n'
-
+nix build nixpkgs\#imagemagick --no-link
 CONVERT="$(nix eval nixpkgs\#imagemagick.outPath | tr -d '"')/bin/magick"
 convert_cmd () {
 if  ! command -v magick &> /dev/null; then $CONVERT "$@"; else convert "$@"; fi
