@@ -29,4 +29,9 @@
   materus.profile.fonts.enable = true;
   materus.profile.steam.enable = true;
 
+  services.logind.extraConfig  = ''
+    NAutoVTs=4
+    ReserveVT=4
+  '';
+
 }
