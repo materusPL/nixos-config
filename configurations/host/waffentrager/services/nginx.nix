@@ -1,4 +1,4 @@
-{ materusArg, config, lib, ... }:
+{ materusArg, config, lib, pkgs, ... }:
 {
   options.waffentragerService.nginx.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable nginx";
 
@@ -14,6 +14,16 @@
         recommendedTlsSettings = true;
         recommendedOptimisation = true;
         recommendedGzipSettings = true;
+        package = pkgs.tengine;
+        virtualHosts."default" = {
+          sslTrustedCertificate = "/var/lib/mnt_acme/materus.pl/chain.pem";
+          sslCertificateKey = "/var/lib/mnt_acme/materus.pl/key.pem";
+          sslCertificate = "/var/lib/mnt_acme/materus.pl/fullchain.pem";
+          forceSSL = true;
+          http2 = false;
+          default = true;
+          locations."/" = { extraConfig = ''deny all;''; };
+        };
       };
 
       systemd.services.nginx = {
