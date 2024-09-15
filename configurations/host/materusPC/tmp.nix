@@ -76,7 +76,6 @@
       "libvirt"
       "libvirtd"
       "podman"
-      "lxd"
     ];
     shell = pkgs.zsh;
     description = "Mateusz Słodkowicz";
