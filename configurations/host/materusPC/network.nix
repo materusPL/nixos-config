@@ -4,6 +4,19 @@
     WIREGUARD_PRIVATEKEY="${config.sops.placeholder.wireguard}"
   '';
 
+  networking.firewall = {
+   logReversePathDrops = false;
+   # wireguard trips rpfilter up
+   extraCommands = ''
+     ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport ${materusArg.wireguard.port} -j RETURN
+     ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --dport ${materusArg.wireguard.port} -j RETURN
+   '';
+   extraStopCommands = ''
+     ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --sport ${materusArg.wireguard.port} -j RETURN || true
+     ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport ${materusArg.wireguard.port} -j RETURN || true
+   '';
+  };
+
   networking.useDHCP = lib.mkDefault true;
   networking.hostName = "materusPC";
   networking.wireless.iwd.enable = true;
@@ -23,6 +36,7 @@
       uri = "http://nmcheck.gnome.org/check_network_status.txt";
     };
   };
+  
 
   networking.networkmanager.ensureProfiles.environmentFiles = [
     config.sops.templates."networkmanager.env".path
