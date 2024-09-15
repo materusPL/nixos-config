@@ -33,6 +33,7 @@ with materusArg.pkgs.lib;
     (discord.override { nss = nss_latest; withOpenASAR = true; withTTS = true; })
     tdesktop
     mpv
+    syncplay
     ani-cli
     nextcloud-client
     spotify
