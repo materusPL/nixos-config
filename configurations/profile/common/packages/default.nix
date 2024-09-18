@@ -32,7 +32,6 @@ with materusArg.pkgs.lib;
   options.materus.profile.packages.list.desktopApps = mkPrivateVar (with pkgs; [
     (discord.override { nss = nss_latest; withOpenASAR = true; withTTS = true; })
     tdesktop
-    mpv
     syncplay
     ani-cli
     nextcloud-client

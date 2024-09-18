@@ -27,6 +27,22 @@ in
         (if cfg.enableTerminal then packages.list.terminalApps else [ ]);
       #Desktop
       programs.feh.enable = lib.mkDefault cfg.enableDesktop;
+      programs.mpv = lib.mkIf cfg.enableDesktop {
+        enable = true;
+        config = {
+          vo = "gpu-next";
+          profile="gpu-hq";
+          ytdl-format = "bestvideo+bestaudio";
+          slang="pl,pol,Polish,Polski,en,eng,English";
+          alang="ja,jp,jpn,Japanese,pl,pol,Polski,en,eng,English";
+          demuxer-max-bytes="500MiB";
+          demuxer-max-back-bytes="150MiB";
+          cache="yes";
+          cache-pause-wait="10";
+          cache-pause-initial="yes";
+          keep-open="yes";
+        };
+      };
 
       #Terminal
       programs.git = {
