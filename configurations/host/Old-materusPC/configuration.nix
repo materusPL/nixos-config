@@ -2,8 +2,10 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, materusArg, ... }:
-
+{ config, pkgs, materusCfg, materusArg, ... }:
+let
+  unstable = import materusCfg.materusFlake.inputs.nixpkgs { system = "x86_64-linux"; config = { allowUnfree = true; nvidia.acceptLicense = true; }; };
+in
 {
   imports =
     [
@@ -33,7 +35,7 @@
   };
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
-  boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelPackages = unstable.linuxPackages_zen;
   boot.tmp.useTmpfs = true;
 
   services.flatpak.enable = true;
@@ -231,7 +233,7 @@
 
   fonts.fontDir.enable = true;
   fonts.enableDefaultPackages = true;
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     dejavu_fonts
     hack-font
     noto-fonts
