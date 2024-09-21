@@ -39,6 +39,7 @@
       "wireguard-peer.${materusArg.wireguard.pubKeys.valkyrie}" = {
         endpoint = "${materusArg.ips.valkyrie}:${materusArg.wireguard.port}";
         allowed-ips = "${materusArg.ip-masks.wireguard.general};";
+        persistent-keepalive = "20";
       };
       ipv4 = {
         address1 = "${materusArg.ips.wireguard.Old-materusPC}/23";
