@@ -30,8 +30,6 @@ in
       programs.mpv = lib.mkIf cfg.enableDesktop {
         enable = true;
         config = {
-          vo = "gpu-next";
-          profile="gpu-hq";
           ytdl-format = "bestvideo+bestaudio";
           slang="pl,pol,Polish,Polski,en,eng,English";
           alang="ja,jp,jpn,Japanese,pl,pol,Polski,en,eng,English";
