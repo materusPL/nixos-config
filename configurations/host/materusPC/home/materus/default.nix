@@ -71,7 +71,7 @@
       freetype.dev
 
       fpc
-      openjdk21
+      gradle
       bison
       flex
 
@@ -109,6 +109,10 @@
     ];
   };
 
+  home.file.".gradle/gradle.properties".text = ''
+  org.gradle.java.installations.fromEnv=JAVA_8_HOME,JAVA_17_HOME,JAVA_21_HOME
+  org.gradle.home=${pkgs.jdk21}
+  '';
 
   xdg.desktopEntries.brave-browser =
     let

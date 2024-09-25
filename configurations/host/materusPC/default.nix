@@ -7,6 +7,7 @@
       ./vm
       ./secrets
       ./containers
+      ./other
 
       ./scripts.nix
       ./tmp.nix
@@ -15,7 +16,6 @@
       ./kde.nix
 
       ./audio.nix
-      ./apps.nix
     ];
 
 

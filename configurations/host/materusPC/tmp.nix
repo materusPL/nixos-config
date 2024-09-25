@@ -166,9 +166,6 @@
   environment.shells = with pkgs; [ zsh bashInteractive fish ];
   programs = {
     fish.enable = true;
-    java.enable = true;
-    java.package = pkgs.graalvm-ce;
-    java.binfmt = true;
     command-not-found.enable = false;
     dconf.enable = true;
   };
