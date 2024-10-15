@@ -1,9 +1,9 @@
-{config, pkgs, materusArg, ...}:
+{ config, pkgs, materusArg, ... }:
 {
 
-    services.jackett.enable = true;
+  services.jackett.enable = true;
 
-    environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; [
     #(pkgs.lutris.override { extraLibraries = pkgs: with pkgs;  [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
     materusArg.pkgs.amdgpu-pro-libs.prefixes
     (pkgs.bottles.override { extraPkgs = pkgs: [ pkgs.libsForQt5.breeze-qt5 pkgs.kdePackages.breeze-gtk pkgs.nss_latest ]; extraLibraries = pkgs: [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
@@ -15,7 +15,8 @@
     kdePackages.dolphin
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     vlc
-    
+    vkbasalt-cli
+
     patchelf
     killall
     util-linux
@@ -104,7 +105,7 @@
 
 
     binutils
-    
+
     qbittorrent
     mkvtoolnix
     nicotine-plus

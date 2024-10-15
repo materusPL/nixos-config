@@ -33,6 +33,7 @@
     vaapiVdpau
     libvdpau-va-gl
     amdvlk
+    vkbasalt
     rocmPackages.clr.icd
     rocmPackages.clr
     materusArg.pkgs.amdgpu-pro-libs.vulkan
@@ -40,6 +41,7 @@
   ];
   hardware.opengl.extraPackages32 = with pkgs.pkgsi686Linux; [
     vaapiVdpau
+    vkbasalt
     pkgs.driversi686Linux.amdvlk
     materusArg.pkgs.i686Linux.amdgpu-pro-libs.vulkan
     libvdpau-va-gl

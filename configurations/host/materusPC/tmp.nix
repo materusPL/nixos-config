@@ -76,6 +76,8 @@
       "libvirt"
       "libvirtd"
       "podman"
+      "scanner"
+      "lp"
     ];
     shell = pkgs.zsh;
     description = "Mateusz Słodkowicz";
@@ -160,6 +162,9 @@
     openFirewall = true;
     autoStart = false;
   };
+  
+  hardware.sane.enable = true;
+  hardware.sane.extraBackends = [ pkgs.hplipWithPlugin ];
 
   environment.enableAllTerminfo = true;
   environment.pathsToLink = [ "/share/zsh" "/share/bash-completion" "/share/fish" ];

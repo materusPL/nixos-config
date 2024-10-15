@@ -4,6 +4,8 @@ let
     pkgs = (import materusCfg.nixerus { inherit pkgs; }) //
       (if pkgs.system == "x86_64-linux" then { i686Linux = import materusCfg.nixerus { pkgs = pkgs.pkgsi686Linux; }; } else { });
     cfg = materusCfg;
+    unstable = import materusCfg.materusFlake.inputs.nixpkgs { system = materusCfg.arch; config = { allowUnfree = true; nvidia.acceptLicense = true; }; };
+
   };
 in
 {

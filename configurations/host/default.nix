@@ -13,6 +13,7 @@ let
         inherit host;
         inherit hm;
         inherit hmAsModule;
+        inherit arch;
         nixerus = if stable then inputs.configInputs-stable.nixerus else inputs.configInputs.nixerus;
         configInputs = if stable then inputs.configInputs-stable else inputs.configInputs;
         path = materusFlake.selfPath;
