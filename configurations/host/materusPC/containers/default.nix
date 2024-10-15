@@ -1,5 +1,8 @@
 {...}:
 {
+  imports = [
+    ./arch.nix
+  ];
   virtualisation.lxc.enable = true;
   virtualisation.lxc.lxcfs.enable = true;
   virtualisation.lxd.enable = false;
