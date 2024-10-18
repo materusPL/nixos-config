@@ -13,8 +13,6 @@
       ./tmp.nix
       ./network.nix
 
-      ./kde.nix
-
       ./audio.nix
     ];
 

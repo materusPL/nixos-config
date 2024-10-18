@@ -30,10 +30,6 @@
 
   services.xserver.displayManager.startx.enable = false;
 
-  xdg.portal.enable = true;
-  xdg.portal.wlr.enable = true;
-  xdg.portal.xdgOpenUsePortal = true;
-
   services.xserver.exportConfiguration = true;
   services.xserver.extraConfig = pkgs.lib.mkDefault ''
     Section "OutputClass"
