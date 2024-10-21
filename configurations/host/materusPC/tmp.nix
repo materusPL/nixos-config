@@ -53,33 +53,6 @@
 
 
 
-
-
-
-
-  users.users.materus = {
-    isNormalUser = true;
-    extraGroups = [
-      "audio"
-      "video"
-      "render"
-      "pipewire"
-      "wheel"
-      "networkmanager"
-      "input"
-      "kvm"
-      "libvirt-qemu"
-      "libvirt"
-      "libvirtd"
-      "podman"
-      "scanner"
-      "lp"
-    ];
-    shell = pkgs.zsh;
-    description = "Mateusz Słodkowicz";
-    openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
-  };
-
   environment.sessionVariables = {
     XDG_CACHE_HOME = "\${HOME}/.cache";
     XDG_CONFIG_HOME = "\${HOME}/.config";
