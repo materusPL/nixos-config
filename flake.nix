@@ -29,10 +29,9 @@
       ref = "main";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
       };
     };
-    
+
     home-manager = {
       type = "github";
       owner = "nix-community";
@@ -90,6 +89,17 @@
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-utils.follows = "flake-utils";
+      };
+    };
+
+    plasma-manager = {
+      type = "github";
+      owner = "nix-community";
+      repo = "plasma-manager";
+      ref = "trunk";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "home-manager";
       };
     };
 
