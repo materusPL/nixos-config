@@ -6,7 +6,7 @@ let
   '';
 in
 {
-  options.materus.profile.wezterm.enable = materusArg.pkgs.lib.mkBoolOpt config.materus.profile.enableDesktop "Enable materus wezterm config";
+  options.materus.profile.wezterm.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable materus wezterm config";
   options.materus.profile.wezterm.enableHackFont = materusArg.pkgs.lib.mkBoolOpt true "Enable hack nerd font for wezterm";
   options.materus.profile.wezterm.enableWezcraft = materusArg.pkgs.lib.mkBoolOpt true "Enable alias to start wezcraft with monocraft font";
   options.materus.profile.wezterm.extraConfig = lib.mkOption {
