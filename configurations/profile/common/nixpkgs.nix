@@ -81,6 +81,11 @@ in
       flake = materusCfg.configInputs.git-agecrypt;
     };
 
+    plasma-manager = {
+      from = { type = "indirect"; id = "git-agecrypt"; };
+      flake = materusCfg.configInputs.plasma-manager;
+    };
+
     nur = {
       from = { type = "indirect"; id = "nur"; };
       flake = materusCfg.configInputs.nur;
