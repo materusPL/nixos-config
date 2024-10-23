@@ -34,6 +34,7 @@ let
 
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.sharedModules = [ materusCfg.configInputs.plasma-manager.homeManagerModules.plasma-manager ];
             home-manager.users = (builtins.foldl' (a: b: a // b) { } (builtins.map
               (user: {
                 ${user} = ({ ... }:
