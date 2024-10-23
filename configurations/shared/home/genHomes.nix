@@ -49,6 +49,7 @@ let
             ./${username}
             profiles.homeProfile
             materusCfg.configInputs.sops-nix.homeManagerModules.sops
+            materusCfg.configInputs.plasma-manager.homeManagerModules.plasma-manager
           ];
         };
     };
