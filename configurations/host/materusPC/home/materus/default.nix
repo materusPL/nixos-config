@@ -1,5 +1,8 @@
 { pkgs, materusArg, lib, ... }:
 {
+  imports = [
+    ./plasma.nix
+  ];
   home.stateVersion = "23.05";
   home.homeDirectory = "/home/materus";
 
@@ -81,7 +84,6 @@
   };
 
   home.packages = [
-    pkgs.papirus-icon-theme
     materusArg.pkgs.ffmpeg_7-amf-full
     (materusArg.pkgs.polymc-qt5.wrap { extraJDKs = [ pkgs.graalvm-ce ]; extraLibs = [ ]; })
     pkgs.git-crypt
@@ -106,8 +108,8 @@
   };
 
   home.file.".gradle/gradle.properties".text = ''
-  org.gradle.java.installations.fromEnv=JAVA_8_HOME,JAVA_17_HOME,JAVA_21_HOME
-  org.gradle.home=${pkgs.jdk21}
+    org.gradle.java.installations.fromEnv=JAVA_8_HOME,JAVA_17_HOME,JAVA_21_HOME
+    org.gradle.home=${pkgs.jdk21}
   '';
 
   xdg.desktopEntries.brave-browser =

@@ -19,9 +19,6 @@ let
                 (materusFlake.selfPath + "/configurations/shared/home/${username}")
                 (materusFlake.selfPath + "/configurations/host/${host}/home/${username}")
                 profiles.homeProfile
-                materusFlake.nixosConfigurations.${host}.materusCfg.configInputs.sops-nix.homeManagerModules.sops
-                materusFlake.nixosConfigurations.${host}.materusCfg.configInputs.plasma-manager.homeManagerModules.plasma-manager
-
               ];
             };
         }]
