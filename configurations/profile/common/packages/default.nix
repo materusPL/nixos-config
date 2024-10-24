@@ -40,6 +40,7 @@ with materusArg.pkgs.lib;
     keepassxc
     (aspellWithDicts (ds: with ds; [ en en-computers en-science pl ]))
     onlyoffice-bin
+    qalculate-qt
   ]);
 
   options.materus.profile.packages.list.terminalApps = mkPrivateVar (with pkgs; [
