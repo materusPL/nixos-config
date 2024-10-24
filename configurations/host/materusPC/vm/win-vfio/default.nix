@@ -174,6 +174,17 @@ in
 
       fi
 
+
+      if [ ''$1 = "windows" ]; then
+        if [ ''$2 = "prepare" ] && [ ''$3 = "begin" ]; then
+          systemctl stop windows-share-mount.service
+        fi
+
+        if [ ''$2 = "release" ] && [ ''$3 = "end" ]; then
+          systemctl start windows-share-mount.service
+        fi
+      fi
+
     
     '';
   };
