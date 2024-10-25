@@ -98,6 +98,7 @@
       hosts deny = 0.0.0.0/0
       guest account = nobody
       map to guest = bad user
+      allow insecure wide links = yes
     '';
     shares = {
       windows = {
@@ -109,6 +110,8 @@
         "directory mask" = "0755";
         "force user" = "materus";
         "force group" = "users";
+        "follow symlinks" = "yes";
+        "wide links" = "yes";
       };
     };
   };
