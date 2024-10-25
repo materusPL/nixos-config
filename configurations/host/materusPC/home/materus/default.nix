@@ -115,7 +115,6 @@
   xdg.desktopEntries.brave-browser =
     let
       env = lib.concatStringsSep " " [
-        ''NIXOS_OZONE_WL="1"''
       ];
       script = pkgs.writeShellScript "brave" ''
         ${env} brave "$@"
