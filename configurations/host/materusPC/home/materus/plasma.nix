@@ -79,6 +79,7 @@
             config = {
               General = {
                 icon = "nix-snowflake-white";
+                customButtonImage="nix-snowflake-white";
                 alphaSort = true;
               };
             };
