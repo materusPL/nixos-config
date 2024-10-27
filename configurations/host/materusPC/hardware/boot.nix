@@ -43,6 +43,7 @@ in
   boot.kernel.sysctl = {
     "vm.max_map_count" = 1000000;
     "vm.swappiness" = 10;
+    "net.ipv4.ip_forward"=1;
   };
 
 

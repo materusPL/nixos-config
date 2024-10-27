@@ -38,6 +38,7 @@
 
 
 ;Graphical
+(setq frame-resize-pixelwise t)
 (when (display-graphic-p)
   (set-frame-font "Hack Nerd Font" nil t)
 )

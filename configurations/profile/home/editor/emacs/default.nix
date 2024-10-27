@@ -113,7 +113,16 @@ in
 
     programs.emacs = {
       enable = true;
-      package = with pkgs; lib.mkDefault materusArg.pkgs.emacs-materus;
+      package = with pkgs; lib.mkDefault (pkgs.emacs29.override {
+        withSQLite3 = true;
+        withWebP = true;
+        withX = true;
+        withGTK3 = true;
+        withAlsaLib = true;
+        withGconf = true;
+        withImageMagick = true;
+        withXwidgets = true;
+      });
       extraPackages = epkgs: ((packages epkgs));
       extraConfig = default-config;
     };

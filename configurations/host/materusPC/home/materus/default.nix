@@ -10,12 +10,14 @@
 
   xdg.userDirs.enable = true;
   materus.profile = {
+    
     fonts.enable = lib.mkDefault true;
     nixpkgs.enable = lib.mkDefault false;
     enableDesktop = lib.mkDefault true;
     enableTerminal = lib.mkDefault true;
     enableTerminalExtra = lib.mkDefault true;
     enableNixDevel = lib.mkDefault true;
+    editor.emacs.enable = false;
     editor.code.fhs.enable = true;
     editor.code.fhs.packages = (ps: with ps; let llvmpkgs = llvmPackages_18; in [
       llvmpkgs.clang
@@ -79,7 +81,7 @@
       dub
     ]);
 
-    editor.emacs.enable = false;
+    
 
   };
 
