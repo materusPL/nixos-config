@@ -107,8 +107,8 @@
       "kcminputrc"."Libinput/9610/46/SINOWEALTH Wired Gaming Mouse"."PointerAccelerationProfile" = 1;
       "kcminputrc"."Libinput/9610/47/SINOWEALTH 2.4G Wireless Receiver"."PointerAccelerationProfile" = 1;
 
-      "spectaclerc"."ImageSave"."imageFilenameTemplate" = "<yyyy>-<MM>-<dd>.<hh>_<mm>_<ss>-<t>.materusPC.<#>";
-      "spectaclerc"."VideoSave"."videoFilenameTemplate" = "<yyyy>-<MM>-<dd>.<hh>_<mm>_<ss>-<t>.materusPC.<#>";
+      "spectaclerc"."ImageSave"."imageFilenameTemplate" = "<yyyy>-<MM>-<dd>.<hh>_<mm>_<ss>-<t>.materusPC";
+      "spectaclerc"."VideoSave"."videoFilenameTemplate" = "<yyyy>-<MM>-<dd>.<hh>_<mm>_<ss>-<t>.materusPC";
       "spectaclerc"."ImageSave"."preferredImageFormat" = "WEBP";
       "spectaclerc"."ImageSave"."translatedScreenshotsFolder" = "Zrzuty ekranu";
       "spectaclerc"."VideoSave"."translatedScreencastsFolder" = "Nagranie ekranu";
