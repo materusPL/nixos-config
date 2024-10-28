@@ -44,6 +44,7 @@
     shortcuts = {
       "kwin"."Grid View" = "Meta+Alt+Tab";
       "kwin"."Overview" = "Meta+Tab";
+      "services/org.kde.kcalc.desktop"."_launch" = [ ];
     };
     spectacle.shortcuts = {
       captureActiveWindow = "Meta+Print";

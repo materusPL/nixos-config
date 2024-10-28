@@ -26,6 +26,7 @@
   };
   environment.systemPackages = with pkgs; [
     kdePackages.ark
+    kdePackages.kcalc
   ];
   programs.kdeconnect.enable = true;
   materus.profile.steam.extraPkgs = [ pkgs.kdePackages.breeze pkgs.kdePackages.breeze-gtk pkgs.kdePackages.dolphin pkgs.vlc pkgs.vkbasalt-cli ];

@@ -26,16 +26,30 @@
   )
 )
 )
-(setq auto-save-list-file-prefix (concat user-emacs-directory "backups/"))
-(setq backup-directory-alist
-  `(("." . ,(concat user-emacs-directory "backups/"))))
 
+
+
+(setq custom-file (concat user-emacs-directory "etc/custom.el"))
+
+(setq auto-save-default nil)          
+(setq backup-directory-alist
+  `((".*" . ,(concat user-emacs-directory "var/backups/"))))
+(setq auto-save-file-name-transforms
+  `((".*" ,(concat user-emacs-directory "var/recovery/") t)))
+  
+
+; Load packages
 (require 'telephone-line)
 (require 'elcord)
 (require 'dashboard)
 (require 'minions)
 (require 'doom-themes)
-
+(require 'nerd-icons)
+(require 'centaur-tabs)
+(require 'projectile)
+(require 'treemacs)
+(require 'treemacs-projectile)
+(require 'treemacs-nerd-icons)
 
 ;Graphical
 (setq frame-resize-pixelwise t)
@@ -46,7 +60,6 @@
 
 
 (setq read-process-output-max (* 1024 1024 3))
-(setq custom-file (concat user-emacs-directory "custom.el"))
 (when (or (not (display-graphic-p)) (daemonp))
   (xterm-mouse-mode 1)
 )
@@ -79,18 +92,29 @@
 
 ;Enable dashboard
 (setq dashboard-center-content t)
+(setq dashboard-display-icons-p t)
+(setq dashboard-icon-type 'nerd-icons)
 (dashboard-setup-startup-hook)
 (when (daemonp)
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ; Show dashboard when emacs is running as daemon
 )
 
+;Enable Centaur tabs
+(centaur-tabs-mode t)
+(setq centaur-tabs-set-bar 'over)
+(setq centaur-tabs-set-modified-marker t)
+;(setq centaur-tabs-modified-marker "*")
 
-
+;Enable treemacs
+(global-set-key (kbd "C-H-t") 'treemacs)
 
 ;CUA
 (cua-mode 1)
 (global-set-key (kbd "C-y") 'undo-redo)
 
-;(define-key key-translation-map [8711] 'event-apply-hyper-modifier )
+
+(define-key key-translation-map (kbd "<XF86Calculator>") 'event-apply-hyper-modifier )
+(define-key key-translation-map (kbd "<Calculator>") 'event-apply-hyper-modifier )
+
 ;(global-set-key (kbd "C-∇") (kbd "C-H"))
 ;(global-set-key (kbd "H-∇") (lambda () (interactive) (insert-char #x2207)))
