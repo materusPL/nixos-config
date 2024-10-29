@@ -26,7 +26,7 @@
       raylib
       gcc
       gdb
-      nil
+      nixd
       nixfmt-classic
       nixpkgs-fmt
       cmake

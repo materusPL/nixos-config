@@ -5,7 +5,7 @@
   ];
   home.stateVersion = "23.05";
   home.homeDirectory = "/home/materus";
-
+  
   programs.git.signing.signByDefault = true;
 
   xdg.userDirs.enable = true;
@@ -33,7 +33,7 @@
       raylib
       gcc
       gdb
-      nil
+      nixd
       nixfmt-classic
       nixpkgs-fmt
       cmake

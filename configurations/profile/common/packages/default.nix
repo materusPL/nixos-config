@@ -24,7 +24,7 @@ with materusArg.pkgs.lib;
     nix-tree
     nix-diff
     nix-ld
-    nil
+    nixd
     nixpkgs-fmt
     nixpkgs-review
   ]);
