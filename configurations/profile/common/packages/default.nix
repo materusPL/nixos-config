@@ -47,6 +47,7 @@ with materusArg.pkgs.lib;
     neofetch
     ripgrep
     fd
+    micro
   ]);
 
 }
