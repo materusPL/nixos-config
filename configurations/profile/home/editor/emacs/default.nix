@@ -21,6 +21,13 @@ let
       projectile
       company
       clipetty
+      which-key
+      iedit
+
+      #Evil-Mode
+      evil
+      treemacs-evil
+      #########
 
       treemacs
       treemacs-nerd-icons
@@ -47,16 +54,20 @@ let
       lsp-treemacs
       dap-mode
       d-mode
+      lua-mode
       multiple-cursors
       org
       org-rainbow-tags
       org-roam
       org-roam-ui
       org-review
+      csharp-mode
       markdown-mode
       json-mode
       nix-mode
+
       no-littering
+      right-click-context
 
       moe-theme
       doom-themes
@@ -67,18 +78,34 @@ let
     ${inits.initText}
   '';
 
-  emacsPkgs = with pkgs; [ python3 lua multimarkdown git ];
+  emacsEnv = pkgs.buildEnv {
+    name = "emacs-env";
+    paths = with pkgs; [
+      python3
+      lua
+      multimarkdown
+      git
+      emacs-lsp-booster
+      llvmPackages.clang-tools
+      llvmPackages.clang
+      llvmPackages.lldb
+      (hiPrio gcc)
+      gdb
+      nixd
+      jdt-language-server
+      omnisharp-roslyn
+    ];
+  };
 
   cfg = config.materus.profile.editor.emacs;
 
   setNixInit = ''
-    (setenv "PATH" (concat (getenv "PATH") ":${lib.makeBinPath emacsPkgs}"))
-    ${builtins.concatStringsSep "\n" (builtins.map
-      (x: ''(setq exec-path (append exec-path '("'' + x + ''/bin")))'')
-      emacsPkgs)}
+    (setenv "PATH" (concat (getenv "PATH") ":${emacsEnv}/bin"))
+    (setq exec-path (append exec-path '("${emacsEnv}/bin")))
     (call-process-shell-command "${pkgs.xorg.xmodmap}/bin/xmodmap -e \"keycode 148 = Hyper_L\" -e \"remove Mod4 = Hyper_L\" -e \"add Mod3 = Hyper_L\" &" nil 0)
   '';
-in {
+in
+{
   options.materus.profile.editor.emacs.enable =
     materusArg.pkgs.lib.mkBoolOpt false "Enable emacs with materus cfg";
 
@@ -96,14 +123,14 @@ in {
     xdg.configFile."emacs/early-init.el".text = ''
       ${inits.earlyInitText}
     '';
-    xdg.configFile."emacs/init.el".text =''
-    (require 'recentf)
-    (require 'no-littering)
-    (add-to-list 'recentf-exclude
-                (recentf-expand-file-name no-littering-var-directory))
-    (add-to-list 'recentf-exclude
-                (recentf-expand-file-name no-littering-etc-directory))
-             '';
+    xdg.configFile."emacs/init.el".text = ''
+      (require 'recentf)
+      (require 'no-littering)
+      (add-to-list 'recentf-exclude
+                  (recentf-expand-file-name no-littering-var-directory))
+      (add-to-list 'recentf-exclude
+                  (recentf-expand-file-name no-littering-etc-directory))
+    '';
 
     programs.emacs = {
       enable = true;

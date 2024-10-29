@@ -72,13 +72,15 @@
 (setq-default cursor-type '(bar . 1))
 (pixel-scroll-precision-mode 1)
 
+(context-menu-mode 1)
 (setq mouse-wheel-follow-mouse 't)
 (setq scroll-step 1)
 (setq mouse-drag-and-drop-region t)
 (telephone-line-mode 1)
 (setq-default pixel-scroll-precision-large-scroll-height 10.0)
 (minions-mode 1)
-(elcord-mode)
+(unless (daemonp)
+  (elcord-mode 1))
 
 ;Hide startup screen if started with file
 (defun startup-screen-advice (orig-fun &rest args)
@@ -112,9 +114,15 @@
 (cua-mode 1)
 (global-set-key (kbd "C-y") 'undo-redo)
 
+(global-set-key (kbd "C-<tab>") 'indent-rigidly-right-to-tab-stop)
+(global-set-key (kbd "<backtab>") 'indent-rigidly-left-to-tab-stop)
+
 
 (define-key key-translation-map (kbd "<XF86Calculator>") 'event-apply-hyper-modifier )
 (define-key key-translation-map (kbd "<Calculator>") 'event-apply-hyper-modifier )
+(define-key key-translation-map (kbd "∇") 'event-apply-hyper-modifier )
 
 ;(global-set-key (kbd "C-∇") (kbd "C-H"))
 ;(global-set-key (kbd "H-∇") (lambda () (interactive) (insert-char #x2207)))
+
+
