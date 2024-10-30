@@ -1,14 +1,12 @@
 { config, lib, pkgs, materusArg, ... }:
 let
   configPath = "${materusArg.cfg.path}" + "/extraFiles/config/emacs/";
-
   inits = import ./init.nix {
     path = configPath;
     inherit pkgs;
   };
   packages = epkgs:
     with epkgs; [
-      load-relative
       elcord
       persp-mode
       dashboard
@@ -23,12 +21,9 @@ let
       clipetty
       which-key
       iedit
-
-      #Evil-Mode
+      hideshowvis
       evil
       treemacs-evil
-      #########
-
       treemacs
       treemacs-nerd-icons
       treemacs-perspective
@@ -44,7 +39,6 @@ let
       telephone-line
       rainbow-delimiters
       use-package
-
       cmake-mode
       lsp-mode
       lsp-java
@@ -65,10 +59,8 @@ let
       markdown-mode
       json-mode
       nix-mode
-
       no-littering
       right-click-context
-
       moe-theme
       doom-themes
     ];
@@ -116,26 +108,25 @@ in
       mkdir -p ${config.xdg.configHome}/emacs/etc
       run ${config.programs.emacs.finalPackage}/bin/emacs --batch \
       --eval '(setq warning-minimum-log-level :error)' \
+      --eval '(byte-recompile-directory "${config.xdg.configHome}/emacs/etc/materus" 0 t)' \
       --eval '(byte-compile-file "${config.xdg.configHome}/emacs/early-init.el")' \
       --eval '(byte-compile-file "${config.xdg.configHome}/emacs/init.el")'
     '';
 
-    xdg.configFile."emacs/early-init.el".text = ''
-      ${inits.earlyInitText}
-    '';
-    xdg.configFile."emacs/init.el".text = ''
-      (require 'recentf)
-      (require 'no-littering)
-      (add-to-list 'recentf-exclude
-                  (recentf-expand-file-name no-littering-var-directory))
-      (add-to-list 'recentf-exclude
-                  (recentf-expand-file-name no-littering-etc-directory))
-    '';
+    xdg.configFile = {
+      "emacs/early-init.el".text = inits.earlyInitText;
+      "emacs/init.el".text = default-config;
+      "emacs/etc/materus" =
+        {
+          source = configPath + "etc/materus";
+          recursive = true;
+        };
+    };
 
     programs.emacs = {
       enable = true;
       package = with pkgs;
-        lib.mkDefault (pkgs.emacs29.override {
+        lib.mkDefault (pkgs.emacs29.override ({
           withSQLite3 = true;
           withWebP = true;
           withX = true;
@@ -144,9 +135,8 @@ in
           withGconf = true;
           withImageMagick = true;
           withXwidgets = true;
-        });
+        }));
       extraPackages = epkgs: ((packages epkgs));
-      extraConfig = default-config;
     };
 
   };

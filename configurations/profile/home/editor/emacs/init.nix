@@ -6,7 +6,6 @@
   '';
   initText = ''
     ${builtins.readFile (path + "init.el")}
-    ${builtins.readFile (path + "lsp.el")}
     
 
   '';

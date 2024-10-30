@@ -1,9 +1,11 @@
-{ pkgs, ... }:
+{ pkgs, materusArg, ... }:
 {
   home.packages = [
     pkgs.papirus-icon-theme
     (pkgs.nerdfonts.override { fonts = [ "Hack" ]; })
   ];
+
+  xdg.dataFile."konsole/materus-linux.keytab".source = ("${materusArg.cfg.path}" + "/extraFiles/config/plasma/materus-linux.keytab");
   programs.konsole = {
     enable = true;
     profiles = {
@@ -11,6 +13,9 @@
         colorScheme = "Breeze";
         font.name = "Hack Nerd Font";
         extraConfig = {
+          Keyboard = {
+            KeyBindings="materus-linux";
+          };
           Scrolling = {
             HistoryMode = 2;
           };
@@ -35,7 +40,7 @@
     overrideConfig = false;
 
 
-
+    
     workspace = {
       lookAndFeel = "org.kde.breezedark.desktop";
       iconTheme = "Papirus-Dark";

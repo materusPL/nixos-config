@@ -4,17 +4,17 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
 if [ $# = 0 ] || ( [ $# = 1 ] && [ $1 = "help" ] ); then
-echo "Use \"unlock\" to unlock with pgp"
-echo "Use \"unlock\" /path/to/key to unlock with symmetric key"
-echo "Use \"lock\": to lock repository"
-exit
+    echo "Use \"unlock\" to unlock with pgp"
+    echo "Use \"unlock\" /path/to/key to unlock with symmetric key"
+    echo "Use \"lock\": to lock repository"
+    exit
 fi
 check_git () {
-if [ "$(git status --porcelain)" ]; then
-echo "Working directory not clean."
-echo "Please commit your changes or 'git stash' them before running this script"
-exit 1
-fi
+    if [ "$(git status --porcelain)" ]; then
+	echo "Working directory not clean."
+	echo "Please commit your changes or 'git stash' them before running this script"
+	exit 1
+    fi
 }
 
 create_decrypt () {
