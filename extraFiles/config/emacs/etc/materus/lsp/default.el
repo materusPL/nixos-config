@@ -42,21 +42,11 @@
                      :priority 0
                      :server-id 'nixd)))
 
-
-;; Hooks
-(add-hook 'c-mode-hook 'lsp-deferred)
-(add-hook 'c-mode-hook 'display-line-numbers-mode)
-
-(add-hook 'c++-mode-hook 'lsp-deferred)
-(add-hook 'c++-mode-hook 'display-line-numbers-mode)
+(load (concat materus/cfg "/lsp/cpp"))
+(load (concat materus/cfg "/lsp/java"))
+(load (concat materus/cfg "/lsp/nix"))
+(load (concat materus/cfg "/lsp/lisp"))
 
 
 
-(add-hook 'nix-mode-hook 'lsp-deferred)
-(add-hook 'nix-mode-hook 'display-line-numbers-mode)
 
-(add-hook 'java-mode-hook 'lsp-deferred)
-(add-hook 'nix-mode-hook 'display-line-numbers-mode)
-
-(add-hook 'emacs-lisp-mode-hook 'display-line-numbers-mode)
-(add-hook 'emacs-lisp-mode-hook 'company-mode)

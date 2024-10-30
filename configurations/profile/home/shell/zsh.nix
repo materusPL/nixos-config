@@ -163,6 +163,8 @@ in
         speedtest() {
           ${lib.getExe pkgs.curl} -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | ${lib.getExe pkgs.python3} 
         }
+        ${lib.optionalString config.materus.profile.editor.emacs.enable ''alias "e"="emacsclient -nw -c --alternate-editor= "''}
+        
 
 
       '' +

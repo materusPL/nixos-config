@@ -25,7 +25,12 @@
 
 
 (tool-bar-mode -1)
-(load-theme 'doom-horizon t)
+(if (daemonp) 
+	    (add-hook 'after-make-frame-functions 
+		      (lambda (frame) 
+			(with-selected-frame frame (load-theme 'doom-horizon t)))) 
+	  (load-theme 'doom-horizon t))
+
 
 (setq-default cursor-type '(bar . 1))
 (pixel-scroll-precision-mode 1)
@@ -93,4 +98,4 @@
 ;(global-set-key (kbd "H-∇") (lambda () (interactive) (insert-char #x2207)))
 
 
-(load (concat materus/cfg "/lsp"))
+(load (concat materus/cfg "/lsp/default"))

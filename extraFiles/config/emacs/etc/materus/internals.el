@@ -52,11 +52,9 @@
   )
 
 
-
+(xterm-mouse-mode 1)
 
 (setq read-process-output-max (* 1024 1024 3))
-(when (or (not (display-graphic-p)) (daemonp))
-  (xterm-mouse-mode 1)
-  )
+
 
 (setq ring-bell-function 'ignore)
