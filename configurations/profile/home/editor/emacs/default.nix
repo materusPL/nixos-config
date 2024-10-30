@@ -11,7 +11,6 @@ let
       persp-mode
       dashboard
       magit
-      helm
       avy
       corfu
       vterm
@@ -32,6 +31,7 @@ let
       treemacs-projectile
       tree-edit
       vertico
+      marginalia
       nerd-icons
       nerd-icons-completion
       perspective
@@ -63,6 +63,7 @@ let
       right-click-context
       moe-theme
       doom-themes
+      orderless
     ];
 
   default-config = ''
@@ -125,8 +126,8 @@ in
 
     programs.emacs = {
       enable = true;
-      package = with pkgs;
-        lib.mkDefault (pkgs.emacs29.override ({
+      package = 
+        lib.mkDefault (pkgs.emacs29.override {
           withSQLite3 = true;
           withWebP = true;
           withX = true;
@@ -135,8 +136,8 @@ in
           withGconf = true;
           withImageMagick = true;
           withXwidgets = true;
-        }));
-      extraPackages = epkgs: ((packages epkgs));
+        });
+      extraPackages = epkgs: (packages epkgs);
     };
 
   };
