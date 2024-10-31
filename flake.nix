@@ -71,6 +71,17 @@
       };
     };
 
+    nix-vscode-extensions = {
+      type = "github";
+      owner = "nix-community";
+      repo = "nix-vscode-extensions";
+      ref = "master";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
+    };
+
     sops-nix = {
       type = "github";
       owner = "Mic92";
