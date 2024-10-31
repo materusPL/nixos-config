@@ -31,7 +31,7 @@ let
         (if hmAsModule then hm.nixosModules.home-manager else { })
         (if hmAsModule then
           {
-
+            home-manager.backupFileExtension = "hm-backup";
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.sharedModules = [
