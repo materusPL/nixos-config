@@ -90,7 +90,10 @@ in
       from = { type = "indirect"; id = "nur"; };
       flake = materusCfg.configInputs.nur;
     };
-
+    nix-vscode-extensions = {
+      from = { type = "indirect"; id = "nix-vscode-extensions"; };
+      flake = materusCfg.configInputs.nix-vscode-extensions;
+    };
 
   };
 }
