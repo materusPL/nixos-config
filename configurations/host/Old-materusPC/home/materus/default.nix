@@ -35,6 +35,8 @@
     "clang-format.executable" = "${pkgs.clang-tools}/bin/clang-format";
     "clang-tidy.executable" =  "${pkgs.clang-tools}/bin/clang-tidy";
 
+    "python.defaultInterpreterPath"= "${pkgs.python3Full}/bin/python";
+
   };
 
   materus.profile = {
@@ -59,10 +61,12 @@
         vscode-marketplace.ms-vscode.cmake-tools
         open-vsx.xaver.clang-format
         vscode-marketplace.cs128.cs128-clang-tidy
+
         #Python
         vscode-marketplace.ms-python.python
         vscode-marketplace.ms-python.vscode-pylance
         vscode-marketplace.ms-python.debugpy
+
         # CSharp
         vscode-marketplace.ms-dotnettools.csharp
         vscode-marketplace.ms-dotnettools.csdevkit
@@ -78,7 +82,6 @@
 
         #Nix
         open-vsx.jnoortheen.nix-ide
-        open-vsx.arrterian.nix-env-selector
 
         #Web
         open-vsx.ecmel.vscode-html-css
@@ -107,6 +110,7 @@
         open-vsx.leonardssh.vscord
         open-vsx.ms-vscode.hexeditor
         open-vsx.alefragnani.project-manager
+        vscode-marketplace.cantonios.project-templates
 
         #Icons
         open-vsx.pkief.material-icon-theme
