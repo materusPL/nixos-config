@@ -19,7 +19,7 @@
     "window.dialogStyle" = "custom";
     "window.titleBarStyle" = "custom";
     "editor.fontFamily" = "'Hack Nerd Font', 'monospace', monospace";
-    "workbench.colorTheme" = "Tokyo Night";
+    "workbench.colorTheme" = "Dracula Theme";
     "workbench.productIconTheme" = "material-product-icons";
     "workbench.iconTheme" = "material-icon-theme";
 
@@ -34,6 +34,7 @@
 
 
   };
+
   materus.profile = {
     fonts.enable = lib.mkDefault true;
     nixpkgs.enable = lib.mkDefault false;
@@ -51,10 +52,9 @@
       with pkgs;
       [
         #Cpp
-        vscode-marketplace.twxs.cmake
+        open-vsx.twxs.cmake
         vscode-extensions.ms-vscode.cpptools
         vscode-marketplace.ms-vscode.cmake-tools
-        vscode-marketplace.ms-vscode.cpptools-themes
         #Python
         vscode-marketplace.ms-python.python
         vscode-marketplace.ms-python.vscode-pylance
@@ -65,51 +65,50 @@
 
 
         #Java
-        vscode-marketplace.redhat.java
-        vscode-marketplace.vscjava.vscode-java-debug
+        open-vsx.redhat.java
+        open-vsx.vscjava.vscode-java-debug
 
         #DLang
-        vscode-marketplace.webfreak.code-d
+        open-vsx.webfreak.code-d
 
 
         #Nix
-        vscode-marketplace.jnoortheen.nix-ide
-        vscode-marketplace.arrterian.nix-env-selector
+        open-vsx.jnoortheen.nix-ide
+        open-vsx.arrterian.nix-env-selector
 
         #Web
-        vscode-marketplace.ecmel.vscode-html-css
-        vscode-marketplace.formulahendry.auto-close-tag
+        open-vsx.ecmel.vscode-html-css
+        open-vsx.formulahendry.auto-close-tag
 
         #Lua
-        vscode-marketplace.sumneko.lua
+        open-vsx.sumneko.lua
 
         #YAML, XML
-        vscode-marketplace.redhat.vscode-yaml
-        vscode-marketplace.redhat.vscode-xml
+        open-vsx.redhat.vscode-yaml
+        open-vsx.redhat.vscode-xml
 
         #Git
-        vscode-marketplace.donjayamanne.githistory
-        vscode-marketplace.mhutchie.git-graph
-        vscode-marketplace.eamodio.gitlens
+        open-vsx.donjayamanne.githistory
+        open-vsx.mhutchie.git-graph
+        open-vsx.eamodio.gitlens
 
         #Other 
-        vscode-marketplace.ms-azuretools.vscode-docker
-        vscode-marketplace.webfreak.debug
-        vscode-marketplace.mkhl.direnv
+        open-vsx.ms-azuretools.vscode-docker
+        open-vsx.webfreak.debug
+        open-vsx.mkhl.direnv
         vscode-marketplace.ms-vscode-remote.remote-ssh
         vscode-marketplace.ms-vscode-remote.remote-containers
-        vscode-marketplace.esbenp.prettier-vscode
-        vscode-marketplace.formulahendry.code-runner
-        vscode-marketplace.leonardssh.vscord
-        vscode-marketplace.ms-vscode.hexeditor
-        vscode-marketplace.alefragnani.project-manager
+        open-vsx.esbenp.prettier-vscode
+        open-vsx.formulahendry.code-runner
+        open-vsx.leonardssh.vscord
+        open-vsx.ms-vscode.hexeditor
+        open-vsx.alefragnani.project-manager
 
         #Icons
-        vscode-marketplace.pkief.material-icon-theme
-        vscode-marketplace.pkief.material-product-icons
+        open-vsx.pkief.material-icon-theme
+        open-vsx.pkief.material-product-icons
         #Themes
-        vscode-marketplace.enkia.tokyo-night
-        vscode-marketplace.ghgofort.neon-vommit
+        open-vsx.dracula-theme.theme-dracula
 
         #Languages
         vscode-marketplace.ms-ceintl.vscode-language-pack-pl
