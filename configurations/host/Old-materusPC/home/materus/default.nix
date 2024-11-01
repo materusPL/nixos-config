@@ -32,11 +32,14 @@
     "nix.serverPath" = "${pkgs.nixd}/bin/nixd";
     "nix.formatterPath" = "${pkgs.nixfmt-classic}/bin/nixfmt";
 
-    "clang-format.executable" = "${pkgs.clang-tools}/bin/clang-format";
-    "clang-tidy.executable" =  "${pkgs.clang-tools}/bin/clang-tidy";
+    "C_Cpp.clang_format_path" = "${pkgs.clang-tools}/bin/clang-format";
+    "C_Cpp.clang_format_fallbackStyle" = "Microsoft";
+    "clang-tidy.executable" = "${pkgs.clang-tools}/bin/clang-tidy";
 
-    "python.defaultInterpreterPath"= "${pkgs.python3Full}/bin/python";
-
+    "python.defaultInterpreterPath" = "${pkgs.python3Full}/bin/python";
+    "[cpp]" = {
+      "editor.defaultFormatter" = "xaver.clang-format";
+    };
   };
 
   materus.profile = {
@@ -59,7 +62,6 @@
         open-vsx.twxs.cmake
         vscode-extensions.ms-vscode.cpptools
         vscode-marketplace.ms-vscode.cmake-tools
-        open-vsx.xaver.clang-format
         vscode-marketplace.cs128.cs128-clang-tidy
 
         #Python
