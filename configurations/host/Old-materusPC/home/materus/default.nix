@@ -70,8 +70,7 @@
         vscode-marketplace.ms-python.debugpy
 
         # CSharp
-        vscode-marketplace.ms-dotnettools.csharp
-        vscode-marketplace.ms-dotnettools.csdevkit
+        open-vsx.muhammad-sammy.csharp
 
 
         #Java
