@@ -36,3 +36,9 @@
   (startup-redirect-eln-cache
    (convert-standard-filename
     (expand-file-name  "var/eln-cache/" user-emacs-directory))))
+
+(setq auto-save-default nil)          
+(setq backup-directory-alist
+      `((".*" . ,(concat user-emacs-directory "var/backups/"))))
+(setq auto-save-file-name-transforms
+      `((".*" ,(concat user-emacs-directory "var/recovery/") t)))

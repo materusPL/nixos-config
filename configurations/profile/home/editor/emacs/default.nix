@@ -14,7 +14,6 @@ let
       avy
       corfu
       vterm
-      centaur-tabs
       projectile
       company
       clipetty
@@ -61,9 +60,13 @@ let
       nix-mode
       no-littering
       right-click-context
-      moe-theme
+      dracula-theme
       doom-themes
       orderless
+      popper
+      undo-tree
+      bash-completion
+      consult
     ];
 
   default-config = ''
@@ -96,6 +99,7 @@ let
     (setenv "PATH" (concat (getenv "PATH") ":${emacsEnv}/bin"))
     (setq exec-path (append exec-path '("${emacsEnv}/bin")))
     (call-process-shell-command "${pkgs.xorg.xmodmap}/bin/xmodmap -e \"keycode 148 = Hyper_L\" -e \"remove Mod4 = Hyper_L\" -e \"add Mod3 = Hyper_L\" &" nil 0)
+    (call-process-shell-command "${pkgs.xorg.xmodmap}/bin/xmodmap -e \"keycode 66 = Hyper_L\" -e \"remove Mod4 = Hyper_L\" -e \"add Mod3 = Hyper_L\" &" nil 0)
   '';
 in
 {

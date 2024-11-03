@@ -37,16 +37,15 @@
 
 (setq custom-file (concat user-emacs-directory "etc/custom.el"))
 
-(setq auto-save-default nil)          
-(setq backup-directory-alist
-      `((".*" . ,(concat user-emacs-directory "var/backups/"))))
-(setq auto-save-file-name-transforms
-      `((".*" ,(concat user-emacs-directory "var/recovery/") t)))
+  
+
 
 
 
 ;;. Graphical
 (setq frame-resize-pixelwise t)
+(setq window-resize-pixelwise t)
+
 (when (display-graphic-p)
   (set-frame-font "Hack Nerd Font" nil t)
   )
