@@ -205,7 +205,7 @@
   (display-time-mode 1))
 
 (use-package minions
-	:hook (after-init . minions-mode))
+:hook (after-init . minions-mode))
 
 (use-package org
   :mode (("\\.org$" . org-mode))
