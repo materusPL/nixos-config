@@ -254,7 +254,7 @@
   (marginalia-mode 1))
 
 (use-package company
-:hook (after-init-hook . global-company-mode))
+:init (global-company-mode 1))
 
 (electric-pair-mode 1)
 (electric-indent-mode 0)
