@@ -24,9 +24,14 @@ let
     open-vsx.muhammad-sammy.csharp
 
     #Java
-    open-vsx.redhat.java
-    open-vsx.vscjava.vscode-java-debug
+    vscode-marketplace.redhat.java
+    vscode-marketplace.vscjava.vscode-java-debug
+    vscode-marketplace.vscjava.vscode-java-test
+    vscode-marketplace.vscjava.vscode-gradle
+    vscode-marketplace.vscjava.vscode-java-dependency
 
+    #JS 
+    vscode-marketplace.angular.ng-template
     #DLang
     open-vsx.webfreak.code-d
 
