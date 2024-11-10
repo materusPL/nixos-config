@@ -109,7 +109,10 @@
     ];
     configFile = {
       "kwinrc"."Effect-overview"."BorderActivate" = 9;
-
+      
+      "klaunchrc"."BusyCursorSettings"."Timeout" = 1;
+      "klaunchrc"."FeedbackStyle"."TaskbarButton" = false;
+      
       "kcminputrc"."Libinput/9610/46/SINOWEALTH Wired Gaming Mouse"."PointerAccelerationProfile" = 1;
       "kcminputrc"."Libinput/9610/47/SINOWEALTH 2.4G Wireless Receiver"."PointerAccelerationProfile" = 1;
 
