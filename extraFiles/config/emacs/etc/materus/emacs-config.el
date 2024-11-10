@@ -49,7 +49,6 @@
     doom-modeline
     rainbow-delimiters
     rainbow-mode
-    use-package
     cmake-mode
     lsp-mode
     lsp-java
@@ -107,6 +106,7 @@
     eshell-vterm
     empv
 	volatile-highlights
+	highlight
     )
   "A list of packages to ensure are installed at launch.")
 
@@ -257,7 +257,8 @@
 :init (global-company-mode 1))
 
 (electric-pair-mode 1)
-(electric-indent-mode 0)
+(electric-indent-mode -1)
+(setq-default buffer-file-coding-system 'utf-8-dos)
 
 (defun materus/elcord-toggle (&optional _frame)
   "Toggle elcord based on visible frames"

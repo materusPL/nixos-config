@@ -4,7 +4,7 @@
 #+STARTUP: showeverything
 #+PROPERTY: header-args :tangle etc/materus/emacs-config.el
 #+auto_tangle: t
-
+My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
 * Table of Contents    :TOC_3:
 - [[#init-files][Init Files]]
   - [[#early-init][Early Init]]
@@ -96,7 +96,7 @@ Early init file, setting for GC and some paths.
 :header-args: :tangle init.el
 :END:
 Init File
-Checking if using emacs from nix package, loads config and custom.el
+Checking if using emacs from my nix config (not used anymore, might use in future), loads config and custom.el
 #+begin_src emacs-lisp
   (setq-default materus/use-nix-packages (require 'materus-config nil 'noerror))
   (cua-mode 0) ; To load cua variables/functions but not set it up yet
@@ -106,6 +106,7 @@ Checking if using emacs from nix package, loads config and custom.el
 #+end_src
 
 ** Byte compile
+Byte compile files if not already.
 #+begin_src emacs-lisp
   (unless (file-exists-p (concat user-emacs-directory "etc/materus/emacs-config.elc"))
     (byte-compile-file (concat user-emacs-directory "etc/materus/emacs-config.el")))
@@ -118,6 +119,7 @@ Checking if using emacs from nix package, loads config and custom.el
 #+end_src
 * Packages
 Package manager config. Nix not used for portability and easier control.
+After some testing default package manager works best for me.
 ** Init
 #+begin_src emacs-lisp
   (require 'cl-lib)
@@ -166,7 +168,6 @@ Packages to install
       doom-modeline
       rainbow-delimiters
       rainbow-mode
-      use-package
       cmake-mode
       lsp-mode
       lsp-java
@@ -224,6 +225,7 @@ Packages to install
       eshell-vterm
       empv
   	volatile-highlights
+  	highlight
       )
     "A list of packages to ensure are installed at launch.")
 
@@ -242,9 +244,9 @@ Packages to install
 
 #+end_src
 * Configuration
+General configurations of packages modes etc.
 ** No Littering
 Set up no littering
-
 #+begin_src emacs-lisp
   (require 'recentf)
   (use-package no-littering
@@ -405,10 +407,12 @@ Org mode settings
 
 #+end_src
 ** Miscellaneous
+Other configs
 *** Defaults
 #+begin_src emacs-lisp
   (electric-pair-mode 1)
-  (electric-indent-mode 0)
+  (electric-indent-mode -1)
+  (setq-default buffer-file-coding-system 'utf-8-dos)
 #+end_src
 *** Elcord
 #+begin_src emacs-lisp
