@@ -82,7 +82,7 @@
     right-click-context
     dracula-theme
     doom-themes
-  doom-modeline
+      doom-modeline
     orderless
     popper
     undo-tree
@@ -106,7 +106,7 @@
     toc-org
     eshell-vterm
     empv
-  volatile-highlights
+      volatile-highlights
     )
   "A list of packages to ensure are installed at launch.")
 
@@ -117,10 +117,10 @@
 
 (defun materus/install-packages ()
   (unless (materus/packages-installed-p)
-  (package-refresh-contents)
-  (dolist (p materus/packages)
+      (package-refresh-contents)
+      (dolist (p materus/packages)
       (when (not (package-installed-p p))
-  	  (package-install p)))))
+  	      (package-install p)))))
 (materus/install-packages)
 
 (require 'recentf)
@@ -175,7 +175,7 @@
 (use-package dracula-theme :config
   (if (daemonp) 
     	(add-hook 'after-make-frame-functions 
-    			  (lambda (frame) 
+    			      (lambda (frame) 
     				(with-selected-frame frame (load-theme 'dracula t)))) 
       (load-theme 'dracula t)))
 
@@ -193,7 +193,7 @@
   (dashboard-setup-startup-hook)
   (when (daemonp)
     (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ; Show dashboard when emacs is running as daemon
-  )
+      )
   )
 
 (use-package doom-modeline
@@ -245,11 +245,11 @@
   :after (consult marginalia)
   :config
   (setq completion-in-region-function
-  	  (lambda (&rest args)
+  	      (lambda (&rest args)
           (apply (if vertico-mode
-  				   #'consult-completion-in-region
+  				       #'consult-completion-in-region
                    #'completion--in-region)
-  			   args)))
+  			       args)))
   (vertico-mode 1)
   (marginalia-mode 1))
 
