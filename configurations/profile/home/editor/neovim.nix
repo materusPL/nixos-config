@@ -13,7 +13,7 @@ in
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
-      defaultEditor = true;
+      defaultEditor = lib.mkDefault false;
 
 
       extraConfig = ''

@@ -1,21 +1,15 @@
+(defvar materus/init-early t) 			; Var to ensure early-init loaded
+(setq materus/init-early t)			; Probably useless
 
-
-
-(defvar materus/init-early t)
-(setq materus/init-early t)
-
-(when (boundp 'native-comp-eln-load-path)
-  (startup-redirect-eln-cache (expand-file-name "/var/eln-cache/" user-emacs-directory)))
-
-(tool-bar-mode -1)
 (setq initial-major-mode 'fundamental-mode)
-(setq-default package-quickstart t)
+(setq native-comp-async-report-warnings-errors nil)
+(setq package-enable-at-startup nil)
+
 (setq native-comp-speed 3)
 (add-hook 'emacs-startup-hook (lambda () (package-initialize)
    (setq gc-cons-threshold 100000000 ; ~100mb
           gc-cons-percentage 0.1)
 ))
-(setq package-enable-at-startup nil)
 (unless (daemonp)
   (setq gc-cons-threshold most-positive-fixnum ; 2^61 bytes
       gc-cons-percentage 0.6)
@@ -30,6 +24,9 @@
   )
 )
 
+(when (boundp 'native-comp-eln-load-path)                        ; Change dir for eln-cache
+  (startup-redirect-eln-cache (expand-file-name "/var/eln-cache/" user-emacs-directory))) 
+
 (when (and (fboundp 'startup-redirect-eln-cache)
            (fboundp 'native-comp-available-p)
            (native-comp-available-p))
@@ -39,6 +36,8 @@
 
 (setq auto-save-default nil)          
 (setq backup-directory-alist
-      `((".*" . ,(concat user-emacs-directory "var/backups/"))))
-(setq auto-save-file-name-transforms
-      `((".*" ,(concat user-emacs-directory "var/recovery/") t)))
+      `((".*" . ,(concat user-emacs-directory "var/backups/"))))  ; Change backup and auto save dir to var dir 
+(setq auto-save-file-name-transforms                              	
+      `((".*" ,(concat user-emacs-directory "var/recovery/") t))) 
+(setq auto-save-list-file-prefix (concat user-emacs-directory "var/auto-save/sessions/"))
+(setq custom-file (concat user-emacs-directory "etc/custom.el"))

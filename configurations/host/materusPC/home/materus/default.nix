@@ -17,7 +17,7 @@
     enableTerminal = lib.mkDefault true;
     enableTerminalExtra = lib.mkDefault true;
     enableNixDevel = lib.mkDefault true;
-    editor.emacs.enable = false;
+    editor.emacs.enable = true;
     editor.code.fhs.enable = true;
     editor.code.fhs.packages = (ps: with ps; let llvmpkgs = llvmPackages_18; in [
       llvmpkgs.clang
