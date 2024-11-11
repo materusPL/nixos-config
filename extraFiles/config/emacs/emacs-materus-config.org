@@ -1,11 +1,11 @@
 #+TITLE: Materus Emacs Cfg
 #+AUTHOR: materus
 #+DESCRIPTION: materus emacs configuration
-#+STARTUP: showeverything
+#+STARTUP: overview
 #+PROPERTY: header-args :tangle etc/materus/emacs-config.el
 #+auto_tangle: t
 My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
-* Table of Contents    :TOC_3:
+* Table of Contents    :noexport:TOC_3:
 - [[#init-files][Init Files]]
   - [[#early-init][Early Init]]
   - [[#init][Init]]
@@ -44,10 +44,10 @@ My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
 :PROPERTIES:
 :header-args: :tangle early-init.el
 :END:
-Early init file, setting for GC and some paths. 
-#+begin_src emacs-lisp 
-  (defvar materus/init-early t) 			; Var to ensure early-init loaded
-  (setq materus/init-early t)			; Probably useless
+Early init file, setting for GC and some paths.
+#+begin_src emacs-lisp
+  (defvar materus/init-early t)           ; Var to ensure early-init loaded
+  (setq materus/init-early t)             ; Probably useless
 
   (setq initial-major-mode 'fundamental-mode)
   (setq native-comp-async-report-warnings-errors nil)
@@ -61,8 +61,6 @@ Early init file, setting for GC and some paths.
   (unless (daemonp)
     (setq gc-cons-threshold most-positive-fixnum ; 2^61 bytes
         gc-cons-percentage 0.6)
-    
-    
     (advice-add #'tty-run-terminal-initialization :override #'ignore)
     (add-hook 'window-setup-hook
       (lambda ()
@@ -82,11 +80,11 @@ Early init file, setting for GC and some paths.
      (convert-standard-filename
       (expand-file-name  "var/eln-cache/" user-emacs-directory))))
 
-  (setq auto-save-default nil)          
+  (setq auto-save-default nil)
   (setq backup-directory-alist
         `((".*" . ,(concat user-emacs-directory "var/backups/"))))  ; Change backup and auto save dir to var dir 
-  (setq auto-save-file-name-transforms                              	
-        `((".*" ,(concat user-emacs-directory "var/recovery/") t))) 
+  (setq auto-save-file-name-transforms
+        `((".*" ,(concat user-emacs-directory "var/recovery/") t)))
   (setq auto-save-list-file-prefix (concat user-emacs-directory "var/auto-save/sessions/"))
   (setq custom-file (concat user-emacs-directory "etc/custom.el"))
 #+end_src
@@ -125,11 +123,12 @@ After some testing default package manager works best for me.
   (require 'cl-lib)
   (require 'package)
   (setq package-user-dir (concat user-emacs-directory "var/elpa/" emacs-version "/" ))
+  (setq package-gnupghome-dir (concat user-emacs-directory "var/elpa/gnupg/" ))
   (add-to-list 'package-archives '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/"))
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
   (package-initialize)
 
-#+end_src
+  #+end_src
 ** Packages
 Packages to install
 #+begin_src emacs-lisp
@@ -200,7 +199,7 @@ Packages to install
       right-click-context
       dracula-theme
       doom-themes
-  	doom-modeline
+      doom-modeline
       orderless
       popper
       undo-tree
@@ -224,8 +223,11 @@ Packages to install
       toc-org
       eshell-vterm
       empv
-  	volatile-highlights
-  	highlight
+      volatile-highlights
+      highlight
+      elfeed
+      elfeed-goodies
+      drag-stuff
       )
     "A list of packages to ensure are installed at launch.")
 
@@ -236,10 +238,10 @@ Packages to install
 
   (defun materus/install-packages ()
     (unless (materus/packages-installed-p)
-  	(package-refresh-contents)
-  	(dolist (p materus/packages)
+      (package-refresh-contents)
+      (dolist (p materus/packages)
         (when (not (package-installed-p p))
-  		(package-install p)))))
+          (package-install p)))))
   (materus/install-packages)
 
 #+end_src
@@ -270,7 +272,6 @@ Graphical related settings.
 #+end_src
 *** Misc
 #+begin_src emacs-lisp
-
   (setq frame-inhibit-implied-resize t)
   (setq frame-resize-pixelwise t)
   (setq window-resize-pixelwise t)
@@ -288,7 +289,11 @@ Graphical related settings.
   (setq read-process-output-max (* 1024 1024 3))
   (setq ring-bell-function 'ignore)
   (setq-default cursor-type '(bar . 1))
-
+  ;; Rainbow mode
+  (use-package rainbow-mode
+    :hook
+    ((org-mode . rainbow-mode)
+     (prog-mode . rainbow-mode)))
 
   ;; Delimiters
   (use-package rainbow-delimiters :hook
@@ -305,17 +310,16 @@ Graphical related settings.
 
   ;; Theme
   (use-package dracula-theme :config
-    (if (daemonp) 
-    	  (add-hook 'after-make-frame-functions 
-    				(lambda (frame) 
-    				  (with-selected-frame frame (load-theme 'dracula t)))) 
-    	(load-theme 'dracula t)))
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions
+                  (lambda (frame)
+                    (with-selected-frame frame (load-theme 'dracula t))))
+      (load-theme 'dracula t)))
 
   (defun startup-screen-advice (orig-fun &rest args)
     (when (= (seq-count #'buffer-file-name (buffer-list)) 0)
       (apply orig-fun args)))
   (advice-add 'display-startup-screen :around #'startup-screen-advice) ; Hide startup screen if started with file
-
 #+end_src
 *** Dashboard
 #+begin_src emacs-lisp
@@ -328,7 +332,7 @@ Graphical related settings.
     (dashboard-setup-startup-hook)
     (when (daemonp)
       (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ; Show dashboard when emacs is running as daemon
-  	)
+      )
     )
 #+end_src
 *** Modeline
@@ -338,12 +342,11 @@ Graphical related settings.
     :hook (after-init . doom-modeline-mode)
     :config
     (setq doom-modeline-icon t)
-    (setq display-time-24hr-format t)
+    (setq display-time-24hr-format t)'
     (display-time-mode 1))
 
   (use-package minions
     :hook (after-init . minions-mode))
-
 #+end_src
 ** Org-mode
 Org mode settings
@@ -390,11 +393,11 @@ Org mode settings
     :after (consult marginalia)
     :config
     (setq completion-in-region-function
-  		(lambda (&rest args)
+          (lambda (&rest args)
             (apply (if vertico-mode
-  					 #'consult-completion-in-region
+                       #'consult-completion-in-region
                      #'completion--in-region)
-  				 args)))
+                   args)))
     (vertico-mode 1)
     (marginalia-mode 1))
 
@@ -412,6 +415,7 @@ Other configs
 #+begin_src emacs-lisp
   (electric-pair-mode 1)
   (electric-indent-mode -1)
+  (setq-default indent-tabs-mode nil)
   (setq-default buffer-file-coding-system 'utf-8-dos)
 #+end_src
 *** Elcord
@@ -541,7 +545,6 @@ Other configs
   (keymap-set cua--cua-keys-keymap "C-z" 'undo-tree-undo)
   (keymap-set cua--cua-keys-keymap "C-y" 'undo-tree-redo)
 
- 
   (keymap-set global-map "C-<iso-lefttab>" #'indent-rigidly-left-to-tab-stop)
   (keymap-set global-map "C-<tab>" #'indent-rigidly-right-to-tab-stop)
 
@@ -563,12 +566,11 @@ Just for testing some code
 
 
   ;;; (setq completion-styles '(orderless basic)
-  ;;;	   completion-category-defaults nil
-  ;;;	   completion-category-overrides '((file (styles partial-completion))))
+  ;;;   completion-category-defaults nil
+  ;;;   completion-category-overrides '((file (styles partial-completion))))
 
 
 
 
 
 #+end_src
-

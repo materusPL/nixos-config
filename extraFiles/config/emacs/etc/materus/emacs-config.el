@@ -10,6 +10,7 @@
 (require 'cl-lib)
 (require 'package)
 (setq package-user-dir (concat user-emacs-directory "var/elpa/" emacs-version "/" ))
+(setq package-gnupghome-dir (concat user-emacs-directory "var/elpa/gnupg/" ))
 (add-to-list 'package-archives '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
@@ -81,7 +82,7 @@
     right-click-context
     dracula-theme
     doom-themes
-	doom-modeline
+    doom-modeline
     orderless
     popper
     undo-tree
@@ -105,8 +106,11 @@
     toc-org
     eshell-vterm
     empv
-	volatile-highlights
-	highlight
+    volatile-highlights
+    highlight
+    elfeed
+    elfeed-goodies
+    drag-stuff
     )
   "A list of packages to ensure are installed at launch.")
 
@@ -117,10 +121,10 @@
 
 (defun materus/install-packages ()
   (unless (materus/packages-installed-p)
-	(package-refresh-contents)
-	(dolist (p materus/packages)
+    (package-refresh-contents)
+    (dolist (p materus/packages)
       (when (not (package-installed-p p))
-		(package-install p)))))
+        (package-install p)))))
 (materus/install-packages)
 
 (require 'recentf)
@@ -156,7 +160,11 @@
 (setq read-process-output-max (* 1024 1024 3))
 (setq ring-bell-function 'ignore)
 (setq-default cursor-type '(bar . 1))
-
+;; Rainbow mode
+(use-package rainbow-mode
+  :hook
+  ((org-mode . rainbow-mode)
+   (prog-mode . rainbow-mode)))
 
 ;; Delimiters
 (use-package rainbow-delimiters :hook
@@ -173,11 +181,11 @@
 
 ;; Theme
 (use-package dracula-theme :config
-  (if (daemonp) 
-  	  (add-hook 'after-make-frame-functions 
-  				(lambda (frame) 
-  				  (with-selected-frame frame (load-theme 'dracula t)))) 
-  	(load-theme 'dracula t)))
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame frame (load-theme 'dracula t))))
+    (load-theme 'dracula t)))
 
 (defun startup-screen-advice (orig-fun &rest args)
   (when (= (seq-count #'buffer-file-name (buffer-list)) 0)
@@ -193,7 +201,7 @@
   (dashboard-setup-startup-hook)
   (when (daemonp)
     (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ; Show dashboard when emacs is running as daemon
-	)
+    )
   )
 
 (use-package doom-modeline
@@ -201,7 +209,7 @@
   :hook (after-init . doom-modeline-mode)
   :config
   (setq doom-modeline-icon t)
-  (setq display-time-24hr-format t)
+  (setq display-time-24hr-format t)'
   (display-time-mode 1))
 
 (use-package minions
@@ -245,11 +253,11 @@
   :after (consult marginalia)
   :config
   (setq completion-in-region-function
-		(lambda (&rest args)
+        (lambda (&rest args)
           (apply (if vertico-mode
-					 #'consult-completion-in-region
+                     #'consult-completion-in-region
                    #'completion--in-region)
-				 args)))
+                 args)))
   (vertico-mode 1)
   (marginalia-mode 1))
 
@@ -258,6 +266,7 @@
 
 (electric-pair-mode 1)
 (electric-indent-mode -1)
+(setq-default indent-tabs-mode nil)
 (setq-default buffer-file-coding-system 'utf-8-dos)
 
 (defun materus/elcord-toggle (&optional _frame)
@@ -354,7 +363,6 @@
 (keymap-set cua--cua-keys-keymap "C-z" 'undo-tree-undo)
 (keymap-set cua--cua-keys-keymap "C-y" 'undo-tree-redo)
 
-
 (keymap-set global-map "C-<iso-lefttab>" #'indent-rigidly-left-to-tab-stop)
 (keymap-set global-map "C-<tab>" #'indent-rigidly-right-to-tab-stop)
 
@@ -371,5 +379,5 @@
 
 
 ;;; (setq completion-styles '(orderless basic)
-;;;	   completion-category-defaults nil
-;;;	   completion-category-overrides '((file (styles partial-completion))))
+;;;   completion-category-defaults nil
+;;;   completion-category-overrides '((file (styles partial-completion))))

@@ -89,7 +89,7 @@ in {
       name = "Emacs";
       genericName = "Edytor tekstu";
       comment = "Edytuj tekst";
-      exec = ''env COLORTERM=truecolor emacsclient -a "" -c %F'';
+      exec = ''env COLORTERM=truecolor emacsclient -a "" -r -n %F'';
       icon = "emacs";
       terminal = false;
       type = "Application";
@@ -113,7 +113,7 @@ in {
         "x-scheme-handler/org-protocol"
       ];
       actions.new-window = {
-        exec = ''env COLORTERM=truecolor emacsclient -a "" -c %F'';
+        exec = ''env COLORTERM=truecolor emacsclient -a "" -c -n %F'';
         name = "Nowe okno";
       };
       actions.no-daemon = {
