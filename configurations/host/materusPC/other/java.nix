@@ -7,8 +7,8 @@
   };
 
   environment.variables = { 
-    JAVA_8_HOME = pkgs.jdk8;
-    JAVA_17_HOME = pkgs.jdk17;
-    JAVA_21_HOME = pkgs.jdk21;
+    JAVA_8_HOME = "${pkgs.jdk8}/lib/openjdk/";
+    JAVA_17_HOME = "${pkgs.jdk17}/lib/openjdk/";
+    JAVA_21_HOME = "${pkgs.jdk21}/lib/openjdk/";
   };
 }

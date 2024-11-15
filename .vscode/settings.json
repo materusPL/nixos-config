@@ -1,6 +1,0 @@
-{
-    "nixEnvSelector.suggestion": false,
-    "files.associations": {
-        "iostream": "cpp"
-    }
-}

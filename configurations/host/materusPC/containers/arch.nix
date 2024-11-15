@@ -2,8 +2,8 @@
 let
   mainMirror = "https://ftp.icm.edu.pl/pub/Linux/dist/archlinux";
   extraMirrors = [ ];
-  getty = [ 5 6 ];
-  ttys = [ 5 6 7 8 ] ++ getty;
+  getty = [ 6 7 ];
+  ttys = [ 6 7 8 ] ++ getty;
 
   startPkgs = lib.strings.concatStringsSep " " [ "base" "base-devel" "dbus" "less" "nano" "bash-completion" ];
   scripts = {
@@ -28,6 +28,7 @@ let
               systemd-machine-id-setup --root="/var/lib/machines/archlinux"
               systemd-nspawn -q --settings=false --system-call-filter=@sandbox -D "/var/lib/machines/archlinux" /bin/sh -c "
                 export PATH=/bin
+                touch /etc/systemd/do-not-udevadm-trigger-on-update
                 pacman-key --init && pacman-key --populate
                 pacman -Rs --noconfirm arch-install-scripts
                 pacman -Sy --noconfirm --needed ${startPkgs}

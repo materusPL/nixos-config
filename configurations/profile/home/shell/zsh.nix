@@ -85,6 +85,11 @@ in
         ${makeEnv "__MATERUS_HM_ZSH_PRIVATE" "0"}
       '';
       initExtraFirst = ''
+
+        if [ -n "$EAT_SHELL_INTEGRATION_DIR" ]; then
+          source "$EAT_SHELL_INTEGRATION_DIR/zsh";
+        fi
+        
         ${makeIfVar "__MATERUS_HM_ZSH_PROMPT" "p10k" ''
               if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
                 source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
@@ -165,6 +170,8 @@ in
         }
         ${lib.optionalString config.materus.profile.editor.emacs.enable ''alias "e"="emacsclient -nw -c --alternate-editor= "''}
         ${lib.optionalString config.materus.profile.editor.emacs.enable ''alias "ee"="emacsclient -n -r --alternate-editor= "''}
+
+        
 
 
       '' +

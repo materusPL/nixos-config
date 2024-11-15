@@ -1,19 +1,25 @@
-(unless (file-exists-p (concat user-emacs-directory "etc/materus/emacs-config.elc"))
-  (byte-compile-file (concat user-emacs-directory "etc/materus/emacs-config.el")))
-
-(unless (file-exists-p (concat user-emacs-directory "init.elc"))
-  (byte-compile-file (concat user-emacs-directory "init.el")))
-
-(unless (file-exists-p (concat user-emacs-directory "early-init.elc"))
-  (byte-compile-file (concat user-emacs-directory "early-init.el")))
+;;; -*- lexical-binding: t; -*-
+(eval-when-compile 
+  (defvar doom-modeline-support-imenu nil)
+  (defvar display-time-24hr-format nil)
+  (defvar lsp-nix-nixd-formatting-command nil)
+  (defvar cua--cua-keys-keymap nil)
+  (declare-function lsp-stdio-connection "lsp-mode" (COMMAND &optional TEST-COMMAND))
+  (declare-function make-lsp-client "lsp-mode")
+  (declare-function lsp-register-client "lsp-mode" ( CLIENT ))
+  )
 
 (require 'cl-lib)
 (require 'package)
 (setq package-user-dir (concat user-emacs-directory "var/elpa/" emacs-version "/" ))
 (setq package-gnupghome-dir (concat user-emacs-directory "var/elpa/gnupg/" ))
+(setq package-quickstart t)
+(setq package-quickstart-file  
+      (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
+(add-to-list 'load-path (concat user-emacs-directory "etc/materus/extra"))
+
 (add-to-list 'package-archives '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
 
 (defvar materus/packages
   '(
@@ -24,10 +30,9 @@
     magit
     git-timemachine
     avy
-    corfu
     vterm
+    direnv
     projectile
-    company
     clipetty
     which-key
     iedit
@@ -41,13 +46,10 @@
     treemacs-magit
     treemacs-projectile
     tree-edit
-    vertico
-    marginalia
     nerd-icons
     nerd-icons-completion
     perspective
     minions
-    doom-modeline
     rainbow-delimiters
     rainbow-mode
     cmake-mode
@@ -57,6 +59,7 @@
     lsp-haskell
     lsp-ui
     lsp-treemacs
+    flycheck
     gradle-mode
     groovy-mode
     kotlin-mode
@@ -71,6 +74,7 @@
     org-roam
     org-roam-ui
     org-review
+    org-present
     org-superstar
     org-auto-tangle
     visual-fill-column
@@ -83,11 +87,9 @@
     dracula-theme
     doom-themes
     doom-modeline
-    orderless
     popper
     undo-tree
     bash-completion
-    consult
     eldoc-box
     yasnippet
     async
@@ -104,13 +106,24 @@
     zones
     sudo-edit
     toc-org
-    eshell-vterm
     empv
     volatile-highlights
     highlight
     elfeed
     elfeed-goodies
     drag-stuff
+    dirvish
+    rg
+    ;; Completions & Minibuffer
+    corfu
+    company
+    company-quickhelp
+    cape
+    embark
+    embark-consult
+    orderless
+    vertico
+    marginalia
     )
   "A list of packages to ensure are installed at launch.")
 
@@ -124,12 +137,18 @@
     (package-refresh-contents)
     (dolist (p materus/packages)
       (when (not (package-installed-p p))
-        (package-install p)))))
-(materus/install-packages)
+        (package-install p)))
+    (package-quickstart-refresh)))
+(unless materus/use-nix-packages 
+  (package-initialize)
+  (materus/install-packages)
+  (unless (file-exists-p package-quickstart-file) (package-quickstart-refresh) ))
 
 (require 'recentf)
 (use-package no-littering
 :config
+(setq package-quickstart-file  
+      (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
 (add-to-list 'recentf-exclude
              (recentf-expand-file-name no-littering-var-directory))
 (add-to-list 'recentf-exclude
@@ -143,6 +162,11 @@
 (pixel-scroll-precision-mode 1)
 (setq-default pixel-scroll-precision-large-scroll-height 10.0)
 
+(when (daemonp)
+  (add-hook 'after-make-frame-functions 
+            (lambda (frame) (when (= (length (frame-list)) 2)
+                              (set-frame-parameter frame 'fullscreen 'maximized)))))
+
 (setq frame-inhibit-implied-resize t)
 (setq frame-resize-pixelwise t)
 (setq window-resize-pixelwise t)
@@ -150,7 +174,7 @@
   (set-frame-font "Hack Nerd Font" nil t)
   )
 
-(setq-default display-line-numbers-width 4)
+(setq-default display-line-numbers-width 3)
 
 
 (global-tab-line-mode 1)
@@ -178,6 +202,11 @@
   )
 ;; Nerd Icons
 (use-package nerd-icons)
+(use-package nerd-icons-completion
+  :after (marginalia)
+  :config 
+  (nerd-icons-completion-mode 1)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
 ;; Theme
 (use-package dracula-theme :config
@@ -193,11 +222,17 @@
 (advice-add 'display-startup-screen :around #'startup-screen-advice) ; Hide startup screen if started with file
 
 (use-package dashboard
-:after (nerd-icons)
-:config
+  :after (nerd-icons projectile)
+  :config
   (setq dashboard-center-content t)
   (setq dashboard-display-icons-p t)
   (setq dashboard-icon-type 'nerd-icons)
+  (setq dashboard-projects-backend 'projectile)
+  (setq dashboard-items '((recents   . 5)
+                          (bookmarks . 5)
+                          (projects  . 5)
+                          (agenda    . 5)
+                          (registers . 5)))
   (dashboard-setup-startup-hook)
   (when (daemonp)
     (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ; Show dashboard when emacs is running as daemon
@@ -209,8 +244,14 @@
   :hook (after-init . doom-modeline-mode)
   :config
   (setq doom-modeline-icon t)
-  (setq display-time-24hr-format t)'
-  (display-time-mode 1))
+  (setq doom-modeline-project-detection 'auto)
+  (setq doom-modeline-height 20)
+  (setq doom-modeline-enable-word-count t)
+  (setq doom-modeline-minor-modes t)
+  (setq display-time-24hr-format t)
+  (display-time-mode 1)
+  (column-number-mode 1)
+  (line-number-mode 1))
 
 (use-package minions
   :hook (after-init . minions-mode))
@@ -219,19 +260,24 @@
   :mode (("\\.org$" . org-mode))
   :hook
   ((org-mode . org-indent-mode)
-   (org-mode . (lambda ()
-         (setq-local electric-pair-inhibit-predicate
-                 `(lambda (c)
-                (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
+   (org-mode . display-line-numbers-mode)
+   )
   :config
   (require 'org-mouse)
-  (require 'org-tempo))
+  (require 'org-tempo)
+  (add-hook 'org-mode-hook (lambda ()
+							 (setq-local
+							  electric-pair-inhibit-predicate
+							  `(lambda (c)
+								 (if
+									 (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
+
 (use-package org-superstar
   :after (org)
   :hook
   (org-mode . org-superstar-mode))
-  :config
-  (setq org-superstar-leading-bullet " ")
+:config
+(setq org-superstar-leading-bullet " ")
 (use-package org-auto-tangle
   :after (org)
   :hook (org-mode . org-auto-tangle-mode))
@@ -260,14 +306,19 @@
                  args)))
   (vertico-mode 1)
   (marginalia-mode 1))
+(use-package vertico-mouse
+  :config
+  (vertico-mouse-mode 1))
 
 (use-package company
-:init (global-company-mode 1))
+  :config 
+  (setq global-corfu-minibuffer nil)
+  (global-company-mode 1))
 
 (electric-pair-mode 1)
 (electric-indent-mode -1)
 (setq-default indent-tabs-mode nil)
-(setq-default buffer-file-coding-system 'utf-8-dos)
+(setq-default buffer-file-coding-system 'utf-8-unix)
 
 (defun materus/elcord-toggle (&optional _frame)
   "Toggle elcord based on visible frames"
@@ -276,14 +327,14 @@
     (elcord-mode -1))
   )
 (use-package elcord
-  :init (unless (daemonp) (elcord-mode 1))
   :config
+  (unless (daemonp) (elcord-mode 1))
   (add-hook 'after-delete-frame-functions 'materus/elcord-toggle)
   (add-hook 'server-after-make-frame-hook 'materus/elcord-toggle))
 
 (use-package undo-tree
-:init (global-undo-tree-mode 1)
 :config
+(global-undo-tree-mode 1)
 (defvar materus/undo-tree-dir (concat user-emacs-directory "var/undo-tree/"))
 (unless (file-exists-p materus/undo-tree-dir)
     (make-directory materus/undo-tree-dir t))
@@ -292,7 +343,8 @@
 (setq undo-tree-visualizer-timestamps t)
 )
 
-(use-package projectile)
+(use-package projectile
+  :config (projectile-mode 1))
 
 (use-package treemacs)
 (use-package treemacs-projectile
@@ -300,7 +352,22 @@
 (use-package treemacs-nerd-icons
 :after (nerd-icons treemacs))
 
+(use-package magit)
+
+(use-package dirvish 
+  :config (dirvish-override-dired-mode 1)
+  (setq dirvish-attributes
+        '(vc-state
+          subtree-state
+          nerd-icons
+          collapse
+          git-msg
+          file-time 
+          file-size)))
+
 (use-package lsp-mode)
+
+
 (use-package lsp-ui)
 (use-package dap-mode)
 (use-package dap-lldb)
@@ -331,12 +398,15 @@
              (not (functionp 'json-rpc-connection))  ;; native json-rpc
              (executable-find "emacs-lsp-booster"))
         (progn
-          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+          (when-let* ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
             (setcar orig-result command-from-exec-path))
           (message "Using emacs-lsp-booster for %s!" orig-result)
           (cons "emacs-lsp-booster" orig-result))
       orig-result)))
 (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+
+
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
 (with-eval-after-load 'lsp-mode
   (lsp-register-client
@@ -349,7 +419,6 @@
 (add-hook 'nix-mode-hook 'display-line-numbers-mode)
 
 (add-hook 'emacs-lisp-mode-hook 'display-line-numbers-mode)
-(add-hook 'emacs-lisp-mode-hook 'company-mode)
 
 (add-hook 'c-mode-hook 'lsp-deferred)
 (add-hook 'c-mode-hook 'display-line-numbers-mode)
@@ -357,7 +426,13 @@
 (add-hook 'c++-mode-hook 'lsp-deferred)
 (add-hook 'c++-mode-hook 'display-line-numbers-mode)
 
-(add-hook 'java-mode-hook 'lsp-deferred)
+(use-package lsp-java
+  :config   
+  (add-hook 'java-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
+  (add-hook 'java-mode-hook 'lsp-deferred)
+  (add-hook 'java-mode-hook 'display-line-numbers-mode))
+
+(use-package cua-base)
 
 ;; Keybinds
 (keymap-set cua--cua-keys-keymap "C-z" 'undo-tree-undo)
@@ -372,6 +447,38 @@
 
 (global-set-key (kbd "C-H-t") 'treemacs)
 (cua-mode 1)
+
+(use-package yasnippet
+:config (yas-global-mode 1))
+
+(defun materus/sync-config ()
+  "Function to sync config from MATERUS_CONFIG_DIR to emacs folder"
+  (if (getenv "MATERUS_CONFIG_DIR")
+      (progn (copy-directory (concat (getenv "MATERUS_CONFIG_DIR") "extraFiles/config/emacs/") 
+                             user-emacs-directory t t t) t)
+    (progn (message "Can't use if MATERUS_CONFIG_DIR is not set!") nil)))
+(defun materus/compare-file-time (file1 file2)
+  "Returns t when file1 is newer than file2"
+  (time-less-p 
+   (nth 5 (file-attributes file2))
+   (nth 5 (file-attributes file1))
+   ))
+(defun materus/compile-if-needed (file)
+  (unless (and (file-exists-p (concat user-emacs-directory file "c"))
+               (materus/compare-file-time (concat user-emacs-directory file "c")
+                                          (concat user-emacs-directory file)))
+    (byte-compile-file (concat user-emacs-directory file)))
+  )
+(defun materus/compile-config-if-needed ()
+  (materus/compile-if-needed "early-init.el")
+  (materus/compile-if-needed "init.el")
+  (materus/compile-if-needed "etc/materus/emacs-config.el"))
+(defun materus/update-config ()
+  "Will sync and compile config"
+  (interactive)
+  (when (materus/sync-config) (materus/compile-config-if-needed) (byte-recompile-directory (concat user-emacs-directory "etc/materus/extra") 0 t)))
+
+(materus/compile-config-if-needed)
 
 ;;; (global-set-key (kbd "C-∇") (kbd "C-H"))
 ;;; (global-set-key (kbd "H-∇") (lambda () (interactive) (insert-char #x2207)))

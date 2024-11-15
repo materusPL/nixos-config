@@ -1,26 +1,33 @@
+;;; -*- lexical-binding: t; -*-
 (defvar materus/init-early t)           ; Var to ensure early-init loaded
 (setq materus/init-early t)             ; Probably useless
+(setenv "LSP_USE_PLISTS" "true")
 
 (setq initial-major-mode 'fundamental-mode)
 (setq native-comp-async-report-warnings-errors nil)
 (setq package-enable-at-startup nil)
+(unless (daemonp)
+  (add-to-list 'initial-frame-alist '(fullscreen . maximized)))
+(setq default-frame-alist
+    '((width . 130)   
+      (height . 40))) 
 
 (setq native-comp-speed 3)
 (add-hook 'emacs-startup-hook (lambda () (package-initialize)
-   (setq gc-cons-threshold 100000000 ; ~100mb
-          gc-cons-percentage 0.1)
-))
+                                (setq gc-cons-threshold 100000000 ; ~100mb
+                                      gc-cons-percentage 0.1)
+                                ))
 (unless (daemonp)
   (setq gc-cons-threshold most-positive-fixnum ; 2^61 bytes
-      gc-cons-percentage 0.6)
+        gc-cons-percentage 0.6)
   (advice-add #'tty-run-terminal-initialization :override #'ignore)
   (add-hook 'window-setup-hook
-    (lambda ()
-      (advice-remove #'tty-run-terminal-initialization #'ignore)
-      (tty-run-terminal-initialization (selected-frame) nil t)
-    )
+            (lambda ()
+              (advice-remove #'tty-run-terminal-initialization #'ignore)
+              (tty-run-terminal-initialization (selected-frame) nil t)
+              )
+            )
   )
-)
 
 (when (boundp 'native-comp-eln-load-path)                        ; Change dir for eln-cache
   (startup-redirect-eln-cache (expand-file-name "/var/eln-cache/" user-emacs-directory))) 

@@ -111,6 +111,11 @@ let
     "[cpp]" = {
       "editor.defaultFormatter" = lib.mkDefault "xaver.clang-format";
     };
+    "cmake.showOptionsMovedNotification" = false;
+    "cmake.pinnedCommands" = [
+      "workbench.action.tasks.configureTaskRunner"
+      "workbench.action.tasks.runTask"
+    ];
 
   };
 in {

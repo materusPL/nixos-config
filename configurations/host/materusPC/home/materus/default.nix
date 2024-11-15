@@ -53,6 +53,8 @@
       lua
       gtk4.dev
       gtk4
+      glib
+      glib.dev
       miniaudio
       SDL2.dev
       SDL2

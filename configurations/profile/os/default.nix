@@ -1,5 +1,4 @@
-{ config, pkgs, lib, ... }:
-{
+{ config, pkgs, lib, ... }: {
   imports = [
     ./nix.nix
     ./fonts.nix
@@ -18,12 +17,17 @@
     font = lib.mkDefault "LatArCyrHeb-16";
     keyMap = lib.mkDefault "pl";
   };
+  environment.sessionVariables = {
+    MATERUS_CONFIG_DIR = lib.mkDefault "/etc/nixos/";
+  };
 
   programs.tmux = {
     enable = lib.mkDefault true;
     clock24 = lib.mkDefault true;
   };
-  environment.systemPackages = lib.mkIf config.programs.tmux.enable [ pkgs.tmux.terminfo ];
+  environment.systemPackages =
+    lib.mkIf config.programs.tmux.enable [ pkgs.tmux.terminfo ];
 
 }
- 
+
+  

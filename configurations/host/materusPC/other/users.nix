@@ -22,6 +22,6 @@ users.users.materus = {
     shell = pkgs.zsh;
     description = "Mateusz Słodkowicz";
     openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
-    hashedPasswordFile = config.sops.secrets."users/materus".path;
+    #hashedPasswordFile = config.sops.secrets."users/materus".path;
   };
 }

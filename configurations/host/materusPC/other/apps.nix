@@ -111,7 +111,7 @@
 
     binutils
 
-    qbittorrent
+    materusArg.unstable.qbittorrent
     mkvtoolnix
     nicotine-plus
     picard
