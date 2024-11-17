@@ -2,7 +2,7 @@
 #+AUTHOR: materus
 #+DESCRIPTION: materus emacs configuration
 #+STARTUP: overview
-#+PROPERTY: header-args :tangle etc/materus/emacs-config.el
+#+PROPERTY: header-args :tangle etc/materus/emacs-config.el :comments link
 #+auto_tangle: t
 My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
 * Table of Contents    :noexport:TOC_3:
@@ -11,8 +11,8 @@ My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
   - [[#init][Init]]
   - [[#compile-time][Compile Time]]
 - [[#packages][Packages]]
-  - [[#init-1][Init]]
-  - [[#packages-1][Packages]]
+  - [[#init-package-manager-config][Init package manager config]]
+  - [[#packages-list--function][Packages list & function]]
 - [[#configuration][Configuration]]
   - [[#no-littering][No Littering]]
   - [[#graphical][Graphical]]
@@ -24,6 +24,8 @@ My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
   - [[#completions][Completions]]
     - [[#minibuffer][Minibuffer]]
     - [[#code-completion][Code completion]]
+  - [[#terms][Terms]]
+    - [[#eat][Eat]]
   - [[#miscellaneous][Miscellaneous]]
     - [[#defaults][Defaults]]
     - [[#elcord][Elcord]]
@@ -32,16 +34,19 @@ My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
     - [[#treemacs][Treemacs]]
     - [[#magit][Magit]]
     - [[#dirvish][Dirvish]]
+    - [[#perspective][Perspective]]
 - [[#programming][Programming]]
   - [[#lsp][LSP]]
   - [[#nix][Nix]]
   - [[#emacs-lisp][Emacs Lisp]]
   - [[#cc][C/C++]]
+  - [[#python][Python]]
   - [[#java][Java]]
+  - [[#other][Other]]
 - [[#keybindings][Keybindings]]
 - [[#snippets][Snippets]]
   - [[#yasnippet-init][Yasnippet init]]
-- [[#other][Other]]
+- [[#other-1][Other]]
   - [[#update-config-script][Update config script]]
   - [[#byte-compile][Byte compile]]
 - [[#test][Test]]
@@ -52,11 +57,18 @@ My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
 :header-args: :tangle early-init.el
 :END:
 Early init file, setting for GC and some paths.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :comments no
   ;;; -*- lexical-binding: t; -*-
+#+end_src
+#+begin_src emacs-lisp
+  
   (defvar materus/init-early t)           ; Var to ensure early-init loaded
   (setq materus/init-early t)             ; Probably useless
   (setenv "LSP_USE_PLISTS" "true")
+  (setq c-default-style nil)
+
+  (set-language-environment "UTF-8")
+  (setq default-input-method nil)
 
   (setq initial-major-mode 'fundamental-mode)
   (setq native-comp-async-report-warnings-errors nil)
@@ -109,18 +121,22 @@ Early init file, setting for GC and some paths.
 :END:
 Init File
 Checking if using emacs from my nix config (not used anymore, might use in future), loads config and custom.el
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :comments no
   ;;; -*- lexical-binding: t; -*-
+#+end_src
+#+begin_src emacs-lisp
   (setq-default materus/use-nix-packages (require 'materus-config nil 'noerror))
   (unless  (file-directory-p (concat user-emacs-directory "var/quickstart")) 
     (make-directory (concat user-emacs-directory "var/quickstart") t))
-  (load (concat user-emacs-directory "nix-init") t)
+  (load (concat user-emacs-directory "etc/materus/nix-init") t)
   (load (concat user-emacs-directory "etc/materus/emacs-config"))
   (load custom-file t)
 #+end_src
 ** Compile Time
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :comments no
   ;;; -*- lexical-binding: t; -*-
+#+end_src
+#+begin_src emacs-lisp
   (eval-when-compile 
     (defvar doom-modeline-support-imenu nil)
     (defvar display-time-24hr-format nil)
@@ -134,30 +150,24 @@ Checking if using emacs from my nix config (not used anymore, might use in futur
 * Packages
 Package manager config if not using nix.
 After some testing default package manager works best for me.
-** Init
+** Init package manager config
 #+begin_src emacs-lisp
   (require 'cl-lib)
   (require 'package)
   (setq package-user-dir (concat user-emacs-directory "var/elpa/" emacs-version "/" ))
   (setq package-gnupghome-dir (concat user-emacs-directory "var/elpa/gnupg/" ))
-  (setq package-quickstart t)
-  (setq package-quickstart-file  
-        (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
   (add-to-list 'load-path (concat user-emacs-directory "etc/materus/extra"))
 
   (add-to-list 'package-archives '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/"))
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-
-
   #+end_src
-** Packages
+** Packages list & function
 Packages to install
 #+begin_src emacs-lisp
   (defvar materus/packages
     '(
       use-package
       elcord
-      persp-mode
       dashboard
       magit
       git-timemachine
@@ -170,6 +180,7 @@ Packages to install
       iedit
       hideshowvis
       evil
+      perspective
       treemacs-evil
       treemacs
       treemacs-nerd-icons
@@ -180,7 +191,6 @@ Packages to install
       tree-edit
       nerd-icons
       nerd-icons-completion
-      perspective
       minions
       rainbow-delimiters
       rainbow-mode
@@ -214,6 +224,7 @@ Packages to install
       markdown-mode
       json-mode
       nix-mode
+      nixfmt
       no-littering
       right-click-context
       dracula-theme
@@ -246,6 +257,7 @@ Packages to install
       drag-stuff
       dirvish
       rg
+      shfmt
       ;; Completions & Minibuffer
       corfu
       company
@@ -271,11 +283,9 @@ Packages to install
         (when (not (package-installed-p p))
           (package-install p)))
       (package-quickstart-refresh)))
+  (package-initialize)
   (unless materus/use-nix-packages 
-    (package-initialize)
-    (materus/install-packages)
-    (unless (file-exists-p package-quickstart-file) (package-quickstart-refresh) ))
-
+    (materus/install-packages))
 #+end_src
 * Configuration
 General configurations of packages modes etc.
@@ -283,14 +293,16 @@ General configurations of packages modes etc.
 Set up no littering
 #+begin_src emacs-lisp
   (require 'recentf)
-  (use-package no-littering
-  :config
-  (setq package-quickstart-file  
-        (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
-  (add-to-list 'recentf-exclude
-               (recentf-expand-file-name no-littering-var-directory))
-  (add-to-list 'recentf-exclude
-               (recentf-expand-file-name no-littering-etc-directory)))
+    (use-package no-littering
+    :config
+    (setq package-quickstart-file  
+          (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
+    (add-to-list 'recentf-exclude
+                 (recentf-expand-file-name no-littering-var-directory))
+    (add-to-list 'recentf-exclude
+                 (recentf-expand-file-name no-littering-etc-directory)))
+  (setq custom-theme-directory (concat user-emacs-directory "etc/themes"))
+  (add-to-list 'custom-theme-load-path custom-theme-directory)
 #+end_src
 ** Graphical
 Graphical related settings.
@@ -306,7 +318,6 @@ Graphical related settings.
 #+end_src
 *** Misc
 #+begin_src emacs-lisp
-
   (when (daemonp)
     (add-hook 'after-make-frame-functions 
               (lambda (frame) (when (= (length (frame-list)) 2)
@@ -323,7 +334,7 @@ Graphical related settings.
 
 
   (global-tab-line-mode 1)
-  (setq-default tab-width 4)
+
   (tool-bar-mode -1)
 
   (setq read-process-output-max (* 1024 1024 3))
@@ -417,12 +428,13 @@ Org mode settings
     :config
     (require 'org-mouse)
     (require 'org-tempo)
+    (setq org-src-window-setup 'current-window)
     (add-hook 'org-mode-hook (lambda ()
-  							 (setq-local
-  							  electric-pair-inhibit-predicate
-  							  `(lambda (c)
-  								 (if
-  									 (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
+                               (setq-local
+                                electric-pair-inhibit-predicate
+                                `(lambda (c)
+                                   (if
+                                       (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
 
   (use-package org-superstar
     :after (org)
@@ -465,8 +477,6 @@ Org mode settings
   (use-package vertico-mouse
     :config
     (vertico-mouse-mode 1))
-
-
 #+end_src
 *** Code completion
 #+begin_src emacs-lisp
@@ -474,16 +484,16 @@ Org mode settings
     :config 
     (setq global-corfu-minibuffer nil)
     (global-company-mode 1))
-
  #+end_src
-
+** Terms
+*** Eat
+#+begin_src emacs-lisp
+  (use-package eat)
+#+end_src
 ** Miscellaneous
 Other configs
 *** Defaults
 #+begin_src emacs-lisp
-  (electric-pair-mode 1)
-  (electric-indent-mode -1)
-  (setq-default indent-tabs-mode nil)
   (setq-default buffer-file-coding-system 'utf-8-unix)
 #+end_src
 *** Elcord
@@ -502,17 +512,16 @@ Other configs
 #+end_src
 *** Undo-Tree
 #+begin_src emacs-lisp
-
-(use-package undo-tree
-:config
-(global-undo-tree-mode 1)
-(defvar materus/undo-tree-dir (concat user-emacs-directory "var/undo-tree/"))
-(unless (file-exists-p materus/undo-tree-dir)
-    (make-directory materus/undo-tree-dir t))
-(setq undo-tree-visualizer-diff t)
-(setq undo-tree-history-directory-alist `(("." . ,materus/undo-tree-dir )))
-(setq undo-tree-visualizer-timestamps t)
-)
+  (use-package undo-tree
+  :config
+  (global-undo-tree-mode 1)
+  (defvar materus/undo-tree-dir (concat user-emacs-directory "var/undo-tree/"))
+  (unless (file-exists-p materus/undo-tree-dir)
+      (make-directory materus/undo-tree-dir t))
+  (setq undo-tree-visualizer-diff t)
+  (setq undo-tree-history-directory-alist `(("." . ,materus/undo-tree-dir )))
+  (setq undo-tree-visualizer-timestamps t)
+  )
 #+end_src
 *** Projectile
 #+begin_src emacs-lisp
@@ -523,13 +532,17 @@ Other configs
 #+begin_src emacs-lisp
   (use-package treemacs)
   (use-package treemacs-projectile
-  :after (projectile treemacs))
+    :after (projectile treemacs))
   (use-package treemacs-nerd-icons
-  :after (nerd-icons treemacs))
+    :after (nerd-icons treemacs))
+  (use-package treemacs-perspective
+    :after (treemacs))
+  (use-package treemacs-mouse-interface
+    :after (treemacs))
 #+end_src
 *** Magit
 #+begin_src emacs-lisp
-(use-package magit)
+  (use-package magit)
 #+end_src
 *** Dirvish
 #+begin_src emacs-lisp
@@ -543,12 +556,17 @@ Other configs
             git-msg
             file-time 
             file-size)))
-
 #+end_src
+*** Perspective 
+#+begin_src emacs-lisp
+  (require 'perspective)
+  (customize-set-variable 'persp-mode-prefix-key (kbd "C-c M-p"))
+  (persp-mode 1)
+#+end_src
+
 * Programming
 ** LSP
 #+begin_src emacs-lisp
-
   (use-package lsp-mode)
 
 
@@ -556,6 +574,8 @@ Other configs
   (use-package dap-mode)
   (use-package dap-lldb)
   (use-package dap-gdb-lldb)
+
+
 
 
   (defun lsp-booster--advice-json-parse (old-fn &rest args)
@@ -588,24 +608,28 @@ Other configs
             (cons "emacs-lsp-booster" orig-result))
         orig-result)))
   (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
-
-
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-
 #+end_src
 
 ** Nix
 #+begin_src emacs-lisp
+  (use-package nix-mode)
+  (use-package nix-ts-mode)
+  (use-package nixfmt)
+  (use-package lsp-nix)
   (with-eval-after-load 'lsp-mode
-    (lsp-register-client
-     (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
-                      :major-modes '(nix-mode)
-                      :priority 0
-                      :server-id 'nixd)))
+    (add-to-list 'lsp-disabled-clients '(nix-mode . nix-nil)) 
+    (setq lsp-nix-nixd-server-path "nixd"
+          lsp-nix-nixd-formatting-command [ "nixfmt" ]
+          lsp-nix-nixd-nixpkgs-expr "import <nixpkgs> { }"))
+
   (setq lsp-nix-nixd-formatting-command "nixfmt")
   (add-hook 'nix-mode-hook 'lsp-deferred)
   (add-hook 'nix-mode-hook 'display-line-numbers-mode)
 
+  ;;(add-hook 'nix-ts-mode-hook 'lsp-deferred)
+  ;;(add-hook 'nix-ts-mode-hook 'display-line-numbers-mode)
+
+  ;;(when (treesit-language-available-p 'nix) (push '(nix-mode . nix-ts-mode) major-mode-remap-alist))
 #+end_src
 ** Emacs Lisp
 #+begin_src emacs-lisp
@@ -613,46 +637,102 @@ Other configs
 #+end_src
 ** C/C++
 #+begin_src emacs-lisp
+  (use-package lsp-clangd)
+  (setq lsp-clients-clangd-args '("--fallback-style=microsoft"))
+
   (add-hook 'c-mode-hook 'lsp-deferred)
   (add-hook 'c-mode-hook 'display-line-numbers-mode)
+  ;(add-hook 'c-ts-mode-hook 'lsp-deferred)
+  ;(add-hook 'c-ts-mode-hook 'display-line-numbers-mode)
 
   (add-hook 'c++-mode-hook 'lsp-deferred)
   (add-hook 'c++-mode-hook 'display-line-numbers-mode)
+  ;(add-hook 'c++-ts-mode-hook 'lsp-deferred)
+  ;(add-hook 'c++-ts-mode-hook 'display-line-numbers-mode)
+  ;(when (treesit-language-available-p 'c) (push '(c-mode . c-ts-mode) major-mode-remap-alist))
+  ;(when (treesit-language-available-p 'cpp) (push '(c++-mode . c++-ts-mode) major-mode-remap-alist))
+
+  (add-to-list 'c-default-style '(c-mode . "bsd"))
+  (add-to-list 'c-default-style '(c++-mode . "bsd"))
+  ;(add-to-list 'c-default-style '(c-ts-mode . "bsd"))
+  ;(add-to-list 'c-default-style '(c++-ts-mode . "bsd"))
+#+end_src
+** Python
+#+begin_src emacs-lisp
+  (use-package lsp-pyright)
+  (setq lsp-pyright-langserver-command "pyright")
+  (add-hook 'python-mode-hook 'lsp-deferred)
+
 #+end_src
 ** Java
 #+begin_src emacs-lisp
-  (use-package lsp-java
-    :config   
-    (add-hook 'java-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
-    (add-hook 'java-mode-hook 'lsp-deferred)
-    (add-hook 'java-mode-hook 'display-line-numbers-mode))
+  (use-package lsp-java)
+  (setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx2G" "-Xms100m"))
+  (add-hook 'java-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
+  (add-hook 'java-mode-hook 'lsp-deferred)
+  (add-hook 'java-mode-hook 'display-line-numbers-mode)
 
+  ;(add-hook 'java-ts-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
+  ;(add-hook 'java-ts-mode-hook 'lsp-deferred)
+  ;(add-hook 'java-ts-mode-hook 'display-line-numbers-mode)
+
+  ;(when (treesit-language-available-p 'java) (push '(java-mode . java-ts-mode) major-mode-remap-alist))
+
+  (add-to-list 'c-default-style '(java-mode . "java"))
+  (add-to-list 'c-default-style '(java-ts-mode . "java"))
 #+end_src
 
+** Other
+#+begin_src emacs-lisp
+  (add-to-list 'c-default-style '(awk-mode . "awk"))
+  (add-to-list 'c-default-style '(other . "bsd"))
+
+
+
+
+  (setq-default c-basic-offset 4)
+  (setq-default c-indent-level 4)
+  (setq-default c-hungry-delete-key t)
+  (electric-pair-mode 1)
+  (electric-indent-mode -1)
+  (setq-default tab-width 4)
+  (setq-default indent-tabs-mode nil)
+
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook 'electric-indent-local-mode)
+#+end_src
 * Keybindings
 #+begin_src emacs-lisp
   (use-package cua-base)
 
-  ;; Keybinds
+    ;;; Keybinds
+  ;; Eat Term
+  (keymap-set eat-semi-char-mode-map "C-v" #'eat-yank)
+  (keymap-set eat-char-mode-map "C-V" #'eat-yank)
+  ;; perspective
+  (global-set-key (kbd "C-x C-b") 'persp-list-buffers)
+  (global-set-key (kbd "C-x C-B") 'list-buffers)
+  (global-set-key (kbd "C-x B") 'persp-switch-to-buffer)
+
+  ;; CUA
   (keymap-set cua--cua-keys-keymap "C-z" 'undo-tree-undo)
   (keymap-set cua--cua-keys-keymap "C-y" 'undo-tree-redo)
-
+  (cua-mode 1)
+  ;; TAB
   (keymap-set global-map "C-<iso-lefttab>" #'indent-rigidly-left-to-tab-stop)
   (keymap-set global-map "C-<tab>" #'indent-rigidly-right-to-tab-stop)
-
+  ;; Hyper
   (define-key key-translation-map (kbd "<XF86Calculator>") 'event-apply-hyper-modifier )
   (define-key key-translation-map (kbd "<Calculator>") 'event-apply-hyper-modifier )
   (define-key key-translation-map (kbd "∇") 'event-apply-hyper-modifier )
 
   (global-set-key (kbd "C-H-t") 'treemacs)
-  (cua-mode 1)
-
 #+end_src
 * Snippets
 ** Yasnippet init
 #+begin_src emacs-lisp
-(use-package yasnippet
-:config (yas-global-mode 1))
+  (use-package yasnippet
+  :config (yas-global-mode 1))
 #+end_src
 * Other
 ** Update config script
@@ -693,7 +773,6 @@ Byte compile files.
 * Test
 Just for testing some code
 #+begin_src emacs-lisp
-
   ;;; (global-set-key (kbd "C-∇") (kbd "C-H"))
   ;;; (global-set-key (kbd "H-∇") (lambda () (interactive) (insert-char #x2207)))
 
@@ -702,9 +781,4 @@ Just for testing some code
   ;;; (setq completion-styles '(orderless basic)
   ;;;   completion-category-defaults nil
   ;;;   completion-category-overrides '((file (styles partial-completion))))
-
-
-
-
-
 #+end_src 

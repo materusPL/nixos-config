@@ -30,7 +30,7 @@
 
     "nix.enableLanguageServer" = true;
     "nix.serverPath" = "${pkgs.nixd}/bin/nixd";
-    "nix.formatterPath" = "${pkgs.nixfmt-classic}/bin/nixfmt";
+    "nix.formatterPath" = "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
 
     "C_Cpp.clang_format_path" = "${pkgs.clang-tools}/bin/clang-format";
     "C_Cpp.clang_format_fallbackStyle" = "Microsoft";

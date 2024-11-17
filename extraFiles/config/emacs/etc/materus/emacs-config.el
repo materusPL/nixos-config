@@ -1,4 +1,6 @@
 ;;; -*- lexical-binding: t; -*-
+
+;; [[file:../../emacs-materus-config.org::*Compile Time][Compile Time:2]]
 (eval-when-compile 
   (defvar doom-modeline-support-imenu nil)
   (defvar display-time-24hr-format nil)
@@ -8,24 +10,24 @@
   (declare-function make-lsp-client "lsp-mode")
   (declare-function lsp-register-client "lsp-mode" ( CLIENT ))
   )
+;; Compile Time:2 ends here
 
+;; [[file:../../emacs-materus-config.org::*Init package manager config][Init package manager config:1]]
 (require 'cl-lib)
 (require 'package)
 (setq package-user-dir (concat user-emacs-directory "var/elpa/" emacs-version "/" ))
 (setq package-gnupghome-dir (concat user-emacs-directory "var/elpa/gnupg/" ))
-(setq package-quickstart t)
-(setq package-quickstart-file  
-      (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
 (add-to-list 'load-path (concat user-emacs-directory "etc/materus/extra"))
 
 (add-to-list 'package-archives '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;; Init package manager config:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Packages list & function][Packages list & function:1]]
 (defvar materus/packages
   '(
     use-package
     elcord
-    persp-mode
     dashboard
     magit
     git-timemachine
@@ -38,6 +40,7 @@
     iedit
     hideshowvis
     evil
+    perspective
     treemacs-evil
     treemacs
     treemacs-nerd-icons
@@ -48,7 +51,6 @@
     tree-edit
     nerd-icons
     nerd-icons-completion
-    perspective
     minions
     rainbow-delimiters
     rainbow-mode
@@ -82,6 +84,7 @@
     markdown-mode
     json-mode
     nix-mode
+    nixfmt
     no-littering
     right-click-context
     dracula-theme
@@ -114,6 +117,7 @@
     drag-stuff
     dirvish
     rg
+    shfmt
     ;; Completions & Minibuffer
     corfu
     company
@@ -139,21 +143,26 @@
       (when (not (package-installed-p p))
         (package-install p)))
     (package-quickstart-refresh)))
+(package-initialize)
 (unless materus/use-nix-packages 
-  (package-initialize)
-  (materus/install-packages)
-  (unless (file-exists-p package-quickstart-file) (package-quickstart-refresh) ))
+  (materus/install-packages))
+;; Packages list & function:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*No Littering][No Littering:1]]
 (require 'recentf)
-(use-package no-littering
-:config
-(setq package-quickstart-file  
-      (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
-(add-to-list 'recentf-exclude
-             (recentf-expand-file-name no-littering-var-directory))
-(add-to-list 'recentf-exclude
-             (recentf-expand-file-name no-littering-etc-directory)))
+  (use-package no-littering
+  :config
+  (setq package-quickstart-file  
+        (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name no-littering-var-directory))
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name no-littering-etc-directory)))
+(setq custom-theme-directory (concat user-emacs-directory "etc/themes"))
+(add-to-list 'custom-theme-load-path custom-theme-directory)
+;; No Littering:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Mouse][Mouse:1]]
 (context-menu-mode 1)
 (setq mouse-wheel-follow-mouse 't)
 (setq scroll-step 1)
@@ -161,7 +170,9 @@
 (xterm-mouse-mode 1)
 (pixel-scroll-precision-mode 1)
 (setq-default pixel-scroll-precision-large-scroll-height 10.0)
+;; Mouse:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Misc][Misc:1]]
 (when (daemonp)
   (add-hook 'after-make-frame-functions 
             (lambda (frame) (when (= (length (frame-list)) 2)
@@ -178,7 +189,7 @@
 
 
 (global-tab-line-mode 1)
-(setq-default tab-width 4)
+
 (tool-bar-mode -1)
 
 (setq read-process-output-max (* 1024 1024 3))
@@ -220,7 +231,9 @@
   (when (= (seq-count #'buffer-file-name (buffer-list)) 0)
     (apply orig-fun args)))
 (advice-add 'display-startup-screen :around #'startup-screen-advice) ; Hide startup screen if started with file
+;; Misc:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Dashboard][Dashboard:1]]
 (use-package dashboard
   :after (nerd-icons projectile)
   :config
@@ -238,7 +251,9 @@
     (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ; Show dashboard when emacs is running as daemon
     )
   )
+;; Dashboard:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Modeline][Modeline:1]]
 (use-package doom-modeline
   :init (setq doom-modeline-support-imenu t)
   :hook (after-init . doom-modeline-mode)
@@ -255,7 +270,9 @@
 
 (use-package minions
   :hook (after-init . minions-mode))
+;; Modeline:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Org-mode][Org-mode:1]]
 (use-package org
   :mode (("\\.org$" . org-mode))
   :hook
@@ -265,12 +282,13 @@
   :config
   (require 'org-mouse)
   (require 'org-tempo)
+  (setq org-src-window-setup 'current-window)
   (add-hook 'org-mode-hook (lambda ()
-							 (setq-local
-							  electric-pair-inhibit-predicate
-							  `(lambda (c)
-								 (if
-									 (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
+                             (setq-local
+                              electric-pair-inhibit-predicate
+                              `(lambda (c)
+                                 (if
+                                     (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
 
 (use-package org-superstar
   :after (org)
@@ -286,7 +304,9 @@
   :hook
   ((org-mode . toc-org-mode )
    (markdown-mode . toc-org-mode)))
+;; Org-mode:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Minibuffer][Minibuffer:1]]
 (use-package consult)
 (use-package marginalia)
 (use-package orderless)
@@ -309,17 +329,24 @@
 (use-package vertico-mouse
   :config
   (vertico-mouse-mode 1))
+;; Minibuffer:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Code completion][Code completion:1]]
 (use-package company
   :config 
   (setq global-corfu-minibuffer nil)
   (global-company-mode 1))
+;; Code completion:1 ends here
 
-(electric-pair-mode 1)
-(electric-indent-mode -1)
-(setq-default indent-tabs-mode nil)
+;; [[file:../../emacs-materus-config.org::*Eat][Eat:1]]
+(use-package eat)
+;; Eat:1 ends here
+
+;; [[file:../../emacs-materus-config.org::*Defaults][Defaults:1]]
 (setq-default buffer-file-coding-system 'utf-8-unix)
+;; Defaults:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Elcord][Elcord:1]]
 (defun materus/elcord-toggle (&optional _frame)
   "Toggle elcord based on visible frames"
   (if (> (length (frame-list)) 1)
@@ -331,7 +358,9 @@
   (unless (daemonp) (elcord-mode 1))
   (add-hook 'after-delete-frame-functions 'materus/elcord-toggle)
   (add-hook 'server-after-make-frame-hook 'materus/elcord-toggle))
+;; Elcord:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Undo-Tree][Undo-Tree:1]]
 (use-package undo-tree
 :config
 (global-undo-tree-mode 1)
@@ -342,18 +371,30 @@
 (setq undo-tree-history-directory-alist `(("." . ,materus/undo-tree-dir )))
 (setq undo-tree-visualizer-timestamps t)
 )
+;; Undo-Tree:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Projectile][Projectile:1]]
 (use-package projectile
   :config (projectile-mode 1))
+;; Projectile:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Treemacs][Treemacs:1]]
 (use-package treemacs)
 (use-package treemacs-projectile
-:after (projectile treemacs))
+  :after (projectile treemacs))
 (use-package treemacs-nerd-icons
-:after (nerd-icons treemacs))
+  :after (nerd-icons treemacs))
+(use-package treemacs-perspective
+  :after (treemacs))
+(use-package treemacs-mouse-interface
+  :after (treemacs))
+;; Treemacs:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Magit][Magit:1]]
 (use-package magit)
+;; Magit:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Dirvish][Dirvish:1]]
 (use-package dirvish 
   :config (dirvish-override-dired-mode 1)
   (setq dirvish-attributes
@@ -364,7 +405,15 @@
           git-msg
           file-time 
           file-size)))
+;; Dirvish:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Perspective][Perspective:1]]
+(require 'perspective)
+(customize-set-variable 'persp-mode-prefix-key (kbd "C-c M-p"))
+(persp-mode 1)
+;; Perspective:1 ends here
+
+;; [[file:../../emacs-materus-config.org::*LSP][LSP:1]]
 (use-package lsp-mode)
 
 
@@ -372,6 +421,8 @@
 (use-package dap-mode)
 (use-package dap-lldb)
 (use-package dap-gdb-lldb)
+
+
 
 
 (defun lsp-booster--advice-json-parse (old-fn &rest args)
@@ -404,53 +455,130 @@
           (cons "emacs-lsp-booster" orig-result))
       orig-result)))
 (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+;; LSP:1 ends here
 
-
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-
+;; [[file:../../emacs-materus-config.org::*Nix][Nix:1]]
+(use-package nix-mode)
+(use-package nix-ts-mode)
+(use-package nixfmt)
+(use-package lsp-nix)
 (with-eval-after-load 'lsp-mode
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-stdio-connection "nixd")
-                    :major-modes '(nix-mode)
-                    :priority 0
-                    :server-id 'nixd)))
+  (add-to-list 'lsp-disabled-clients '(nix-mode . nix-nil)) 
+  (setq lsp-nix-nixd-server-path "nixd"
+        lsp-nix-nixd-formatting-command [ "nixfmt" ]
+        lsp-nix-nixd-nixpkgs-expr "import <nixpkgs> { }"))
+
 (setq lsp-nix-nixd-formatting-command "nixfmt")
 (add-hook 'nix-mode-hook 'lsp-deferred)
 (add-hook 'nix-mode-hook 'display-line-numbers-mode)
 
+;;(add-hook 'nix-ts-mode-hook 'lsp-deferred)
+;;(add-hook 'nix-ts-mode-hook 'display-line-numbers-mode)
+
+;;(when (treesit-language-available-p 'nix) (push '(nix-mode . nix-ts-mode) major-mode-remap-alist))
+;; Nix:1 ends here
+
+;; [[file:../../emacs-materus-config.org::*Emacs Lisp][Emacs Lisp:1]]
 (add-hook 'emacs-lisp-mode-hook 'display-line-numbers-mode)
+;; Emacs Lisp:1 ends here
+
+;; [[file:../../emacs-materus-config.org::*C/C++][C/C++:1]]
+(use-package lsp-clangd)
+(setq lsp-clients-clangd-args '("--fallback-style=microsoft"))
 
 (add-hook 'c-mode-hook 'lsp-deferred)
 (add-hook 'c-mode-hook 'display-line-numbers-mode)
+;(add-hook 'c-ts-mode-hook 'lsp-deferred)
+;(add-hook 'c-ts-mode-hook 'display-line-numbers-mode)
 
 (add-hook 'c++-mode-hook 'lsp-deferred)
 (add-hook 'c++-mode-hook 'display-line-numbers-mode)
+;(add-hook 'c++-ts-mode-hook 'lsp-deferred)
+;(add-hook 'c++-ts-mode-hook 'display-line-numbers-mode)
+;(when (treesit-language-available-p 'c) (push '(c-mode . c-ts-mode) major-mode-remap-alist))
+;(when (treesit-language-available-p 'cpp) (push '(c++-mode . c++-ts-mode) major-mode-remap-alist))
 
-(use-package lsp-java
-  :config   
-  (add-hook 'java-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
-  (add-hook 'java-mode-hook 'lsp-deferred)
-  (add-hook 'java-mode-hook 'display-line-numbers-mode))
+(add-to-list 'c-default-style '(c-mode . "bsd"))
+(add-to-list 'c-default-style '(c++-mode . "bsd"))
+;(add-to-list 'c-default-style '(c-ts-mode . "bsd"))
+;(add-to-list 'c-default-style '(c++-ts-mode . "bsd"))
+;; C/C++:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Python][Python:1]]
+(use-package lsp-pyright)
+(setq lsp-pyright-langserver-command "pyright")
+(add-hook 'python-mode-hook 'lsp-deferred)
+;; Python:1 ends here
+
+;; [[file:../../emacs-materus-config.org::*Java][Java:1]]
+(use-package lsp-java)
+(setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx2G" "-Xms100m"))
+(add-hook 'java-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
+(add-hook 'java-mode-hook 'lsp-deferred)
+(add-hook 'java-mode-hook 'display-line-numbers-mode)
+
+;(add-hook 'java-ts-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
+;(add-hook 'java-ts-mode-hook 'lsp-deferred)
+;(add-hook 'java-ts-mode-hook 'display-line-numbers-mode)
+
+;(when (treesit-language-available-p 'java) (push '(java-mode . java-ts-mode) major-mode-remap-alist))
+
+(add-to-list 'c-default-style '(java-mode . "java"))
+(add-to-list 'c-default-style '(java-ts-mode . "java"))
+;; Java:1 ends here
+
+;; [[file:../../emacs-materus-config.org::*Other][Other:1]]
+(add-to-list 'c-default-style '(awk-mode . "awk"))
+(add-to-list 'c-default-style '(other . "bsd"))
+
+
+
+
+(setq-default c-basic-offset 4)
+(setq-default c-indent-level 4)
+(setq-default c-hungry-delete-key t)
+(electric-pair-mode 1)
+(electric-indent-mode -1)
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
+
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'electric-indent-local-mode)
+;; Other:1 ends here
+
+;; [[file:../../emacs-materus-config.org::*Keybindings][Keybindings:1]]
 (use-package cua-base)
 
-;; Keybinds
+  ;;; Keybinds
+;; Eat Term
+(keymap-set eat-semi-char-mode-map "C-v" #'eat-yank)
+(keymap-set eat-char-mode-map "C-V" #'eat-yank)
+;; perspective
+(global-set-key (kbd "C-x C-b") 'persp-list-buffers)
+(global-set-key (kbd "C-x C-B") 'list-buffers)
+(global-set-key (kbd "C-x B") 'persp-switch-to-buffer)
+
+;; CUA
 (keymap-set cua--cua-keys-keymap "C-z" 'undo-tree-undo)
 (keymap-set cua--cua-keys-keymap "C-y" 'undo-tree-redo)
-
+(cua-mode 1)
+;; TAB
 (keymap-set global-map "C-<iso-lefttab>" #'indent-rigidly-left-to-tab-stop)
 (keymap-set global-map "C-<tab>" #'indent-rigidly-right-to-tab-stop)
-
+;; Hyper
 (define-key key-translation-map (kbd "<XF86Calculator>") 'event-apply-hyper-modifier )
 (define-key key-translation-map (kbd "<Calculator>") 'event-apply-hyper-modifier )
 (define-key key-translation-map (kbd "∇") 'event-apply-hyper-modifier )
 
 (global-set-key (kbd "C-H-t") 'treemacs)
-(cua-mode 1)
+;; Keybindings:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Yasnippet init][Yasnippet init:1]]
 (use-package yasnippet
 :config (yas-global-mode 1))
+;; Yasnippet init:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Update config script][Update config script:1]]
 (defun materus/sync-config ()
   "Function to sync config from MATERUS_CONFIG_DIR to emacs folder"
   (if (getenv "MATERUS_CONFIG_DIR")
@@ -477,9 +605,13 @@
   "Will sync and compile config"
   (interactive)
   (when (materus/sync-config) (materus/compile-config-if-needed) (byte-recompile-directory (concat user-emacs-directory "etc/materus/extra") 0 t)))
+;; Update config script:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Byte compile][Byte compile:1]]
 (materus/compile-config-if-needed)
+;; Byte compile:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Test][Test:1]]
 ;;; (global-set-key (kbd "C-∇") (kbd "C-H"))
 ;;; (global-set-key (kbd "H-∇") (lambda () (interactive) (insert-char #x2207)))
 
@@ -488,3 +620,4 @@
 ;;; (setq completion-styles '(orderless basic)
 ;;;   completion-category-defaults nil
 ;;;   completion-category-overrides '((file (styles partial-completion))))
+;; Test:1 ends here

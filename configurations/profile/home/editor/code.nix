@@ -58,7 +58,7 @@ let
     open-vsx.ms-azuretools.vscode-docker
     open-vsx.webfreak.debug
     open-vsx.mkhl.direnv
-    vscode-marketplace.ms-vscode-remote.remote-ssh
+    vscode-marketplace.ms-vscode-remote.remote-wsl
     vscode-marketplace.ms-vscode-remote.remote-containers
     open-vsx.esbenp.prettier-vscode
     open-vsx.formulahendry.code-runner
@@ -95,7 +95,7 @@ let
 
     "nix.enableLanguageServer" = lib.mkDefault true;
     "nix.serverPath" = lib.mkDefault "${pkgs.nixd}/bin/nixd";
-    "nix.formatterPath" = lib.mkDefault "${pkgs.nixfmt-classic}/bin/nixfmt";
+    "nix.formatterPath" = lib.mkDefault "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
     "nix.serverSettings" = {
       "nixd" = { "formatting" = { "command" = lib.mkDefault [ "nixfmt" ]; }; };
     };

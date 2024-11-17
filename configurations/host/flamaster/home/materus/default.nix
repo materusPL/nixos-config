@@ -26,8 +26,8 @@
       raylib
       gcc
       gdb
-      nixd
-      nixfmt-classic
+      materusArg.unstable.nixd
+      nixfmt-rfc-style
       nixpkgs-fmt
       cmake
       gnumake

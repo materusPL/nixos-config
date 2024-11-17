@@ -1,7 +1,12 @@
 ;;; -*- lexical-binding: t; -*-
+
 (defvar materus/init-early t)           ; Var to ensure early-init loaded
 (setq materus/init-early t)             ; Probably useless
 (setenv "LSP_USE_PLISTS" "true")
+(setq c-default-style nil)
+
+(set-language-environment "UTF-8")
+(setq default-input-method nil)
 
 (setq initial-major-mode 'fundamental-mode)
 (setq native-comp-async-report-warnings-errors nil)

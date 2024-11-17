@@ -19,12 +19,11 @@ with materusArg.pkgs.lib;
     nix-prefetch-scripts
     nix-prefetch-github
     nix-prefetch-docker
-    nixfmt-classic
+    nixfmt-rfc-style
     nix-top
     nix-tree
     nix-diff
     nix-ld
-    nixd
     nixpkgs-fmt
     nixpkgs-review
   ]);
