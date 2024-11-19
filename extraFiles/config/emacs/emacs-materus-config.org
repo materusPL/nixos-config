@@ -61,9 +61,10 @@ My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
 * Init Files
 ** Early Init
 :PROPERTIES:
-:header-args: :tangle early-init.el
+:header-args: :tangle early-init.el :comments link
 :END:
 Early init file, setting for GC and some paths.
+Tangled file is [[./early-init.el][there]]
 #+begin_src emacs-lisp :comments no
   ;;; -*- lexical-binding: t; -*-
 #+end_src
@@ -369,7 +370,7 @@ Graphical related settings.
               (lambda (frame) (when (= (length (frame-list)) 2)
                                 (set-frame-parameter frame 'fullscreen 'maximized)))))
 
-  
+
   (when (display-graphic-p)
     (set-frame-font "Hack Nerd Font" nil t)
     )
@@ -381,8 +382,8 @@ Graphical related settings.
 
   (tool-bar-mode -1)
 
-  
-  
+
+
   (setq-default cursor-type '(bar . 1))
   ;; Rainbow mode
   (use-package rainbow-mode
@@ -706,7 +707,6 @@ Other configs
   (use-package lsp-pyright)
   (setq lsp-pyright-langserver-command "pyright")
   (add-hook 'python-mode-hook 'lsp-deferred)
-
 #+end_src
 ** Java
 #+begin_src emacs-lisp

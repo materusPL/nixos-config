@@ -1,5 +1,6 @@
 ;;; -*- lexical-binding: t; -*-
 
+;; [[file:emacs-materus-config.org::*Early Init Variables][Early Init Variables:1]]
 (defvar materus/init-early t
   "Is emacs using materus early init")                                                    ; Var to ensure early-init loaded, not used anymore but keeping it anyway
 (setq materus/init-early t)                                                               ; Probably useless
@@ -45,13 +46,17 @@
 
 (defvar materus-emacs-gc-cons-threshold (* 32 1024 1024)
   "The value of `gc-cons-threshold' after Emacs startup.")                                ; Define after init garbage collector threshold
+;; Early Init Variables:1 ends here
 
+;; [[file:emacs-materus-config.org::*Garbage Collector][Garbage Collector:1]]
 (setq gc-cons-threshold most-positive-fixnum)                                             ; Set `gc-cons-threshold' so it won't collectect during initialization 
 
 (add-hook 'emacs-startup-hook
           (lambda ()
             (setq gc-cons-threshold materus-emacs-gc-cons-threshold)))                    ; Set `gc-cons-threshold' to desired value after startup
+;; Garbage Collector:1 ends here
 
+;; [[file:emacs-materus-config.org::*Early Frame Settings][Early Frame Settings:1]]
 (setq frame-inhibit-implied-resize t)
 (setq frame-resize-pixelwise t)
 (setq window-resize-pixelwise t)                                ; Allow pixelwise resizing of window and frame
@@ -69,7 +74,9 @@
               (advice-remove #'tty-run-terminal-initialization #'ignore) 
               (tty-run-terminal-initialization (selected-frame) nil t)
               )))
+;; Early Frame Settings:1 ends here
 
+;; [[file:emacs-materus-config.org::*Native compilation][Native compilation:1]]
 (setq native-comp-async-report-warnings-errors nil) ; Silence warnings
 (setq native-comp-speed 3)                          ; Set native-comp speed
 
@@ -86,3 +93,4 @@
   (startup-redirect-eln-cache
    (convert-standard-filename
     (expand-file-name  "var/eln-cache/" user-emacs-directory))))
+;; Native compilation:1 ends here
