@@ -122,6 +122,9 @@ let
       dirvish
       rg
       shfmt
+      mermaid-mode
+      ob-mermaid
+      visual-replace
       # Completions & Minibuffer
       corfu
       company
@@ -137,6 +140,8 @@ let
   emacsEnv = pkgs.buildEnv {
     name = "emacs-env";
     paths = with pkgs; [
+      plantuml
+      mermaid-cli
       pyright
       shfmt
       ripgrep

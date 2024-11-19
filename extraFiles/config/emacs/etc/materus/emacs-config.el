@@ -15,12 +15,6 @@
 ;; [[file:../../emacs-materus-config.org::*Init package manager config][Init package manager config:1]]
 (require 'cl-lib)
 (require 'package)
-(setq package-user-dir (concat user-emacs-directory "var/elpa/" emacs-version "/" ))
-(setq package-gnupghome-dir (concat user-emacs-directory "var/elpa/gnupg/" ))
-(add-to-list 'load-path (concat user-emacs-directory "etc/materus/extra"))
-
-(add-to-list 'package-archives '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/"))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 ;; Init package manager config:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Packages list & function][Packages list & function:1]]
@@ -141,9 +135,7 @@
     (package-refresh-contents)
     (dolist (p materus/packages)
       (when (not (package-installed-p p))
-        (package-install p)))
-    (package-quickstart-refresh)))
-(package-initialize)
+        (package-install p)))))
 (unless materus/use-nix-packages 
   (materus/install-packages))
 ;; Packages list & function:1 ends here
@@ -178,9 +170,7 @@
             (lambda (frame) (when (= (length (frame-list)) 2)
                               (set-frame-parameter frame 'fullscreen 'maximized)))))
 
-(setq frame-inhibit-implied-resize t)
-(setq frame-resize-pixelwise t)
-(setq window-resize-pixelwise t)
+
 (when (display-graphic-p)
   (set-frame-font "Hack Nerd Font" nil t)
   )
@@ -192,8 +182,8 @@
 
 (tool-bar-mode -1)
 
-(setq read-process-output-max (* 1024 1024 3))
-(setq ring-bell-function 'ignore)
+
+
 (setq-default cursor-type '(bar . 1))
 ;; Rainbow mode
 (use-package rainbow-mode
@@ -423,7 +413,7 @@
 (use-package dap-gdb-lldb)
 
 
-
+(setq read-process-output-max (* 1024 1024 3))
 
 (defun lsp-booster--advice-json-parse (old-fn &rest args)
   "Try to parse bytecode instead of json."
