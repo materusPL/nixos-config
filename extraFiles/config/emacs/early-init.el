@@ -21,16 +21,6 @@
 ;; Packages
 (setq package-enable-at-startup t)                                                        ; Ensure packages are enable since I'm either using built in package manager or nix
 (setq package-quickstart nil)                                                             ; Disable package quickstart, it's annoying if forget to update it and doesn't speed up much
-(add-to-list 'load-path (concat user-emacs-directory "etc/materus/extra"))                ; Extra load path for packages
-(setq package-user-dir (concat user-emacs-directory "var/elpa/" emacs-version "/" ))      ; Set elpa path for this emacs version, should use nix packages anyway so keeping just in case
-(setq package-gnupghome-dir (concat user-emacs-directory "var/elpa/gnupg/" ))             ; Set path to gnupg for elpa
-(add-to-list 'package-archives 
-             '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/"))                 ; Add nongnu-devel repo to package manager
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)              ; Add melpa repo to package manager
-(customize-set-variable 'package-archive-priorities '(("gnu"    . 99)
-                                                      ("nongnu" . 80)
-                                                      ("nongnu-devel" . 70)
-                                                      ("melpa"  . 0)))                      ; Repository priority
 ;;
 
 (setq inhibit-compacting-font-caches t)                                                   ; Don't compact fonts
@@ -39,12 +29,12 @@
 
 (setq custom-file (concat user-emacs-directory "etc/custom.el"))                          ; Set custom file location, don't want clutter in main directory
 (setq custom-theme-directory
-      (expand-file-name "/etc/materus/themes/" user-emacs-directory))                       ; Set custom themes location
+      (concat user-emacs-directory "/etc/materus/themes" ))                               ; Set custom themes location
 
 (setq ring-bell-function 'ignore)                                                         ; Disable bell
 
 
-(defvar materus-emacs-gc-cons-threshold (* 32 1024 1024)
+(defvar materus-emacs-gc-cons-threshold (* 64 1024 1024)
   "The value of `gc-cons-threshold' after Emacs startup.")                                ; Define after init garbage collector threshold
 ;; Early Init Variables:1 ends here
 
@@ -81,7 +71,7 @@
 (setq native-comp-speed 3)                          ; Set native-comp speed
 
 (setq native-comp-jit-compilation t
-      ;native-comp-deferred-compilation t 
+      ;;native-comp-deferred-compilation t 
       package-native-compile t)
 
 
@@ -92,5 +82,5 @@
            (native-comp-available-p))
   (startup-redirect-eln-cache
    (convert-standard-filename
-    (expand-file-name  "var/eln-cache/" user-emacs-directory))))
+    (concat user-emacs-directory "var/eln-cache/"))))
 ;; Native compilation:1 ends here

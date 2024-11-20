@@ -91,16 +91,6 @@ Setting early init variables
   ;; Packages
   (setq package-enable-at-startup t)                                                        ; Ensure packages are enable since I'm either using built in package manager or nix
   (setq package-quickstart nil)                                                             ; Disable package quickstart, it's annoying if forget to update it and doesn't speed up much
-  (add-to-list 'load-path (concat user-emacs-directory "etc/materus/extra"))                ; Extra load path for packages
-  (setq package-user-dir (concat user-emacs-directory "var/elpa/" emacs-version "/" ))      ; Set elpa path for this emacs version, should use nix packages anyway so keeping just in case
-  (setq package-gnupghome-dir (concat user-emacs-directory "var/elpa/gnupg/" ))             ; Set path to gnupg for elpa
-  (add-to-list 'package-archives 
-               '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/"))                 ; Add nongnu-devel repo to package manager
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)              ; Add melpa repo to package manager
-  (customize-set-variable 'package-archive-priorities '(("gnu"    . 99)
-                                                        ("nongnu" . 80)
-                                                        ("nongnu-devel" . 70)
-                                                        ("melpa"  . 0)))                      ; Repository priority
   ;;
 
   (setq inhibit-compacting-font-caches t)                                                   ; Don't compact fonts
@@ -109,15 +99,13 @@ Setting early init variables
 
   (setq custom-file (concat user-emacs-directory "etc/custom.el"))                          ; Set custom file location, don't want clutter in main directory
   (setq custom-theme-directory
-        (expand-file-name "/etc/materus/themes/" user-emacs-directory))                       ; Set custom themes location
+        (concat user-emacs-directory "/etc/materus/themes" ))                               ; Set custom themes location
 
   (setq ring-bell-function 'ignore)                                                         ; Disable bell
 
 
-  (defvar materus-emacs-gc-cons-threshold (* 32 1024 1024)
+  (defvar materus-emacs-gc-cons-threshold (* 64 1024 1024)
     "The value of `gc-cons-threshold' after Emacs startup.")                                ; Define after init garbage collector threshold
-
-
 #+end_src
 *** Garbage Collector
 Settings for garbage collector
@@ -127,7 +115,6 @@ Settings for garbage collector
   (add-hook 'emacs-startup-hook
             (lambda ()
               (setq gc-cons-threshold materus-emacs-gc-cons-threshold)))                    ; Set `gc-cons-threshold' to desired value after startup
-
 #+end_src
 *** Early Frame Settings
 Early frame settings, maybe some could be move to normal init
@@ -148,16 +135,15 @@ Early frame settings, maybe some could be move to normal init
               (unless (display-graphic-p)
                 (advice-remove #'tty-run-terminal-initialization #'ignore) 
                 (tty-run-terminal-initialization (selected-frame) nil t)
-                )))                       
+                )))
 #+end_src
 *** Native compilation
 #+begin_src emacs-lisp
-
   (setq native-comp-async-report-warnings-errors nil) ; Silence warnings
   (setq native-comp-speed 3)                          ; Set native-comp speed
 
   (setq native-comp-jit-compilation t
-        ;native-comp-deferred-compilation t 
+        ;;native-comp-deferred-compilation t 
         package-native-compile t)
 
 
@@ -168,26 +154,41 @@ Early frame settings, maybe some could be move to normal init
              (native-comp-available-p))
     (startup-redirect-eln-cache
      (convert-standard-filename
-      (expand-file-name  "var/eln-cache/" user-emacs-directory))))
-
+      (concat user-emacs-directory "var/eln-cache/"))))
 #+end_src
 
 ** Init
 :PROPERTIES:
-:header-args: :tangle init.el
+:header-args: :tangle init.el :comments link
 :END:
-Init File
-Checking if using emacs from my nix config (not used anymore, might use in future), loads config and custom.el
+Init File, tangled [[./init.el][there]]
+Checking if using emacs from my nix config, loads config and custom.el
+Sets up package.el 
 #+begin_src emacs-lisp :comments no
   ;;; -*- lexical-binding: t; -*-
 #+end_src
 #+begin_src emacs-lisp
   (setq-default materus/use-nix-packages (require 'materus-config nil 'noerror))
+  (require 'cl-lib)
+  (require 'package)
+
+  (add-to-list 'load-path (concat user-emacs-directory "etc/materus/extra"))                ; Extra load path for packages
+  (setq package-user-dir (concat user-emacs-directory "var/elpa/" emacs-version "/" ))      ; Set elpa path for this emacs version, should use nix packages anyway so keeping just in case
+  (setq package-gnupghome-dir (concat user-emacs-directory "var/elpa/gnupg/" ))             ; Set path to gnupg for elpa
+  (add-to-list 'package-archives 
+               '("nongnu-devel" . "https://elpa.nongnu.org/nongnu-devel/"))                 ; Add nongnu-devel repo to package manager
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)              ; Add melpa repo to package manager
+  (customize-set-variable 'package-archive-priorities '(("gnu"    . 99)
+                                                        ("nongnu" . 80)
+                                                        ("nongnu-devel" . 70)
+                                                        ("melpa"  . 0)))                    ; Repository priority
+
   (load (concat user-emacs-directory "etc/materus/nix-init") t)
   (load (concat user-emacs-directory "etc/materus/emacs-config"))
   (load custom-file t)
 #+end_src
 ** Compile Time
+Some defvar so native-compile wont complain
 #+begin_src emacs-lisp :comments no
   ;;; -*- lexical-binding: t; -*-
 #+end_src
@@ -207,8 +208,7 @@ Package manager config if not using nix.
 After some testing default package manager works best for me.
 ** Init package manager config
 #+begin_src emacs-lisp
-  (require 'cl-lib)
-  (require 'package)
+  
   #+end_src
 ** Packages list & function
 Packages to install
@@ -340,7 +340,7 @@ General configurations of packages modes etc.
 Set up no littering
 #+begin_src emacs-lisp
   (require 'recentf)
-    (use-package no-littering
+  (use-package no-littering
     :config
     (setq package-quickstart-file  
           (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
@@ -348,8 +348,6 @@ Set up no littering
                  (recentf-expand-file-name no-littering-var-directory))
     (add-to-list 'recentf-exclude
                  (recentf-expand-file-name no-littering-etc-directory)))
-  (setq custom-theme-directory (concat user-emacs-directory "etc/themes"))
-  (add-to-list 'custom-theme-load-path custom-theme-directory)
 #+end_src
 ** Graphical
 Graphical related settings.
@@ -376,13 +374,15 @@ Graphical related settings.
     )
 
   (setq-default display-line-numbers-width 3)
-
+  (setq-default display-line-numbers-widen t)
+  (setq truncate-string-ellipsis "…")
 
   (global-tab-line-mode 1)
 
   (tool-bar-mode -1)
-
-
+  (setq window-divider-default-bottom-width 1)
+  (setq window-divider-default-right-width 1)
+  (window-divider-mode 1)
 
   (setq-default cursor-type '(bar . 1))
   ;; Rainbow mode
@@ -395,12 +395,10 @@ Graphical related settings.
   (use-package rainbow-delimiters :hook
     (prog-mode . rainbow-delimiters-mode)
     :config
-    (custom-set-faces
-     '(rainbow-delimiters-depth-1-face ((t (:foreground "#FFFFFF"))))
-     '(rainbow-delimiters-depth-2-face ((t (:foreground "#FFFF00"))))
-     '(rainbow-delimiters-depth-5-face ((t (:foreground "#6A5ACD"))))
-     '(rainbow-delimiters-unmatched-face ((t (:foreground "#FF0000")))))
-    )
+    (set-face-attribute 'rainbow-delimiters-depth-1-face nil :foreground "#FFFFFF")
+    (set-face-attribute 'rainbow-delimiters-depth-2-face nil :foreground "#FFFF00")
+    (set-face-attribute 'rainbow-delimiters-depth-5-face nil :foreground "#6A5ACD")
+    (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#FF0000"))
   ;; Nerd Icons
   (use-package nerd-icons)
   (use-package nerd-icons-completion
@@ -641,13 +639,13 @@ Other configs
   (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
     "Prepend emacs-lsp-booster command to lsp CMD."
     (let ((orig-result (funcall old-fn cmd test?)))
-      (if (and (not test?)                             ;; for check lsp-server-present?
-               (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+      (if (and (not test?)                                                             ; for check lsp-server-present?
+               (not (file-remote-p default-directory))                                 ; see lsp-resolve-final-command, it would add extra shell wrapper
                lsp-use-plists
-               (not (functionp 'json-rpc-connection))  ;; native json-rpc
+               (not (functionp 'json-rpc-connection))                                  ; native json-rpc
                (executable-find "emacs-lsp-booster"))
           (progn
-            (when-let* ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+            (when-let* ((command-from-exec-path (executable-find (car orig-result))))  ; resolve command from exec-path (in case not found in $PATH)
               (setcar orig-result command-from-exec-path))
             (message "Using emacs-lsp-booster for %s!" orig-result)
             (cons "emacs-lsp-booster" orig-result))
@@ -816,11 +814,15 @@ Byte compile files.
 #+end_src
 * Test
 Just for testing some code
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp 
   ;;; (global-set-key (kbd "C-∇") (kbd "C-H"))
   ;;; (global-set-key (kbd "H-∇") (lambda () (interactive) (insert-char #x2207)))
+  ;;;  (keymap-set corfu--mouse-ignore-map "<mouse-movement>" 'ignore)
+  ;;; (keymap-set corfu-map "<mouse-movement>" 'ignore)
+  ;;; (buffer-text-pixel-size)
+  ;;; (set-window-vscroll nil 960 t t)
 
-
+  ;;;  (set-window-margins (selected-window) 0 0)
 
   ;;; (setq completion-styles '(orderless basic)
   ;;;   completion-category-defaults nil

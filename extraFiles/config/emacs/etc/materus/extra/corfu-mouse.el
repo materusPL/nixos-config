@@ -35,12 +35,12 @@
 ;; To enable, M-x corfu-mouse-mode.
 
 
-;; Modified to support pixel-scroll-precision-mode
+;; Modified to support pixel-scroll-precision-mode and fixed adding spaces 
 
 ;;; Code:
 
 (require 'corfu)
-
+(make-gdb-table)
 (defgroup corfu-mouse nil
   "Mouse support for Corfu."
   :group 'corfu
@@ -78,18 +78,17 @@
 
 (defun corfu-mouse--format-candidates (fcands)
   "Format candidates.
-
 FCANDS is the return value of `corfu--format-candidates'."
   (let ((index corfu--scroll)
         (cands (caddr fcands)))
     (while cands
       (let ((line (car cands)))
-
         ;; Append necessary amount of spaces to make it as wide as the
         ;; popup.
-        (setq line (concat line (make-string (- (cadr fcands)
-                                                (string-width line))
-                                             ? )))
+        (let ((strlen (- (cadr fcands) (string-width line))))
+          (when (> strlen 0)
+            (setq line (concat line (make-string strlen ? )))))
+        
         (add-text-properties 0 (length line)
                              `(mouse-face
                                corfu-mouse

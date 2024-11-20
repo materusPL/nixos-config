@@ -125,6 +125,8 @@ let
       mermaid-mode
       ob-mermaid
       visual-replace
+      scroll-restore
+      highlight-indent-guides
       # Completions & Minibuffer
       corfu
       company

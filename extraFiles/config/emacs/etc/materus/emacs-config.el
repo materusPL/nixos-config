@@ -13,8 +13,7 @@
 ;; Compile Time:2 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Init package manager config][Init package manager config:1]]
-(require 'cl-lib)
-(require 'package)
+
 ;; Init package manager config:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Packages list & function][Packages list & function:1]]
@@ -142,7 +141,7 @@
 
 ;; [[file:../../emacs-materus-config.org::*No Littering][No Littering:1]]
 (require 'recentf)
-  (use-package no-littering
+(use-package no-littering
   :config
   (setq package-quickstart-file  
         (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
@@ -150,8 +149,6 @@
                (recentf-expand-file-name no-littering-var-directory))
   (add-to-list 'recentf-exclude
                (recentf-expand-file-name no-littering-etc-directory)))
-(setq custom-theme-directory (concat user-emacs-directory "etc/themes"))
-(add-to-list 'custom-theme-load-path custom-theme-directory)
 ;; No Littering:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Mouse][Mouse:1]]
@@ -176,13 +173,15 @@
   )
 
 (setq-default display-line-numbers-width 3)
-
+(setq-default display-line-numbers-widen t)
+(setq truncate-string-ellipsis "…")
 
 (global-tab-line-mode 1)
 
 (tool-bar-mode -1)
-
-
+(setq window-divider-default-bottom-width 1)
+(setq window-divider-default-right-width 1)
+(window-divider-mode 1)
 
 (setq-default cursor-type '(bar . 1))
 ;; Rainbow mode
@@ -195,12 +194,10 @@
 (use-package rainbow-delimiters :hook
   (prog-mode . rainbow-delimiters-mode)
   :config
-  (custom-set-faces
-   '(rainbow-delimiters-depth-1-face ((t (:foreground "#FFFFFF"))))
-   '(rainbow-delimiters-depth-2-face ((t (:foreground "#FFFF00"))))
-   '(rainbow-delimiters-depth-5-face ((t (:foreground "#6A5ACD"))))
-   '(rainbow-delimiters-unmatched-face ((t (:foreground "#FF0000")))))
-  )
+  (set-face-attribute 'rainbow-delimiters-depth-1-face nil :foreground "#FFFFFF")
+  (set-face-attribute 'rainbow-delimiters-depth-2-face nil :foreground "#FFFF00")
+  (set-face-attribute 'rainbow-delimiters-depth-5-face nil :foreground "#6A5ACD")
+  (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#FF0000"))
 ;; Nerd Icons
 (use-package nerd-icons)
 (use-package nerd-icons-completion
@@ -433,13 +430,13 @@
 (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
   "Prepend emacs-lsp-booster command to lsp CMD."
   (let ((orig-result (funcall old-fn cmd test?)))
-    (if (and (not test?)                             ;; for check lsp-server-present?
-             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+    (if (and (not test?)                                                             ; for check lsp-server-present?
+             (not (file-remote-p default-directory))                                 ; see lsp-resolve-final-command, it would add extra shell wrapper
              lsp-use-plists
-             (not (functionp 'json-rpc-connection))  ;; native json-rpc
+             (not (functionp 'json-rpc-connection))                                  ; native json-rpc
              (executable-find "emacs-lsp-booster"))
         (progn
-          (when-let* ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+          (when-let* ((command-from-exec-path (executable-find (car orig-result))))  ; resolve command from exec-path (in case not found in $PATH)
             (setcar orig-result command-from-exec-path))
           (message "Using emacs-lsp-booster for %s!" orig-result)
           (cons "emacs-lsp-booster" orig-result))
@@ -604,8 +601,12 @@
 ;; [[file:../../emacs-materus-config.org::*Test][Test:1]]
 ;;; (global-set-key (kbd "C-∇") (kbd "C-H"))
 ;;; (global-set-key (kbd "H-∇") (lambda () (interactive) (insert-char #x2207)))
+;;;  (keymap-set corfu--mouse-ignore-map "<mouse-movement>" 'ignore)
+;;; (keymap-set corfu-map "<mouse-movement>" 'ignore)
+;;; (buffer-text-pixel-size)
+;;; (set-window-vscroll nil 960 t t)
 
-
+;;;  (set-window-margins (selected-window) 0 0)
 
 ;;; (setq completion-styles '(orderless basic)
 ;;;   completion-category-defaults nil
