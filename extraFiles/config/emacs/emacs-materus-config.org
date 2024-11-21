@@ -9,6 +9,7 @@
  
 My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
 #+HTML: <p>
+# Komentarz
 #+HTML: <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" />
 #+HTML: <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=red" />
 #+HTML: </p>
