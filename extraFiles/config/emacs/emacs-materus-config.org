@@ -9,6 +9,11 @@
  
 My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
 
+#+BEGIN_EXPORT HTML
+<img src="https://img.shields.io/badge/ProtonMail-8B89CC?style=for-the-badge&logo=protonmail&logoColor=white&.svg"/>
+#+END_EXPORT
+[[https://materus.pl][https://img.shields.io/badge/ProtonMail-8B89CC?style=for-the-badge&logo=protonmail&logoColor=white&.svg]]
+
 * Table of Contents    :noexport:TOC_3:
 - [[#init-files][Init Files]]
   - [[#early-init][Early Init]]
