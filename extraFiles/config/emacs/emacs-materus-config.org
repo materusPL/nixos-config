@@ -9,10 +9,6 @@
  
 My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
 
-#+HTML: <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" />
-#+TAGS: noexport
-[[https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white]]
-
 * Table of Contents    :noexport:TOC_3:
 - [[#init-files][Init Files]]
   - [[#early-init][Early Init]]
