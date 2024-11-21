@@ -2,10 +2,11 @@
 #+AUTHOR: materus
 #+DESCRIPTION: materus emacs configuration
 #+STARTUP: overview
-#+PROPERTY: header-args :tangle etc/materus/emacs-config.el :comments link
+#+PROPERTY: EMACS-DIR: "./"
+#+PROPERTY: header-args :tangle (concat (org-entry-get nil "EMACS-DIR" t) "etc/materus/emacs-config.el") :comments link
 #+OPTIONS: \n:t
 #+auto_tangle: t
-
+ 
 My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
 
 * Table of Contents    :noexport:TOC_3:
@@ -63,7 +64,7 @@ My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
 * Init Files
 ** Early Init
 :PROPERTIES:
-:header-args: :tangle early-init.el :comments link
+:header-args: :tangle (concat (org-entry-get nil "EMACS-DIR" t) "early-init.el") :comments link
 :END:
 Early init file, setting for GC and some paths.
 Tangled file is [[./early-init.el][there]]
@@ -161,7 +162,7 @@ Early frame settings, maybe some could be move to normal init
 
 ** Init
 :PROPERTIES:
-:header-args: :tangle init.el :comments link
+:header-args: :tangle (concat (org-entry-get nil "EMACS-DIR" t) "init.el") :comments link
 :END:
 Init File, tangled [[./init.el][there]]
 Checking if using emacs from my nix config, loads config and custom.el
