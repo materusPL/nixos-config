@@ -127,11 +127,13 @@ let
       visual-replace
       scroll-restore
       highlight-indent-guides
+      diff-hl
       # Completions & Minibuffer
       corfu
-      company
-      company-quickhelp
+      corfu-terminal
+      kind-icon
       cape
+      
       embark
       embark-consult
       orderless

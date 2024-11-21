@@ -1,4 +1,9 @@
-{ config, pkgs, materusArg, ... }:
+{
+  config,
+  pkgs,
+  materusArg,
+  ...
+}:
 {
 
   services.jackett.enable = true;
@@ -7,11 +12,26 @@
 
   ];
 
-
   environment.systemPackages = with pkgs; [
     #(pkgs.lutris.override { extraLibraries = pkgs: with pkgs;  [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
     materusArg.pkgs.amdgpu-pro-libs.prefixes
-    (pkgs.bottles.override { extraPkgs = pkgs: [ pkgs.libsForQt5.breeze-qt5 pkgs.kdePackages.breeze-gtk pkgs.nss_latest ]; extraLibraries = pkgs: [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
+    (pkgs.bottles.override {
+      extraPkgs = pkgs: [
+        pkgs.libsForQt5.breeze-qt5
+        pkgs.kdePackages.breeze-gtk
+        pkgs.nss_latest
+      ];
+      extraLibraries = pkgs: [
+        pkgs.samba
+        pkgs.jansson
+        pkgs.tdb
+        pkgs.libunwind
+        pkgs.libusb1
+        pkgs.gnutls
+        pkgs.gtk3
+        pkgs.pango
+      ];
+    })
     glibc
     glib
     gtk3
@@ -38,10 +58,14 @@
 
     pciutils
 
-    aspell
-    aspellDicts.pl
-    aspellDicts.en
-    aspellDicts.en-computers
+    (aspellWithDicts (
+      ds: with ds; [
+        en
+        en-computers
+        en-science
+        pl
+      ]
+    ))
     steamtinkerlaunch
     distrobox
     # WebP support
@@ -78,7 +102,6 @@
 
     nix-du
 
-
     kate
     krusader
 
@@ -93,21 +116,15 @@
     monkeysphere
     gparted
 
-
-
     virt-viewer
 
     inkscape
     gimp
 
-
-
     git-crypt
 
     bubblewrap
     bindfs
-
-
 
     binutils
 

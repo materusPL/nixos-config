@@ -259,6 +259,16 @@
   :hook (after-init . minions-mode))
 ;; Modeline:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Diff-hl][Diff-hl:1]]
+(use-package diff-hl
+  :config
+  (setq diff-hl-side 'right)
+  (global-diff-hl-mode 1)
+  (diff-hl-margin-mode 1)
+  (diff-hl-flydiff-mode 1)
+  (global-diff-hl-show-hunk-mouse-mode 1))
+;; Diff-hl:1 ends here
+
 ;; [[file:../../emacs-materus-config.org::*Org-mode][Org-mode:1]]
 (use-package org
   :mode (("\\.org$" . org-mode))
@@ -293,10 +303,19 @@
    (markdown-mode . toc-org-mode)))
 ;; Org-mode:1 ends here
 
+;; [[file:../../emacs-materus-config.org::*Style][Style:1]]
+(use-package orderless
+ :init
+ ;; Tune the global completion style settings to your liking!
+ ;; This affects the minibuffer and non-lsp completion at point.
+ (setq completion-styles '(basic partial-completion orderless)
+       completion-category-defaults nil
+       completion-category-overrides nil))
+;; Style:1 ends here
+
 ;; [[file:../../emacs-materus-config.org::*Minibuffer][Minibuffer:1]]
 (use-package consult)
 (use-package marginalia)
-(use-package orderless)
 
 (use-package which-key
   :config
@@ -319,10 +338,50 @@
 ;; Minibuffer:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Code completion][Code completion:1]]
-(use-package company
+(use-package cape)
+
+(use-package corfu
+  ;; Optional customizations
+  :custom
+  (corfu-cycle nil)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  (global-corfu-minibuffer nil)
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+
+  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+  ;; be used globally (M-/).  See also the customization variable
+  ;; `global-corfu-modes' to exclude certain modes.
+  :init
+  (global-corfu-mode 1)
+  (corfu-popupinfo-mode 1)
+  (corfu-history-mode 1))
+
+
+(use-package corfu-terminal
+  :after (corfu)
+  :config
+  (when (or (daemonp) (not (display-graphic-p)))
+    (corfu-terminal-mode)))
+
+(use-package corfu-mouse
+  :after (corfu)
   :config 
-  (setq global-corfu-minibuffer nil)
-  (global-company-mode 1))
+  (corfu-mouse-mode)
+  (keymap-set corfu--mouse-ignore-map "<mouse-movement>" 'ignore)
+  (keymap-set corfu-map "<mouse-movement>" 'ignore))
+
+(use-package kind-icon
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 ;; Code completion:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Eat][Eat:1]]
@@ -331,6 +390,7 @@
 
 ;; [[file:../../emacs-materus-config.org::*Defaults][Defaults:1]]
 (setq-default buffer-file-coding-system 'utf-8-unix)
+(setq text-mode-ispell-word-completion nil) ; Disable ispell
 ;; Defaults:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Elcord][Elcord:1]]
@@ -401,47 +461,64 @@
 ;; Perspective:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*LSP][LSP:1]]
-(use-package lsp-mode)
+(use-package lsp-mode
+  :custom
+  (lsp-completion-provider :none) ;; we use Corfu!
+
+  :init
+  (defun materus/orderless-dispatch-flex-first (_pattern index _total)
+    (and (eq index 0) 'orderless-flex))
+
+  (defun materus/lsp-mode-setup-completion ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless))
+    ;; Optionally configure the first word as flex filtered.
+    (add-hook 'orderless-style-dispatchers #'materus/orderless-dispatch-flex-first nil 'local)
+    ;; Optionally configure the cape-capf-buster.
+    (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point))))
+
+  :hook
+  (lsp-completion-mode . materus/lsp-mode-setup-completion))
 
 
-(use-package lsp-ui)
-(use-package dap-mode)
-(use-package dap-lldb)
-(use-package dap-gdb-lldb)
+  (use-package lsp-ui)
+  (use-package dap-mode)
+  (use-package dap-lldb)
+  (use-package dap-gdb-lldb)
 
 
-(setq read-process-output-max (* 1024 1024 3))
+  (setq read-process-output-max (* 1024 1024 3))
 
-(defun lsp-booster--advice-json-parse (old-fn &rest args)
-  "Try to parse bytecode instead of json."
-  (or
-   (when (equal (following-char) ?#)
-     (let ((bytecode (read (current-buffer))))
-       (when (byte-code-function-p bytecode)
-         (funcall bytecode))))
-   (apply old-fn args)))
-(advice-add (if (progn (require 'json)
-                       (fboundp 'json-parse-buffer))
-                'json-parse-buffer
-              'json-read)
-            :around
-            #'lsp-booster--advice-json-parse)
+  (defun lsp-booster--advice-json-parse (old-fn &rest args)
+    "Try to parse bytecode instead of json."
+    (or
+     (when (equal (following-char) ?#)
+       (let ((bytecode (read (current-buffer))))
+         (when (byte-code-function-p bytecode)
+           (funcall bytecode))))
+     (apply old-fn args)))
+  (advice-add (if (progn (require 'json)
+                         (fboundp 'json-parse-buffer))
+                  'json-parse-buffer
+                'json-read)
+              :around
+              #'lsp-booster--advice-json-parse)
 
-(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
-  "Prepend emacs-lsp-booster command to lsp CMD."
-  (let ((orig-result (funcall old-fn cmd test?)))
-    (if (and (not test?)                                                             ; for check lsp-server-present?
-             (not (file-remote-p default-directory))                                 ; see lsp-resolve-final-command, it would add extra shell wrapper
-             lsp-use-plists
-             (not (functionp 'json-rpc-connection))                                  ; native json-rpc
-             (executable-find "emacs-lsp-booster"))
-        (progn
-          (when-let* ((command-from-exec-path (executable-find (car orig-result))))  ; resolve command from exec-path (in case not found in $PATH)
-            (setcar orig-result command-from-exec-path))
-          (message "Using emacs-lsp-booster for %s!" orig-result)
-          (cons "emacs-lsp-booster" orig-result))
-      orig-result)))
-(advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+  (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+    "Prepend emacs-lsp-booster command to lsp CMD."
+    (let ((orig-result (funcall old-fn cmd test?)))
+      (if (and (not test?)                                                             ; for check lsp-server-present?
+               (not (file-remote-p default-directory))                                 ; see lsp-resolve-final-command, it would add extra shell wrapper
+               lsp-use-plists
+               (not (functionp 'json-rpc-connection))                                  ; native json-rpc
+               (executable-find "emacs-lsp-booster"))
+          (progn
+            (when-let* ((command-from-exec-path (executable-find (car orig-result))))  ; resolve command from exec-path (in case not found in $PATH)
+              (setcar orig-result command-from-exec-path))
+            (message "Using emacs-lsp-booster for %s!" orig-result)
+            (cons "emacs-lsp-booster" orig-result))
+        orig-result)))
+  (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 ;; LSP:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Nix][Nix:1]]
@@ -543,7 +620,8 @@
 ;; perspective
 (global-set-key (kbd "C-x C-b") 'persp-list-buffers)
 (global-set-key (kbd "C-x C-B") 'list-buffers)
-(global-set-key (kbd "C-x B") 'persp-switch-to-buffer)
+(global-set-key (kbd "C-x b") 'persp-switch-to-buffer)
+(global-set-key (kbd "C-x B") 'consult-buffer)
 
 ;; CUA
 (keymap-set cua--cua-keys-keymap "C-z" 'undo-tree-undo)
@@ -601,8 +679,6 @@
 ;; [[file:../../emacs-materus-config.org::*Test][Test:1]]
 ;;; (global-set-key (kbd "C-∇") (kbd "C-H"))
 ;;; (global-set-key (kbd "H-∇") (lambda () (interactive) (insert-char #x2207)))
-;;;  (keymap-set corfu--mouse-ignore-map "<mouse-movement>" 'ignore)
-;;; (keymap-set corfu-map "<mouse-movement>" 'ignore)
 ;;; (buffer-text-pixel-size)
 ;;; (set-window-vscroll nil 960 t t)
 

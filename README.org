@@ -1,0 +1,21 @@
+#+TITLE: nixos-config
+#+AUTHOR: materus
+#+DESCRIPTION: NixOS config and dotfiles
+#+OPTIONS: \n:t
+My NixOS and home-manager configs.
+Dotfiles and helper scripts.
+
+Part of it is encrypted by git-crypt, mostly just ips and names. Secrets are managed by sops.
+
+* Hosts
+[[./configurations/host/materusPC/][materusPC]] - my main PC
+
+[[./configurations/host/Old-materusPC/][Old-materusPC]] - my old PC, barely used
+
+[[./configurations/host/flamaster/][flamaster]] - my laptop, used mostly as server for games.
+
+[[./configurations/host/valkyrie/][valkyrie]] - VPS, my website and pleroma instance
+
+[[./configurations/host/waffentrager/][waffentrager]] - raspberry pi4, home server
+
+

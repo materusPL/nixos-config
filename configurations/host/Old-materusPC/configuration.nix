@@ -2,27 +2,42 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, materusCfg, materusArg, ... }:
+{
+  config,
+  pkgs,
+  materusCfg,
+  materusArg,
+  ...
+}:
 let
-  unstable = import materusCfg.materusFlake.inputs.nixpkgs { system = "x86_64-linux"; config = { allowUnfree = true; nvidia.acceptLicense = true; }; };
+  unstable = import materusCfg.materusFlake.inputs.nixpkgs {
+    system = "x86_64-linux";
+    config = {
+      allowUnfree = true;
+      nvidia.acceptLicense = true;
+    };
+  };
 in
 {
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ./network.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./network.nix
+  ];
   boot.supportedFilesystems = [ "ntfs" ];
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   nix.settings.auto-optimise-store = true;
   nix.settings.substituters = [
     "https://nix-community.cachix.org"
     "https://cache.nixos.org/"
   ];
-  nix.settings.trusted-public-keys = [ "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" ];
+  nix.settings.trusted-public-keys = [
+    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+  ];
   nixpkgs.config.allowUnfree = true;
-
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.grub = {
@@ -70,19 +85,10 @@ in
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-
   hardware.opengl.enable = true;
   hardware.opengl.driSupport32Bit = true;
 
   materus.profile.steam.enable = true;
-
-
-
-
-
-
-
-
 
   # Configure keymap in X11
   services.xserver.xkb.layout = "pl";
@@ -114,17 +120,25 @@ in
     '';
   };
 
-
   virtualisation.podman = {
     enable = true;
     dockerCompat = true;
     dockerSocket.enable = true;
   };
 
-
   users.users.materus = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "kvm" "input" "libvirt" "libvirtd" "podman" "audio" "pipewire" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "kvm"
+      "input"
+      "libvirt"
+      "libvirtd"
+      "podman"
+      "audio"
+      "pipewire"
+    ];
     shell = pkgs.zsh;
     description = "Mateusz Słodkowicz";
 
@@ -140,9 +154,7 @@ in
     STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
 
     MOZ_USE_XINPUT2 = "1";
-    PATH = [
-      "\${XDG_BIN_HOME}"
-    ];
+    PATH = [ "\${XDG_BIN_HOME}" ];
   };
   environment.shellInit = ''
     if ! [ -z "$DISPLAY" ]; then xhost +si:localuser:root &> /dev/null; fi;
@@ -151,11 +163,13 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
 
-
-
-
   i18n.inputMethod.enabled = "fcitx5";
-  i18n.inputMethod.fcitx5.addons = [ pkgs.fcitx5-configtool pkgs.fcitx5-lua pkgs.fcitx5-mozc pkgs.libsForQt5.fcitx5-qt ];
+  i18n.inputMethod.fcitx5.addons = [
+    pkgs.fcitx5-configtool
+    pkgs.fcitx5-lua
+    pkgs.fcitx5-mozc
+    pkgs.libsForQt5.fcitx5-qt
+  ];
 
   environment.systemPackages = with pkgs; [
     brave
@@ -172,10 +186,14 @@ in
     curl
     jdk
     nss_latest
-    aspell
-    aspellDicts.pl
-    aspellDicts.en
-    aspellDicts.en-computers
+    (aspellWithDicts (
+      ds: with ds; [
+        en
+        en-computers
+        en-science
+        pl
+      ]
+    ))
     distrobox
     p7zip
     unrar
@@ -197,11 +215,8 @@ in
     iptraf-ng
     mprocs
 
-
-
     nix-du
     git-crypt
-
 
     wineWowPackages.stagingFull
     winetricks
@@ -215,9 +230,6 @@ in
     inkscape
     gimp
 
-
-
-
     virt-manager
     libguestfs
 
@@ -227,7 +239,6 @@ in
     pulseaudio
 
     binutils
-
 
   ];
 
@@ -244,15 +255,38 @@ in
     ubuntu_font_family
     wqy_zenhei
     monocraft
-    (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "Meslo" "ProFont" ]; })
+    (nerdfonts.override {
+      fonts = [
+        "FiraCode"
+        "DroidSansMono"
+        "Meslo"
+        "ProFont"
+      ];
+    })
   ];
   fonts.fontconfig.enable = true;
   fonts.fontconfig.cache32Bit = true;
-  fonts.fontconfig.defaultFonts.sansSerif = [ "Noto Sans" "DejaVu Sans" "WenQuanYi Zen Hei" "Noto Color Emoji" ];
-  fonts.fontconfig.defaultFonts.serif = [ "Noto Serif" "DejaVu Serif" "WenQuanYi Zen Hei" "Noto Color Emoji" ];
-  fonts.fontconfig.defaultFonts.emoji = [ "Noto Color Emoji" "OpenMoji Color" ];
-  fonts.fontconfig.defaultFonts.monospace = [ "Hack Nerd Font" "Noto Sans Mono" "WenQuanYi Zen Hei Mono" ];
-
+  fonts.fontconfig.defaultFonts.sansSerif = [
+    "Noto Sans"
+    "DejaVu Sans"
+    "WenQuanYi Zen Hei"
+    "Noto Color Emoji"
+  ];
+  fonts.fontconfig.defaultFonts.serif = [
+    "Noto Serif"
+    "DejaVu Serif"
+    "WenQuanYi Zen Hei"
+    "Noto Color Emoji"
+  ];
+  fonts.fontconfig.defaultFonts.emoji = [
+    "Noto Color Emoji"
+    "OpenMoji Color"
+  ];
+  fonts.fontconfig.defaultFonts.monospace = [
+    "Hack Nerd Font"
+    "Noto Sans Mono"
+    "WenQuanYi Zen Hei Mono"
+  ];
 
   environment.enableAllTerminfo = true;
   environment.pathsToLink = [ "/share/zsh" ];
@@ -273,14 +307,15 @@ in
   # programs.mtr.enable = true;
   services.pcscd.enable = true;
 
-  /*systemd.user.services.gpg-agent.serviceConfig.ExecStart = [
+  /*
+    systemd.user.services.gpg-agent.serviceConfig.ExecStart = [
     ""
     ''
     ${pkgs.gnupg}/bin/gpg-agent --supervised \
     --pinentry-program ${pkgs.kwalletcli}/bin/pinentry-kwallet
     ''
-    ];*/
-
+    ];
+  */
 
   programs.gnupg.agent = {
     enable = true;
@@ -293,9 +328,6 @@ in
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-
-
-
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
@@ -311,4 +343,3 @@ in
   system.stateVersion = "23.11"; # Did you read the comment?
 
 }
-

@@ -40,7 +40,6 @@
 ;;; Code:
 
 (require 'corfu)
-(make-gdb-table)
 (defgroup corfu-mouse nil
   "Mouse support for Corfu."
   :group 'corfu
@@ -78,7 +77,7 @@
 
 (defun corfu-mouse--format-candidates (fcands)
   "Format candidates.
-FCANDS is the return value of `corfu--format-candidates'."
+   FCANDS is the return value of `corfu--format-candidates'."
   (let ((index corfu--scroll)
         (cands (caddr fcands)))
     (while cands
