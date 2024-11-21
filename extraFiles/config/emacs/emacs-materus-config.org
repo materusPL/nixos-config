@@ -8,9 +8,9 @@
 #+auto_tangle: t
  
 My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
-#+begin_html
-<img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" />
-#+end_html
+
+#+HTML: <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" />
+
 
 * Table of Contents    :noexport:TOC_3:
 - [[#init-files][Init Files]]
