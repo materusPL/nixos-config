@@ -8,7 +8,7 @@
 #+auto_tangle: t
  
 My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
-
+[[https://materus.pl/][https://materus.pl/content/img/materus-no-background.webp]]
 * Table of Contents    :noexport:TOC_3:
 - [[#init-files][Init Files]]
   - [[#early-init][Early Init]]
