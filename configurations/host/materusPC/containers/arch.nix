@@ -1,15 +1,44 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   mainMirror = "https://ftp.icm.edu.pl/pub/Linux/dist/archlinux";
   extraMirrors = [ ];
-  getty = [ 6 7 ];
-  ttys = [ 6 7 8 ] ++ getty;
+  getty = [
+    6
+    7
+  ];
+  ttys = [
+    6
+    7
+    8
+  ] ++ getty;
 
-  startPkgs = lib.strings.concatStringsSep " " [ "base" "base-devel" "dbus" "less" "nano" "bash-completion" ];
+  startPkgs = lib.strings.concatStringsSep " " [
+    "base"
+    "base-devel"
+    "dbus"
+    "less"
+    "nano"
+    "bash-completion"
+  ];
   scripts = {
     preStart = pkgs.writeShellScript "arch-pre-start" ''
             if [ ! -d "/var/lib/machines/archlinux" ]; then
-              export PATH=''${PATH:+''${PATH}:}${lib.strings.makeBinPath (with pkgs; [ wget coreutils-full gnutar zstd ]) }
+              export PATH=''${PATH:+''${PATH}:}${
+                lib.strings.makeBinPath (
+                  with pkgs;
+                  [
+                    wget
+                    coreutils-full
+                    gnutar
+                    zstd
+                  ]
+                )
+              }
 
               ARCH_IMAGE=$(mktemp)
               trap 'rm $ARCH_IMAGE' EXIT
@@ -35,7 +64,11 @@ let
                 pacman -Syu --noconfirm
 
                 systemctl disable getty@tty1.service
-                ${lib.strings.concatStringsSep "\n" (lib.lists.forEach getty (x: "systemctl enable getty@tty${builtins.toString x}.service"))}
+                ${
+                  lib.strings.concatStringsSep "\n" (
+                    lib.lists.forEach getty (x: "systemctl enable getty@tty${builtins.toString x}.service")
+                  )
+                }
 
           
               "
@@ -51,13 +84,12 @@ in
       SystemCallFilter = [ "@known" ];
       Timezone = "bind";
       Capability = "all";
-      PrivateUsers="no";
+      PrivateUsers = "no";
+      ResolvConf = "copy-host";
     };
 
     filesConfig = {
       BindReadOnly = [
-        "/etc/resolv.conf:/etc/resolv.conf"
-
         "/nix"
 
         "/run/current-system"
@@ -93,7 +125,11 @@ in
     preStart = "${scripts.preStart}";
     overrideStrategy = "asDropin";
     serviceConfig = {
-      DeviceAllow = [ "char-tty rwm" "char-input rwm" "char-drm rwm" ];
+      DeviceAllow = [
+        "char-tty rwm"
+        "char-input rwm"
+        "char-drm rwm"
+      ];
     };
   };
 }

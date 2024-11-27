@@ -165,7 +165,8 @@
 (when (daemonp)
   (add-hook 'after-make-frame-functions 
             (lambda (frame) (when (= (length (frame-list)) 2)
-                              (set-frame-parameter frame 'fullscreen 'maximized)))))
+                              (set-frame-parameter frame 'fullscreen 'maximized)) 
+              (select-frame-set-input-focus frame) )))
 
 
 (when (display-graphic-p)
@@ -183,7 +184,7 @@
 (setq window-divider-default-right-width 1)
 (window-divider-mode 1)
 
-(setq-default cursor-type '(bar . 1))
+(setq-default cursor-type '(bar . 2))
 ;; Rainbow mode
 (use-package rainbow-mode
   :hook
@@ -287,15 +288,17 @@
                                  (if
                                      (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
 
-(use-package org-superstar
+(use-package org-modern
   :after (org)
   :hook
-  (org-mode . org-superstar-mode))
-:config
-(setq org-superstar-leading-bullet " ")
+  (org-indent-mode . org-modern-mode)
+  (org-agenda-finalize . org-modern-agenda)
+  :config 
+  (setq org-modern-block-name '("▼ " . "▲ ")))
 (use-package org-auto-tangle
   :after (org)
-  :hook (org-mode . org-auto-tangle-mode))
+  :hook (org-mode . org-auto-tangle-mode)
+  )
 (use-package toc-org
   :after (org)
   :hook
@@ -382,10 +385,14 @@
 (use-package kind-icon
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+(global-completion-preview-mode 1)
 ;; Code completion:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Eat][Eat:1]]
 (use-package eat)
+(defvar cua--eat-semi-char-keymap (copy-keymap cua--cua-keys-keymap) "EAT semi-char mode CUA keymap")
+(defvar cua--eat-char-keymap (copy-keymap cua--cua-keys-keymap) "EAT char mode CUA keymap")
 ;; Eat:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Defaults][Defaults:1]]
@@ -464,7 +471,8 @@
 (use-package lsp-mode
   :custom
   (lsp-completion-provider :none) ;; we use Corfu!
-
+  :config
+  (require 'lsp-ui)
   :init
   (defun materus/orderless-dispatch-flex-first (_pattern index _total)
     (and (eq index 0) 'orderless-flex))
@@ -480,11 +488,7 @@
   :hook
   (lsp-completion-mode . materus/lsp-mode-setup-completion))
 
-
-  (use-package lsp-ui)
-  (use-package dap-mode)
-  (use-package dap-lldb)
-  (use-package dap-gdb-lldb)
+ 
 
 
   (setq read-process-output-max (* 1024 1024 3))
@@ -520,6 +524,17 @@
         orig-result)))
   (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 ;; LSP:1 ends here
+
+;; [[file:../../emacs-materus-config.org::*DAP][DAP:1]]
+(use-package dap-mode
+  :config
+  (require 'dap-lldb)
+  (require 'dap-gdb-lldb)
+  (require 'dap-cpptools)
+  (setq dap-gdb-lldb-extension-version "0.27.0")
+  (dap-auto-configure-mode 1)
+  )
+;; DAP:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Nix][Nix:1]]
 (use-package nix-mode)
@@ -610,33 +625,69 @@
 (add-hook 'prog-mode-hook 'electric-indent-local-mode)
 ;; Other:1 ends here
 
-;; [[file:../../emacs-materus-config.org::*Keybindings][Keybindings:1]]
+;; [[file:../../emacs-materus-config.org::*Keys][Keys:1]]
 (use-package cua-base)
 
-  ;;; Keybinds
+        ;;; Keybinds
 ;; Eat Term
-(keymap-set eat-semi-char-mode-map "C-v" #'eat-yank)
-(keymap-set eat-char-mode-map "C-V" #'eat-yank)
+(define-key cua--eat-semi-char-keymap (kbd "C-v") #'eat-yank)
+(define-key cua--eat-char-keymap (kbd "C-S-v") #'eat-yank)
+(define-key eat-mode-map (kbd "C-<right>") #'eat-self-input)
+(define-key eat-mode-map (kbd "C-<left>") #'eat-self-input)
 ;; perspective
-(global-set-key (kbd "C-x C-b") 'persp-list-buffers)
-(global-set-key (kbd "C-x C-B") 'list-buffers)
-(global-set-key (kbd "C-x b") 'persp-switch-to-buffer)
-(global-set-key (kbd "C-x B") 'consult-buffer)
-
+(define-key global-map (kbd "C-x C-b") 'persp-list-buffers)
+(define-key global-map (kbd "C-x C-B") 'list-buffers)
+(define-key global-map (kbd "C-x b") 'persp-switch-to-buffer)
+(define-key global-map (kbd "C-x B") 'consult-buffer)
+;; CUA-like global
+(define-key global-map (kbd "C-s") 'save-buffer)
+(define-key global-map (kbd "C-r") 'query-replace)
+(define-key global-map (kbd "C-S-r") 'replace-string)
+(define-key global-map (kbd "M-r") 'query-replace-regexp)
+(define-key global-map (kbd "M-S-r") 'replace-regexp)
+(define-key global-map (kbd "C-a") 'mark-whole-buffer)
+(define-key global-map (kbd "C-f") 'isearch-forward)
+(define-key global-map (kbd "C-S-f") 'isearch-backward)
+(define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
+(define-key isearch-mode-map (kbd "C-S-f") 'isearch-repeat-backward)
+(define-key global-map (kbd "M-f") 'consult-ripgrep)
+(define-key global-map (kbd "C-M-f") 'consult-find)
 ;; CUA
-(keymap-set cua--cua-keys-keymap "C-z" 'undo-tree-undo)
-(keymap-set cua--cua-keys-keymap "C-y" 'undo-tree-redo)
+(define-key cua--cua-keys-keymap (kbd "C-z") 'undo-tree-undo)
+(define-key cua--cua-keys-keymap (kbd "C-y") 'undo-tree-redo)
+(define-key cua-global-keymap (kbd "C-SPC") 'completion-at-point)
+(define-key cua-global-keymap (kbd "C-M-SPC") 'cua-set-mark)
 (cua-mode 1)
 ;; TAB
-(keymap-set global-map "C-<iso-lefttab>" #'indent-rigidly-left-to-tab-stop)
-(keymap-set global-map "C-<tab>" #'indent-rigidly-right-to-tab-stop)
+(define-key global-map (kbd "C-<iso-lefttab>") #'indent-rigidly-left)
+(define-key global-map (kbd "C-<tab>") #'indent-rigidly-right)
+;; Dashboard
+(define-key dashboard-mode-map (kbd "C-r") #'dashboard-refresh-buffer)
+
 ;; Hyper
 (define-key key-translation-map (kbd "<XF86Calculator>") 'event-apply-hyper-modifier )
 (define-key key-translation-map (kbd "<Calculator>") 'event-apply-hyper-modifier )
 (define-key key-translation-map (kbd "∇") 'event-apply-hyper-modifier )
+;; Treemacs
+(define-key global-map (kbd "C-H-t") 'treemacs)
 
-(global-set-key (kbd "C-H-t") 'treemacs)
-;; Keybindings:1 ends here
+;; Unbind
+(define-key isearch-mode-map (kbd "C-s") nil)
+(define-key isearch-mode-map (kbd "C-r") nil)
+;; Keys:1 ends here
+
+;; [[file:../../emacs-materus-config.org::*CUA Overrides][CUA Overrides:1]]
+(defun cua--eat-semi-char-override-keymap ()
+  (setq-local cua--keymap-alist (copy-tree cua--keymap-alist))
+  (setf (alist-get 'cua--ena-cua-keys-keymap cua--keymap-alist) cua--eat-semi-char-keymap))
+(defun cua--eat-char-override-keymap ()
+  (setq-local cua--keymap-alist (copy-tree cua--keymap-alist))
+  (setf (alist-get 'cua--ena-cua-keys-keymap cua--keymap-alist) cua--eat-char-keymap))
+
+(advice-add 'eat-semi-char-mode :after #'cua--eat-semi-char-override-keymap)
+(advice-add 'eat-char-mode :after #'cua--eat-char-override-keymap)
+;(add-hook 'eat-char-mode-hook #'cua--eat-char-override-keymap)
+;; CUA Overrides:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Yasnippet init][Yasnippet init:1]]
 (use-package yasnippet

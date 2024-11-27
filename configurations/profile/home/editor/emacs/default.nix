@@ -41,9 +41,7 @@ let
       which-key
       iedit
       hideshowvis
-      evil
       perspective
-      treemacs-evil
       treemacs
       treemacs-perspective
       treemacs-nerd-icons
@@ -81,7 +79,7 @@ let
       org-roam-ui
       org-review
       org-present
-      org-superstar
+      org-modern
       org-auto-tangle
       visual-fill-column
       csharp-mode
@@ -100,6 +98,7 @@ let
       bash-completion
       eldoc-box
       yasnippet
+      yasnippet-capf
       async
       request
       markdown-ts-mode
@@ -128,14 +127,15 @@ let
       scroll-restore
       highlight-indent-guides
       diff-hl
+      transient
+      embark
+      embark-consult
+      ef-themes
       # Completions & Minibuffer
       corfu
       corfu-terminal
       kind-icon
       cape
-      
-      embark
-      embark-consult
       orderless
       vertico
       marginalia
@@ -167,7 +167,9 @@ let
       jdk
       gradle
       fpc
+      nodejs
       omnisharp-roslyn
+      texlive.combined.scheme-basic
     ];
   };
 
@@ -175,6 +177,7 @@ let
 
   setNixInit = ''
     (defvar lsp-java-configuration-runtimes nil)
+    (setq dap-lldb-debug-program '("${pkgs.llvmPackages.lldb}/bin/lldb-vscode"))
     (setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
                                                    :path "${pkgs.jdk8}/lib/openjdk/")
                                             (:name "JavaSE-17"

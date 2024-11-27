@@ -11,9 +11,9 @@ if [ $# = 0 ] || ( [ $# = 1 ] && [ $1 = "help" ] ); then
 fi
 check_git () {
     if [ "$(git status --porcelain)" ]; then
-	echo "Working directory not clean."
-	echo "Please commit your changes or 'git stash' them before running this script"
-	exit 1
+        echo "Working directory not clean."
+        echo "Please commit your changes or 'git stash' them before running this script"
+        exit 1
     fi
 }
 

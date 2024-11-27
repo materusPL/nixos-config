@@ -2,13 +2,12 @@
 #+AUTHOR: materus
 #+DESCRIPTION: materus emacs configuration
 #+STARTUP: overview
-#+PROPERTY: EMACS-DIR: "./"
+#+PROPERTY: EMACS-DIR: ./
 #+PROPERTY: header-args :tangle (concat (org-entry-get nil "EMACS-DIR" t) "etc/materus/emacs-config.el") :comments link
 #+OPTIONS: \n:t
 #+auto_tangle: t
  
 My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
-
 
 * Table of Contents    :noexport:TOC_3:
 - [[#init-files][Init Files]]
@@ -48,6 +47,7 @@ My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
     - [[#perspective][Perspective]]
 - [[#programming][Programming]]
   - [[#lsp][LSP]]
+  - [[#dap][DAP]]
   - [[#nix][Nix]]
   - [[#emacs-lisp][Emacs Lisp]]
   - [[#cc][C/C++]]
@@ -55,6 +55,8 @@ My emacs config, tangled file is [[file:etc/materus/emacs-config.el][there]]
   - [[#java][Java]]
   - [[#other][Other]]
 - [[#keybindings][Keybindings]]
+  - [[#keys][Keys]]
+  - [[#cua-overrides][CUA Overrides]]
 - [[#snippets][Snippets]]
   - [[#yasnippet-init][Yasnippet init]]
 - [[#other-1][Other]]
@@ -171,6 +173,7 @@ Sets up package.el
 #+begin_src emacs-lisp :comments no
   ;;; -*- lexical-binding: t; -*-
 #+end_src
+
 #+begin_src emacs-lisp
   (setq-default materus/use-nix-packages (require 'materus-config nil 'noerror))
   (require 'cl-lib)
@@ -211,9 +214,11 @@ Some defvar so native-compile wont complain
 Package manager config if not using nix.
 After some testing default package manager works best for me.
 ** Init package manager config
+
 #+begin_src emacs-lisp
   
-  #+end_src
+#+end_src
+
 ** Packages list & function
 Packages to install
 #+begin_src emacs-lisp
@@ -338,6 +343,7 @@ Packages to install
   (unless materus/use-nix-packages 
     (materus/install-packages))
 #+end_src
+
 * Configuration
 General configurations of packages modes etc.
 ** No Littering
@@ -370,7 +376,8 @@ Graphical related settings.
   (when (daemonp)
     (add-hook 'after-make-frame-functions 
               (lambda (frame) (when (= (length (frame-list)) 2)
-                                (set-frame-parameter frame 'fullscreen 'maximized)))))
+                                (set-frame-parameter frame 'fullscreen 'maximized)) 
+                (select-frame-set-input-focus frame) )))
 
 
   (when (display-graphic-p)
@@ -388,7 +395,7 @@ Graphical related settings.
   (setq window-divider-default-right-width 1)
   (window-divider-mode 1)
 
-  (setq-default cursor-type '(bar . 1))
+  (setq-default cursor-type '(bar . 2))
   ;; Rainbow mode
   (use-package rainbow-mode
     :hook
@@ -476,7 +483,8 @@ Graphical related settings.
 #+end_src
 ** Org-mode
 Org mode settings
-#+begin_src emacs-lisp
+
+#+begin_SRC emacs-lisp
   (use-package org
     :mode (("\\.org$" . org-mode))
     :hook
@@ -494,22 +502,23 @@ Org mode settings
                                    (if
                                        (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
 
-  (use-package org-superstar
+  (use-package org-modern
     :after (org)
     :hook
-    (org-mode . org-superstar-mode))
-  :config
-  (setq org-superstar-leading-bullet " ")
+    (org-indent-mode . org-modern-mode)
+    (org-agenda-finalize . org-modern-agenda)
+    :config 
+    (setq org-modern-block-name '("▼ " . "▲ ")))
   (use-package org-auto-tangle
     :after (org)
-    :hook (org-mode . org-auto-tangle-mode))
+    :hook (org-mode . org-auto-tangle-mode)
+    )
   (use-package toc-org
     :after (org)
     :hook
     ((org-mode . toc-org-mode )
      (markdown-mode . toc-org-mode)))
-#+end_src
-
+#+end_SRC
 ** Completions
 *** Style
 #+begin_src emacs-lisp
@@ -592,12 +601,17 @@ Org mode settings
   (use-package kind-icon
     :config
     (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+  
+  (global-completion-preview-mode 1)
 
  #+end_src
 ** Terms
 *** Eat
 #+begin_src emacs-lisp
   (use-package eat)
+  (defvar cua--eat-semi-char-keymap (copy-keymap cua--cua-keys-keymap) "EAT semi-char mode CUA keymap")
+  (defvar cua--eat-char-keymap (copy-keymap cua--cua-keys-keymap) "EAT char mode CUA keymap")
+
 #+end_src
 ** Miscellaneous
 Other configs
@@ -680,7 +694,8 @@ Other configs
   (use-package lsp-mode
     :custom
     (lsp-completion-provider :none) ;; we use Corfu!
-
+    :config
+    (require 'lsp-ui)
     :init
     (defun materus/orderless-dispatch-flex-first (_pattern index _total)
       (and (eq index 0) 'orderless-flex))
@@ -696,11 +711,7 @@ Other configs
     :hook
     (lsp-completion-mode . materus/lsp-mode-setup-completion))
 
-
-    (use-package lsp-ui)
-    (use-package dap-mode)
-    (use-package dap-lldb)
-    (use-package dap-gdb-lldb)
+   
 
 
     (setq read-process-output-max (* 1024 1024 3))
@@ -736,7 +747,18 @@ Other configs
           orig-result)))
     (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 #+end_src
+** DAP
+#+begin_src emacs-lisp
+  (use-package dap-mode
+    :config
+    (require 'dap-lldb)
+    (require 'dap-gdb-lldb)
+    (require 'dap-cpptools)
+    (setq dap-gdb-lldb-extension-version "0.27.0")
+    (dap-auto-configure-mode 1)
+    )
 
+#+end_src
 ** Nix
 #+begin_src emacs-lisp
   (use-package nix-mode)
@@ -828,39 +850,82 @@ Other configs
   (add-hook 'prog-mode-hook 'electric-indent-local-mode)
 #+end_src
 * Keybindings
+** Keys
+
 #+begin_src emacs-lisp
   (use-package cua-base)
 
-    ;;; Keybinds
+          ;;; Keybinds
   ;; Eat Term
-  (keymap-set eat-semi-char-mode-map "C-v" #'eat-yank)
-  (keymap-set eat-char-mode-map "C-V" #'eat-yank)
+  (define-key cua--eat-semi-char-keymap (kbd "C-v") #'eat-yank)
+  (define-key cua--eat-char-keymap (kbd "C-S-v") #'eat-yank)
+  (define-key eat-mode-map (kbd "C-<right>") #'eat-self-input)
+  (define-key eat-mode-map (kbd "C-<left>") #'eat-self-input)
   ;; perspective
-  (global-set-key (kbd "C-x C-b") 'persp-list-buffers)
-  (global-set-key (kbd "C-x C-B") 'list-buffers)
-  (global-set-key (kbd "C-x b") 'persp-switch-to-buffer)
-  (global-set-key (kbd "C-x B") 'consult-buffer)
-
+  (define-key global-map (kbd "C-x C-b") 'persp-list-buffers)
+  (define-key global-map (kbd "C-x C-B") 'list-buffers)
+  (define-key global-map (kbd "C-x b") 'persp-switch-to-buffer)
+  (define-key global-map (kbd "C-x B") 'consult-buffer)
+  ;; CUA-like global
+  (define-key global-map (kbd "C-s") 'save-buffer)
+  (define-key global-map (kbd "C-r") 'query-replace)
+  (define-key global-map (kbd "C-S-r") 'replace-string)
+  (define-key global-map (kbd "M-r") 'query-replace-regexp)
+  (define-key global-map (kbd "M-S-r") 'replace-regexp)
+  (define-key global-map (kbd "C-a") 'mark-whole-buffer)
+  (define-key global-map (kbd "C-f") 'isearch-forward)
+  (define-key global-map (kbd "C-S-f") 'isearch-backward)
+  (define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
+  (define-key isearch-mode-map (kbd "C-S-f") 'isearch-repeat-backward)
+  (define-key global-map (kbd "M-f") 'consult-ripgrep)
+  (define-key global-map (kbd "C-M-f") 'consult-find)
   ;; CUA
-  (keymap-set cua--cua-keys-keymap "C-z" 'undo-tree-undo)
-  (keymap-set cua--cua-keys-keymap "C-y" 'undo-tree-redo)
+  (define-key cua--cua-keys-keymap (kbd "C-z") 'undo-tree-undo)
+  (define-key cua--cua-keys-keymap (kbd "C-y") 'undo-tree-redo)
+  (define-key cua-global-keymap (kbd "C-SPC") 'completion-at-point)
+  (define-key cua-global-keymap (kbd "C-M-SPC") 'cua-set-mark)
   (cua-mode 1)
   ;; TAB
-  (keymap-set global-map "C-<iso-lefttab>" #'indent-rigidly-left-to-tab-stop)
-  (keymap-set global-map "C-<tab>" #'indent-rigidly-right-to-tab-stop)
+  (define-key global-map (kbd "C-<iso-lefttab>") #'indent-rigidly-left)
+  (define-key global-map (kbd "C-<tab>") #'indent-rigidly-right)
+  ;; Dashboard
+  (define-key dashboard-mode-map (kbd "C-r") #'dashboard-refresh-buffer)
+
   ;; Hyper
   (define-key key-translation-map (kbd "<XF86Calculator>") 'event-apply-hyper-modifier )
   (define-key key-translation-map (kbd "<Calculator>") 'event-apply-hyper-modifier )
   (define-key key-translation-map (kbd "∇") 'event-apply-hyper-modifier )
+  ;; Treemacs
+  (define-key global-map (kbd "C-H-t") 'treemacs)
 
-  (global-set-key (kbd "C-H-t") 'treemacs)
+  ;; Unbind
+  (define-key isearch-mode-map (kbd "C-s") nil)
+  (define-key isearch-mode-map (kbd "C-r") nil)
 #+end_src
+
+** CUA Overrides
+
+#+begin_src emacs-lisp
+(defun cua--eat-semi-char-override-keymap ()
+  (setq-local cua--keymap-alist (copy-tree cua--keymap-alist))
+  (setf (alist-get 'cua--ena-cua-keys-keymap cua--keymap-alist) cua--eat-semi-char-keymap))
+(defun cua--eat-char-override-keymap ()
+  (setq-local cua--keymap-alist (copy-tree cua--keymap-alist))
+  (setf (alist-get 'cua--ena-cua-keys-keymap cua--keymap-alist) cua--eat-char-keymap))
+
+(advice-add 'eat-semi-char-mode :after #'cua--eat-semi-char-override-keymap)
+(advice-add 'eat-char-mode :after #'cua--eat-char-override-keymap)
+;(add-hook 'eat-char-mode-hook #'cua--eat-char-override-keymap)
+#+end_src
+
 * Snippets
 ** Yasnippet init
-#+begin_src emacs-lisp
+
+#+begin_src emacs-lisp 
   (use-package yasnippet
   :config (yas-global-mode 1))
 #+end_src
+
 * Other
 ** Update config script
 #+begin_src emacs-lisp

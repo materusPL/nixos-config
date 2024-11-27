@@ -158,6 +158,9 @@ in
           bindkey "^[[1;5A" history-substring-search-up-prefixed
           bindkey "^[[1;5B" history-substring-search-down-prefixed
 
+          bindkey '^[[3~' delete-char
+          bindkey '^[[3;2~' delete-word
+
           zsh-private() {
             __MATERUS_HM_ZSH_PRIVATE=1 ${lib.getExe config.programs.zsh.package}
           }
