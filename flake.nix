@@ -1,5 +1,6 @@
+# [[file:org-conf/nix-flake.org::*Main Flake][Main Flake:1]]
 {
-  description = "Materus hosts and user config";
+  description = "Lemon flake: NixOS and home manager configs";
   inputs = {
     private = {
       type = "github";
@@ -29,14 +30,14 @@
       type = "github";
       owner = "NixOS";
       repo = "nixpkgs";
-      ref = "nixos-24.05";
+      ref = "nixos-24.11";
     };
 
     hm-stable = {
       type = "github";
       owner = "nix-community";
       repo = "home-manager";
-      ref = "release-24.05";
+      ref = "release-24.11";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 
@@ -51,13 +52,13 @@
       };
     };
   };
+  outputs =
+    let
+      rootPath = builtins.toString ./.;
+    in
+    inputs@{ self, ... }:
+    {
 
-
-  outputs = inputs @ { self, nixpkgs, home-manager, nur, ... }:
-    rec {
-      nixosConfigurations = import ./configurations/host { inherit inputs; materusFlake = self; };
-      homeConfigurations = import ./configurations/shared/home { inherit inputs; materusFlake = self; };
-      selfPath = self;
-      decrypted = builtins.pathExists (selfPath + "/decrypted");
     };
 }
+# Main Flake:1 ends here

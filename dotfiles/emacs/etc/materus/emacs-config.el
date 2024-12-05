@@ -1,0 +1,768 @@
+;;; -*- lexical-binding: t; -*-
+
+;; [[file:../../../../org-conf/emacs-config.org::*Compile Time][Compile Time:2]]
+(eval-when-compile 
+  (defvar doom-modeline-support-imenu nil)
+  (defvar display-time-24hr-format nil)
+  (defvar lsp-nix-nixd-formatting-command nil)
+  (defvar cua--cua-keys-keymap nil)
+  (declare-function lsp-stdio-connection "lsp-mode" (COMMAND &optional TEST-COMMAND))
+  (declare-function make-lsp-client "lsp-mode")
+  (declare-function lsp-register-client "lsp-mode" ( CLIENT ))
+  )
+;; Compile Time:2 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Init package manager config][Init package manager config:1]]
+
+;; Init package manager config:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Packages list & function][Packages list & function:1]]
+(defvar materus/packages
+  '(
+    use-package
+    elcord
+    dashboard
+    magit
+    git-timemachine
+    avy
+    vterm
+    direnv
+    projectile
+    clipetty
+    which-key
+    iedit
+    hideshowvis
+    evil
+    perspective
+    treemacs-evil
+    treemacs
+    treemacs-nerd-icons
+    treemacs-perspective
+    treemacs-icons-dired
+    treemacs-magit
+    treemacs-projectile
+    tree-edit
+    nerd-icons
+    nerd-icons-completion
+    minions
+    rainbow-delimiters
+    rainbow-mode
+    cmake-mode
+    lsp-mode
+    lsp-java
+    lsp-jedi
+    lsp-haskell
+    lsp-ui
+    lsp-treemacs
+    flycheck
+    gradle-mode
+    groovy-mode
+    kotlin-mode
+    dap-mode
+    d-mode
+    lua-mode
+    multiple-cursors
+    org
+    org-contrib
+    org-ql
+    org-rainbow-tags
+    org-roam
+    org-roam-ui
+    org-review
+    org-present
+    org-superstar
+    org-auto-tangle
+    visual-fill-column
+    csharp-mode
+    markdown-mode
+    json-mode
+    nix-mode
+    nixfmt
+    no-littering
+    right-click-context
+    dracula-theme
+    doom-themes
+    doom-modeline
+    popper
+    undo-tree
+    bash-completion
+    eldoc-box
+    yasnippet
+    async
+    request
+    nix-ts-mode
+    markdown-ts-mode
+    llvm-ts-mode
+    treesit-fold
+    treesit-auto
+    tree-sitter-langs
+    eat
+    vlf
+    edit-indirect
+    zones
+    sudo-edit
+    toc-org
+    empv
+    volatile-highlights
+    highlight
+    elfeed
+    elfeed-goodies
+    drag-stuff
+    dirvish
+    rg
+    shfmt
+    ;; Completions & Minibuffer
+    corfu
+    company
+    company-quickhelp
+    cape
+    embark
+    embark-consult
+    orderless
+    vertico
+    marginalia
+    )
+  "A list of packages to ensure are installed at launch.")
+
+(defun materus/packages-installed-p ()
+  (cl-loop for p in materus/packages
+           when (not (package-installed-p p)) do (cl-return nil)
+           finally (cl-return t)))
+
+(defun materus/install-packages ()
+  (unless (materus/packages-installed-p)
+    (package-refresh-contents)
+    (dolist (p materus/packages)
+      (when (not (package-installed-p p))
+        (package-install p)))))
+(unless materus/use-nix-packages 
+  (materus/install-packages))
+;; Packages list & function:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*No Littering][No Littering:1]]
+(require 'recentf)
+(use-package no-littering
+  :config
+  (setq package-quickstart-file  
+        (concat user-emacs-directory "var/quickstart/package-quickstart-" emacs-version ".el" ))
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name no-littering-var-directory))
+  (add-to-list 'recentf-exclude
+               (recentf-expand-file-name no-littering-etc-directory)))
+;; No Littering:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Mouse][Mouse:1]]
+(context-menu-mode 1)
+(setq mouse-wheel-follow-mouse 't)
+(setq scroll-step 1)
+(setq mouse-drag-and-drop-region t)
+(xterm-mouse-mode 1)
+(pixel-scroll-precision-mode 1)
+(setq-default pixel-scroll-precision-large-scroll-height 10.0)
+;; Mouse:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Misc][Misc:1]]
+(when (daemonp)
+  (add-hook 'after-make-frame-functions 
+            (lambda (frame) (when (= (length (frame-list)) 2)
+                              (set-frame-parameter frame 'fullscreen 'maximized)) 
+              (select-frame-set-input-focus frame) )))
+
+
+(when (display-graphic-p)
+  (set-frame-font "Hack Nerd Font" nil t)
+  )
+
+(setq-default display-line-numbers-width 3)
+(setq-default display-line-numbers-widen t)
+(setq truncate-string-ellipsis "…")
+
+(global-tab-line-mode 1)
+
+(tool-bar-mode -1)
+(setq window-divider-default-bottom-width 1)
+(setq window-divider-default-right-width 1)
+(window-divider-mode 1)
+
+(setq-default cursor-type '(bar . 2))
+;; Rainbow mode
+(use-package rainbow-mode
+  :hook
+  ((org-mode . rainbow-mode)
+   (prog-mode . rainbow-mode)))
+
+;; Delimiters
+(use-package rainbow-delimiters :hook
+  (prog-mode . rainbow-delimiters-mode)
+  :config
+  (set-face-attribute 'rainbow-delimiters-depth-1-face nil :foreground "#FFFFFF")
+  (set-face-attribute 'rainbow-delimiters-depth-2-face nil :foreground "#FFFF00")
+  (set-face-attribute 'rainbow-delimiters-depth-5-face nil :foreground "#6A5ACD")
+  (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#FF0000"))
+;; Nerd Icons
+(use-package nerd-icons)
+(use-package nerd-icons-completion
+  :after (marginalia)
+  :config 
+  (nerd-icons-completion-mode 1)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+;; Theme
+(use-package dracula-theme :config
+  (if (daemonp)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame frame (load-theme 'dracula t))))
+    (load-theme 'dracula t)))
+
+(defun startup-screen-advice (orig-fun &rest args)
+  (when (= (seq-count #'buffer-file-name (buffer-list)) 0)
+    (apply orig-fun args)))
+(advice-add 'display-startup-screen :around #'startup-screen-advice) ; Hide startup screen if started with file
+;; Misc:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Dashboard][Dashboard:1]]
+(use-package dashboard
+  :after (nerd-icons projectile)
+  :config
+  (setq dashboard-center-content t)
+  (setq dashboard-display-icons-p t)
+  (setq dashboard-icon-type 'nerd-icons)
+  (setq dashboard-projects-backend 'projectile)
+  (setq dashboard-items '((recents   . 5)
+                          (bookmarks . 5)
+                          (projects  . 5)
+                          (agenda    . 5)
+                          (registers . 5)))
+  (dashboard-setup-startup-hook)
+  (when (daemonp)
+    (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*"))) ; Show dashboard when emacs is running as daemon
+    )
+  )
+;; Dashboard:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Modeline][Modeline:1]]
+(use-package doom-modeline
+  :init (setq doom-modeline-support-imenu t)
+  :hook (after-init . doom-modeline-mode)
+  :config
+  (setq doom-modeline-icon t)
+  (setq doom-modeline-project-detection 'auto)
+  (setq doom-modeline-height 20)
+  (setq doom-modeline-enable-word-count t)
+  (setq doom-modeline-minor-modes t)
+  (setq display-time-24hr-format t)
+  (display-time-mode 1)
+  (column-number-mode 1)
+  (line-number-mode 1))
+
+(use-package minions
+  :hook (after-init . minions-mode))
+;; Modeline:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Diff-hl][Diff-hl:1]]
+(use-package diff-hl
+  :config
+  (setq diff-hl-side 'right)
+  (global-diff-hl-mode 1)
+  (diff-hl-margin-mode 1)
+  (diff-hl-flydiff-mode 1)
+  (global-diff-hl-show-hunk-mouse-mode 1))
+;; Diff-hl:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Org-mode][Org-mode:1]]
+(use-package org
+  :mode (("\\.org$" . org-mode))
+  :hook
+  ((org-mode . org-indent-mode)
+   (org-mode . display-line-numbers-mode)
+   )
+  :config
+  (require 'org-mouse)
+  (require 'org-tempo)
+  (setq org-src-window-setup 'current-window)
+  (add-hook 'org-mode-hook (lambda ()
+                             (setq-local
+                              electric-pair-inhibit-predicate
+                              `(lambda (c)
+                                 (if
+                                     (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
+
+(use-package org-modern
+  :after (org)
+  :hook
+  (org-indent-mode . org-modern-mode)
+  (org-agenda-finalize . org-modern-agenda)
+  :config 
+  (setq org-modern-block-name '("▼ " . "▲ ")))
+(use-package org-auto-tangle
+  :after (org)
+  :hook (org-mode . org-auto-tangle-mode)
+  )
+(use-package toc-org
+  :after (org)
+  :hook
+  ((org-mode . toc-org-mode )
+   (markdown-mode . toc-org-mode)))
+(setq org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f -output-directory=%o %f"))
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((latex . t)
+   (emacs-lisp . t)
+   (shell . t)
+   (css . t)
+   (C . t)
+   (calc . t)
+   (awk . t)
+   (sql . t)
+   (sqlite . t)))
+;; Org-mode:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Style][Style:1]]
+(use-package orderless
+ :init
+ ;; Tune the global completion style settings to your liking!
+ ;; This affects the minibuffer and non-lsp completion at point.
+ (setq completion-styles '(basic partial-completion orderless)
+       completion-category-defaults nil
+       completion-category-overrides nil))
+;; Style:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Minibuffer][Minibuffer:1]]
+(use-package consult)
+(use-package marginalia)
+
+(use-package which-key
+  :config
+  (which-key-mode 1))
+
+(use-package vertico
+  :after (consult marginalia)
+  :config
+  (setq completion-in-region-function
+        (lambda (&rest args)
+          (apply (if vertico-mode
+                     #'consult-completion-in-region
+                   #'completion--in-region)
+                 args)))
+  (vertico-mode 1)
+  (marginalia-mode 1))
+(use-package vertico-mouse
+  :config
+  (vertico-mouse-mode 1))
+;; Minibuffer:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Code completion][Code completion:1]]
+(use-package cape)
+
+(use-package corfu
+  ;; Optional customizations
+  :custom
+  (corfu-cycle nil)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                 ;; Enable auto completion
+  (global-corfu-minibuffer nil)
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+
+  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+  ;; be used globally (M-/).  See also the customization variable
+  ;; `global-corfu-modes' to exclude certain modes.
+  :init
+  (global-corfu-mode 1)
+  (corfu-popupinfo-mode 1)
+  (corfu-history-mode 1))
+
+
+(use-package corfu-terminal
+  :after (corfu)
+  :config
+  (when (or (daemonp) (not (display-graphic-p)))
+    (corfu-terminal-mode)))
+
+(use-package corfu-mouse
+  :after (corfu)
+  :config 
+  (corfu-mouse-mode)
+  (keymap-set corfu--mouse-ignore-map "<mouse-movement>" 'ignore)
+  (keymap-set corfu-map "<mouse-movement>" 'ignore))
+
+(use-package kind-icon
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+(global-completion-preview-mode 1)
+;; Code completion:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Eat][Eat:1]]
+(use-package eat)
+(defvar cua--eat-semi-char-keymap (copy-keymap cua--cua-keys-keymap) "EAT semi-char mode CUA keymap")
+(defvar cua--eat-char-keymap (copy-keymap cua--cua-keys-keymap) "EAT char mode CUA keymap")
+;; Eat:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Defaults][Defaults:1]]
+(setq-default buffer-file-coding-system 'utf-8-unix)
+(setq text-mode-ispell-word-completion nil) ; Disable ispell
+;; Defaults:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Elcord][Elcord:1]]
+(defun materus/elcord-toggle (&optional _frame)
+  "Toggle elcord based on visible frames"
+  (if (> (length (frame-list)) 1)
+      (elcord-mode 1)
+    (elcord-mode -1))
+  )
+(use-package elcord
+  :config
+  (unless (daemonp) (elcord-mode 1))
+  (add-hook 'after-delete-frame-functions 'materus/elcord-toggle)
+  (add-hook 'server-after-make-frame-hook 'materus/elcord-toggle))
+;; Elcord:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Undo-Tree][Undo-Tree:1]]
+(use-package undo-tree
+:config
+(global-undo-tree-mode 1)
+(defvar materus/undo-tree-dir (concat user-emacs-directory "var/undo-tree/"))
+(unless (file-exists-p materus/undo-tree-dir)
+    (make-directory materus/undo-tree-dir t))
+(setq undo-tree-visualizer-diff t)
+(setq undo-tree-history-directory-alist `(("." . ,materus/undo-tree-dir )))
+(setq undo-tree-visualizer-timestamps t)
+)
+;; Undo-Tree:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Projectile][Projectile:1]]
+(use-package projectile
+  :config (projectile-mode 1))
+;; Projectile:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Treemacs][Treemacs:1]]
+(use-package treemacs)
+(use-package treemacs-projectile
+  :after (projectile treemacs))
+(use-package treemacs-nerd-icons
+  :after (nerd-icons treemacs))
+(use-package treemacs-perspective
+  :after (treemacs))
+(use-package treemacs-mouse-interface
+  :after (treemacs))
+;; Treemacs:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Magit][Magit:1]]
+(use-package magit)
+;; Magit:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Dirvish / Dired][Dirvish / Dired:1]]
+(setq dired-mouse-drag-files t)
+(use-package dirvish 
+  :config 
+  (dirvish-override-dired-mode 1)
+  (setq dirvish-attributes
+        '(vc-state
+          subtree-state
+          nerd-icons
+          collapse
+          git-msg
+          file-time 
+          file-size)))
+;; Dirvish / Dired:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Perspective][Perspective:1]]
+(require 'perspective)
+(setq persp-mode-prefix-key (kbd "C-c M-p"))
+(setq persp-modestring-short t)
+(persp-mode 1)
+;; Perspective:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*LSP][LSP:1]]
+(use-package lsp-mode
+  :custom
+  (lsp-completion-provider :none) ;; we use Corfu!
+  :config
+  (setq lsp-keep-workspace-alive nil)
+  (require 'lsp-ui)
+  :init
+  (defun materus/orderless-dispatch-flex-first (_pattern index _total)
+    (and (eq index 0) 'orderless-flex))
+
+  (defun materus/lsp-mode-setup-completion ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless))
+    ;; Optionally configure the first word as flex filtered.
+    (add-hook 'orderless-style-dispatchers #'materus/orderless-dispatch-flex-first nil 'local)
+    ;; Optionally configure the cape-capf-buster.
+    (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point))))
+
+  :hook
+  (lsp-completion-mode . materus/lsp-mode-setup-completion))
+
+ 
+
+
+  (setq read-process-output-max (* 1024 1024 3))
+
+  (defun lsp-booster--advice-json-parse (old-fn &rest args)
+    "Try to parse bytecode instead of json."
+    (or
+     (when (equal (following-char) ?#)
+       (let ((bytecode (read (current-buffer))))
+         (when (byte-code-function-p bytecode)
+           (funcall bytecode))))
+     (apply old-fn args)))
+  (advice-add (if (progn (require 'json)
+                         (fboundp 'json-parse-buffer))
+                  'json-parse-buffer
+                'json-read)
+              :around
+              #'lsp-booster--advice-json-parse)
+
+  (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+    "Prepend emacs-lsp-booster command to lsp CMD."
+    (let ((orig-result (funcall old-fn cmd test?)))
+      (if (and (not test?)                                                             ; for check lsp-server-present?
+               (not (file-remote-p default-directory))                                 ; see lsp-resolve-final-command, it would add extra shell wrapper
+               lsp-use-plists
+               (not (functionp 'json-rpc-connection))                                  ; native json-rpc
+               (executable-find "emacs-lsp-booster"))
+          (progn
+            (when-let* ((command-from-exec-path (executable-find (car orig-result))))  ; resolve command from exec-path (in case not found in $PATH)
+              (setcar orig-result command-from-exec-path))
+            (message "Using emacs-lsp-booster for %s!" orig-result)
+            (cons "emacs-lsp-booster" orig-result))
+        orig-result)))
+  (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+;; LSP:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*DAP][DAP:1]]
+(use-package dap-mode
+  :config
+  (require 'dap-lldb)
+  (require 'dap-gdb-lldb)
+  (require 'dap-cpptools)
+  (setq dap-gdb-lldb-extension-version "0.27.0")
+  (dap-auto-configure-mode 1)
+  )
+;; DAP:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Nix][Nix:1]]
+(use-package nix-mode)
+(use-package nix-ts-mode)
+(use-package nixfmt)
+(use-package lsp-nix)
+(with-eval-after-load 'lsp-mode
+  (add-to-list 'lsp-disabled-clients '(nix-mode . nix-nil)) 
+  (setq lsp-nix-nixd-server-path "nixd"
+        lsp-nix-nixd-formatting-command [ "nixfmt" ]
+        lsp-nix-nixd-nixpkgs-expr "import <nixpkgs> { }"))
+
+(setq lsp-nix-nixd-formatting-command "nixfmt")
+(add-hook 'nix-mode-hook 'lsp-deferred)
+(add-hook 'nix-mode-hook 'display-line-numbers-mode)
+
+(add-hook 'nix-ts-mode-hook 'lsp-deferred)
+(add-hook 'nix-ts-mode-hook 'display-line-numbers-mode)
+
+(when (treesit-language-available-p 'nix) (push '(nix-mode . nix-ts-mode) major-mode-remap-alist))
+;; Nix:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Emacs Lisp][Emacs Lisp:1]]
+(add-hook 'emacs-lisp-mode-hook 'display-line-numbers-mode)
+;; Emacs Lisp:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*C/C++][C/C++:1]]
+(use-package lsp-clangd)
+(setq lsp-clients-clangd-args '("--fallback-style=microsoft"))
+
+(add-hook 'c-mode-hook 'lsp-deferred)
+(add-hook 'c-mode-hook 'display-line-numbers-mode)
+(add-hook 'c-ts-mode-hook 'lsp-deferred)
+(add-hook 'c-ts-mode-hook 'display-line-numbers-mode)
+
+(add-hook 'c++-mode-hook 'lsp-deferred)
+(add-hook 'c++-mode-hook 'display-line-numbers-mode)
+(add-hook 'c++-ts-mode-hook 'lsp-deferred)
+(add-hook 'c++-ts-mode-hook 'display-line-numbers-mode)
+(when (treesit-language-available-p 'c) (push '(c-mode . c-ts-mode) major-mode-remap-alist))
+(when (treesit-language-available-p 'cpp) (push '(c++-mode . c++-ts-mode) major-mode-remap-alist))
+
+(add-to-list 'c-default-style '(c-mode . "bsd"))
+(add-to-list 'c-default-style '(c++-mode . "bsd"))
+(add-to-list 'c-default-style '(c-ts-mode . "bsd"))
+(add-to-list 'c-default-style '(c++-ts-mode . "bsd"))
+;; C/C++:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Python][Python:1]]
+(use-package lsp-pyright)
+(setq lsp-pyright-langserver-command "pyright")
+(add-hook 'python-mode-hook 'lsp-deferred)
+(add-hook 'python-ts-mode-hook 'lsp-deferred)
+(when (treesit-language-available-p 'python) (push '(python-mode . python-ts-mode) major-mode-remap-alist))
+;; Python:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Java][Java:1]]
+(use-package lsp-java)
+(setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx2G" "-Xms100m"))
+(add-hook 'java-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
+(add-hook 'java-mode-hook 'lsp-deferred)
+(add-hook 'java-mode-hook 'display-line-numbers-mode)
+
+(add-hook 'java-ts-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
+(add-hook 'java-ts-mode-hook 'lsp-deferred)
+(add-hook 'java-ts-mode-hook 'display-line-numbers-mode)
+
+(when (treesit-language-available-p 'java) (push '(java-mode . java-ts-mode) major-mode-remap-alist))
+
+(add-to-list 'c-default-style '(java-mode . "java"))
+(add-to-list 'c-default-style '(java-ts-mode . "java"))
+;; Java:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Other][Other:1]]
+(add-to-list 'c-default-style '(awk-mode . "awk"))
+(add-to-list 'c-default-style '(other . "bsd"))
+
+
+
+
+(setq-default c-basic-offset 4)
+(setq-default c-indent-level 4)
+
+(setq-default c-ts-mode-indent-offset 4)
+(setq-default c-ts-mode-indent-style 'bsd)
+
+(setq-default c-hungry-delete-key t)
+
+(electric-pair-mode 1)
+(electric-indent-mode -1)
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
+
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'electric-indent-local-mode)
+;; Other:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Keys][Keys:1]]
+(use-package cua-base)
+
+        ;;; Keybinds
+;; Eat Term
+(define-key cua--eat-semi-char-keymap (kbd "C-v") #'eat-yank)
+(define-key cua--eat-char-keymap (kbd "C-S-v") #'eat-yank)
+(define-key cua--eat-semi-char-keymap (kbd "C-c") #'copy-region-as-kill)
+(define-key cua--eat-char-keymap (kbd "C-S-c") #'copy-region-as-kill)
+(define-key eat-mode-map (kbd "C-<right>") #'eat-self-input)
+(define-key eat-mode-map (kbd "C-<left>") #'eat-self-input)
+;; perspective
+(define-key global-map (kbd "C-x C-b") #'persp-list-buffers)
+(define-key global-map (kbd "C-x C-B") #'list-buffers)
+(define-key global-map (kbd "C-x b") #'persp-switch-to-buffer*)
+(define-key global-map (kbd "C-x B") #'consult-buffer)
+;; CUA-like global
+(define-key global-map (kbd "C-s") 'save-buffer)
+(define-key global-map (kbd "C-r") 'query-replace)
+(define-key global-map (kbd "C-S-r") 'replace-string)
+(define-key global-map (kbd "M-r") 'query-replace-regexp)
+(define-key global-map (kbd "M-S-r") 'replace-regexp)
+(define-key global-map (kbd "C-a") 'mark-whole-buffer)
+(define-key global-map (kbd "C-f") 'isearch-forward)
+(define-key global-map (kbd "C-S-f") 'isearch-backward)
+(define-key isearch-mode-map (kbd "C-f") 'isearch-repeat-forward)
+(define-key isearch-mode-map (kbd "C-S-f") 'isearch-repeat-backward)
+(define-key global-map (kbd "M-f") 'consult-ripgrep)
+(define-key global-map (kbd "C-M-f") 'consult-find)
+;; CUA
+(define-key cua--cua-keys-keymap (kbd "C-z") 'undo-tree-undo)
+(define-key cua--cua-keys-keymap (kbd "C-y") 'undo-tree-redo)
+(define-key cua-global-keymap (kbd "C-SPC") 'completion-at-point)
+(define-key cua-global-keymap (kbd "C-M-SPC") 'cua-set-mark)
+(cua-mode 1)
+;; TAB
+(define-key global-map (kbd "C-<iso-lefttab>") #'indent-rigidly-left)
+(define-key global-map (kbd "C-<tab>") #'indent-rigidly-right)
+;; Dashboard
+(define-key dashboard-mode-map (kbd "C-r") #'dashboard-refresh-buffer)
+
+;; Hyper
+(define-key key-translation-map (kbd "<XF86Calculator>") 'event-apply-hyper-modifier )
+(define-key key-translation-map (kbd "<Calculator>") 'event-apply-hyper-modifier )
+(define-key key-translation-map (kbd "∇") 'event-apply-hyper-modifier )
+;; Treemacs
+(define-key global-map (kbd "C-H-t") 'treemacs)
+
+;; Unbind
+(define-key isearch-mode-map (kbd "C-s") nil)
+(define-key isearch-mode-map (kbd "C-r") nil)
+;; Keys:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*CUA Overrides][CUA Overrides:1]]
+(defun cua--eat-semi-char-override-keymap ()
+  (setq-local cua--keymap-alist (copy-tree cua--keymap-alist))
+  (setf (alist-get 'cua--ena-cua-keys-keymap cua--keymap-alist) cua--eat-semi-char-keymap))
+(defun cua--eat-char-override-keymap ()
+  (setq-local cua--keymap-alist (copy-tree cua--keymap-alist))
+  (setf (alist-get 'cua--ena-cua-keys-keymap cua--keymap-alist) cua--eat-char-keymap))
+
+(advice-add 'eat-semi-char-mode :after #'cua--eat-semi-char-override-keymap)
+(advice-add 'eat-char-mode :after #'cua--eat-char-override-keymap)
+;(add-hook 'eat-char-mode-hook #'cua--eat-char-override-keymap)
+;; CUA Overrides:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Yasnippet init][Yasnippet init:1]]
+(use-package yasnippet
+:config (yas-global-mode 1))
+;; Yasnippet init:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Update config script][Update config script:1]]
+(defun materus/sync-config ()
+  "Function to sync config from MATERUS_CONFIG_DIR to emacs folder"
+  (if (getenv "MATERUS_CONFIG_DIR")
+      (progn (copy-directory (concat (getenv "MATERUS_CONFIG_DIR") "extraFiles/config/emacs/") 
+                             user-emacs-directory t t t) t)
+    (progn (message "Can't use if MATERUS_CONFIG_DIR is not set!") nil)))
+(defun materus/compare-file-time (file1 file2)
+  "Returns t when file1 is newer than file2"
+  (time-less-p 
+   (nth 5 (file-attributes file2))
+   (nth 5 (file-attributes file1))
+   ))
+(defun materus/compile-if-needed (file)
+  (unless (and (file-exists-p (concat user-emacs-directory file "c"))
+               (materus/compare-file-time (concat user-emacs-directory file "c")
+                                          (concat user-emacs-directory file)))
+    (byte-compile-file (concat user-emacs-directory file)))
+  )
+(defun materus/compile-config-if-needed ()
+  (materus/compile-if-needed "early-init.el")
+  (materus/compile-if-needed "init.el")
+  (materus/compile-if-needed "etc/materus/emacs-config.el"))
+(defun materus/update-config ()
+  "Will sync and compile config"
+  (interactive)
+  (when (materus/sync-config) (materus/compile-config-if-needed) (byte-recompile-directory (concat user-emacs-directory "etc/materus/extra") 0 t)))
+;; Update config script:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Byte compile][Byte compile:1]]
+(materus/compile-config-if-needed)
+;; Byte compile:1 ends here
+
+;; [[file:../../../../org-conf/emacs-config.org::*Test][Test:1]]
+;;; (global-set-key (kbd "C-∇") (kbd "C-H"))
+;;; (global-set-key (kbd "H-∇") (lambda () (interactive) (insert-char #x2207)))
+;;; (buffer-text-pixel-size)
+;;; (set-window-vscroll nil 960 t t)
+
+;;;  (set-window-margins (selected-window) 0 0)
+
+;;; (buffer-local-value 'var (get-buffer  "your-buffer-name"))
+
+;;; (setq completion-styles '(orderless basic)
+;;;   completion-category-defaults nil
+;;;   completion-category-overrides '((file (styles partial-completion))))
+;; Test:1 ends here

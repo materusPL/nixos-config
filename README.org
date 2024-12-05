@@ -1,21 +1,10 @@
-#+TITLE: nixos-config
-#+AUTHOR: materus
+TITLE: Lemon
+#+AUTHOR: materus (Mateusz Słodkowicz)
 #+DESCRIPTION: NixOS config and dotfiles
 #+OPTIONS: \n:t
-My NixOS and home-manager configs.
-Dotfiles and helper scripts.
+#+LANGUAGE: en
 
-Part of it is encrypted by git-crypt, mostly just ips and names. Secrets are managed by sops.
-
-* Hosts
-[[./configurations/host/materusPC/][materusPC]] - my main PC
-
-[[./configurations/host/Old-materusPC/][Old-materusPC]] - my old PC, barely used
-
-[[./configurations/host/flamaster/][flamaster]] - my laptop, used mostly as server for games.
-
-[[./configurations/host/valkyrie/][valkyrie]] - VPS, my website and pleroma instance
-
-[[./configurations/host/waffentrager/][waffentrager]] - raspberry pi4, home server
-
+Lemon is mine collection of NixOS config, dotfiles and some scripts.
+Most of my config is tangled from Emacs Org files located [[./org-conf/][there]].
+Part of it is encrypted with [[https://github.com/AGWA/git-crypt][git-crypt]].
 
