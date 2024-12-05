@@ -1,4 +1,4 @@
-TITLE: Lemon
+#+TITLE: Lemon
 #+AUTHOR: materus (Mateusz Słodkowicz)
 #+DESCRIPTION: NixOS config and dotfiles
 #+OPTIONS: \n:t
