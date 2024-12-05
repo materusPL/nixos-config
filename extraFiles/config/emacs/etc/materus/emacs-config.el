@@ -304,6 +304,18 @@
   :hook
   ((org-mode . toc-org-mode )
    (markdown-mode . toc-org-mode)))
+(setq org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f -output-directory=%o %f"))
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((latex . t)
+   (emacs-lisp . t)
+   (shell . t)
+   (css . t)
+   (C . t)
+   (calc . t)
+   (awk . t)
+   (sql . t)
+   (sqlite . t)))
 ;; Org-mode:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Style][Style:1]]
@@ -448,9 +460,11 @@
 (use-package magit)
 ;; Magit:1 ends here
 
-;; [[file:../../emacs-materus-config.org::*Dirvish][Dirvish:1]]
+;; [[file:../../emacs-materus-config.org::*Dirvish / Dired][Dirvish / Dired:1]]
+(setq dired-mouse-drag-files t)
 (use-package dirvish 
-  :config (dirvish-override-dired-mode 1)
+  :config 
+  (dirvish-override-dired-mode 1)
   (setq dirvish-attributes
         '(vc-state
           subtree-state
@@ -459,11 +473,12 @@
           git-msg
           file-time 
           file-size)))
-;; Dirvish:1 ends here
+;; Dirvish / Dired:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Perspective][Perspective:1]]
 (require 'perspective)
-(customize-set-variable 'persp-mode-prefix-key (kbd "C-c M-p"))
+(setq persp-mode-prefix-key (kbd "C-c M-p"))
+(setq persp-modestring-short t)
 (persp-mode 1)
 ;; Perspective:1 ends here
 
@@ -472,6 +487,7 @@
   :custom
   (lsp-completion-provider :none) ;; we use Corfu!
   :config
+  (setq lsp-keep-workspace-alive nil)
   (require 'lsp-ui)
   :init
   (defun materus/orderless-dispatch-flex-first (_pattern index _total)
@@ -551,10 +567,10 @@
 (add-hook 'nix-mode-hook 'lsp-deferred)
 (add-hook 'nix-mode-hook 'display-line-numbers-mode)
 
-;;(add-hook 'nix-ts-mode-hook 'lsp-deferred)
-;;(add-hook 'nix-ts-mode-hook 'display-line-numbers-mode)
+(add-hook 'nix-ts-mode-hook 'lsp-deferred)
+(add-hook 'nix-ts-mode-hook 'display-line-numbers-mode)
 
-;;(when (treesit-language-available-p 'nix) (push '(nix-mode . nix-ts-mode) major-mode-remap-alist))
+(when (treesit-language-available-p 'nix) (push '(nix-mode . nix-ts-mode) major-mode-remap-alist))
 ;; Nix:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Emacs Lisp][Emacs Lisp:1]]
@@ -567,26 +583,28 @@
 
 (add-hook 'c-mode-hook 'lsp-deferred)
 (add-hook 'c-mode-hook 'display-line-numbers-mode)
-;(add-hook 'c-ts-mode-hook 'lsp-deferred)
-;(add-hook 'c-ts-mode-hook 'display-line-numbers-mode)
+(add-hook 'c-ts-mode-hook 'lsp-deferred)
+(add-hook 'c-ts-mode-hook 'display-line-numbers-mode)
 
 (add-hook 'c++-mode-hook 'lsp-deferred)
 (add-hook 'c++-mode-hook 'display-line-numbers-mode)
-;(add-hook 'c++-ts-mode-hook 'lsp-deferred)
-;(add-hook 'c++-ts-mode-hook 'display-line-numbers-mode)
-;(when (treesit-language-available-p 'c) (push '(c-mode . c-ts-mode) major-mode-remap-alist))
-;(when (treesit-language-available-p 'cpp) (push '(c++-mode . c++-ts-mode) major-mode-remap-alist))
+(add-hook 'c++-ts-mode-hook 'lsp-deferred)
+(add-hook 'c++-ts-mode-hook 'display-line-numbers-mode)
+(when (treesit-language-available-p 'c) (push '(c-mode . c-ts-mode) major-mode-remap-alist))
+(when (treesit-language-available-p 'cpp) (push '(c++-mode . c++-ts-mode) major-mode-remap-alist))
 
 (add-to-list 'c-default-style '(c-mode . "bsd"))
 (add-to-list 'c-default-style '(c++-mode . "bsd"))
-;(add-to-list 'c-default-style '(c-ts-mode . "bsd"))
-;(add-to-list 'c-default-style '(c++-ts-mode . "bsd"))
+(add-to-list 'c-default-style '(c-ts-mode . "bsd"))
+(add-to-list 'c-default-style '(c++-ts-mode . "bsd"))
 ;; C/C++:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Python][Python:1]]
 (use-package lsp-pyright)
 (setq lsp-pyright-langserver-command "pyright")
 (add-hook 'python-mode-hook 'lsp-deferred)
+(add-hook 'python-ts-mode-hook 'lsp-deferred)
+(when (treesit-language-available-p 'python) (push '(python-mode . python-ts-mode) major-mode-remap-alist))
 ;; Python:1 ends here
 
 ;; [[file:../../emacs-materus-config.org::*Java][Java:1]]
@@ -596,11 +614,11 @@
 (add-hook 'java-mode-hook 'lsp-deferred)
 (add-hook 'java-mode-hook 'display-line-numbers-mode)
 
-;(add-hook 'java-ts-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
-;(add-hook 'java-ts-mode-hook 'lsp-deferred)
-;(add-hook 'java-ts-mode-hook 'display-line-numbers-mode)
+(add-hook 'java-ts-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
+(add-hook 'java-ts-mode-hook 'lsp-deferred)
+(add-hook 'java-ts-mode-hook 'display-line-numbers-mode)
 
-;(when (treesit-language-available-p 'java) (push '(java-mode . java-ts-mode) major-mode-remap-alist))
+(when (treesit-language-available-p 'java) (push '(java-mode . java-ts-mode) major-mode-remap-alist))
 
 (add-to-list 'c-default-style '(java-mode . "java"))
 (add-to-list 'c-default-style '(java-ts-mode . "java"))
@@ -615,7 +633,12 @@
 
 (setq-default c-basic-offset 4)
 (setq-default c-indent-level 4)
+
+(setq-default c-ts-mode-indent-offset 4)
+(setq-default c-ts-mode-indent-style 'bsd)
+
 (setq-default c-hungry-delete-key t)
+
 (electric-pair-mode 1)
 (electric-indent-mode -1)
 (setq-default tab-width 4)
@@ -632,13 +655,15 @@
 ;; Eat Term
 (define-key cua--eat-semi-char-keymap (kbd "C-v") #'eat-yank)
 (define-key cua--eat-char-keymap (kbd "C-S-v") #'eat-yank)
+(define-key cua--eat-semi-char-keymap (kbd "C-c") #'copy-region-as-kill)
+(define-key cua--eat-char-keymap (kbd "C-S-c") #'copy-region-as-kill)
 (define-key eat-mode-map (kbd "C-<right>") #'eat-self-input)
 (define-key eat-mode-map (kbd "C-<left>") #'eat-self-input)
 ;; perspective
-(define-key global-map (kbd "C-x C-b") 'persp-list-buffers)
-(define-key global-map (kbd "C-x C-B") 'list-buffers)
-(define-key global-map (kbd "C-x b") 'persp-switch-to-buffer)
-(define-key global-map (kbd "C-x B") 'consult-buffer)
+(define-key global-map (kbd "C-x C-b") #'persp-list-buffers)
+(define-key global-map (kbd "C-x C-B") #'list-buffers)
+(define-key global-map (kbd "C-x b") #'persp-switch-to-buffer*)
+(define-key global-map (kbd "C-x B") #'consult-buffer)
 ;; CUA-like global
 (define-key global-map (kbd "C-s") 'save-buffer)
 (define-key global-map (kbd "C-r") 'query-replace)
@@ -734,6 +759,8 @@
 ;;; (set-window-vscroll nil 960 t t)
 
 ;;;  (set-window-margins (selected-window) 0 0)
+
+;;; (buffer-local-value 'var (get-buffer  "your-buffer-name"))
 
 ;;; (setq completion-styles '(orderless basic)
 ;;;   completion-category-defaults nil

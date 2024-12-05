@@ -131,6 +131,11 @@ let
       embark
       embark-consult
       ef-themes
+      pdf-tools
+      minimap
+      geiser-guile
+      fennel-mode
+      paredit
       # Completions & Minibuffer
       corfu
       corfu-terminal
@@ -144,6 +149,12 @@ let
   emacsEnv = pkgs.buildEnv {
     name = "emacs-env";
     paths = with pkgs; [
+      luaformatter
+      (luajit.withPackages (p: [p.fennel p.lua-lsp]))
+      fennel-ls
+      fnlfmt
+      
+      guile
       plantuml
       mermaid-cli
       pyright
@@ -153,7 +164,6 @@ let
       gnumake
       nixfmt-rfc-style
       python3Full
-      lua
       multimarkdown
       git
       emacs-lsp-booster
@@ -169,7 +179,7 @@ let
       fpc
       nodejs
       omnisharp-roslyn
-      texlive.combined.scheme-basic
+      texlive.combined.scheme-full
     ];
   };
 
