@@ -1,6 +1,6 @@
 #+TITLE: Lemon
-#+AUTHOR: materus (Mateusz Słodkowicz)
 #+DESCRIPTION: NixOS config and dotfiles
+#+AUTHOR: Mateusz "materus" Słodkowicz
 #+OPTIONS: \n:t
 #+LANGUAGE: en
 
