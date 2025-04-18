@@ -82,7 +82,7 @@ in
     execConfig = {
       Boot = true;
       SystemCallFilter = [ "@known" ];
-      Timezone = "bind";
+      Timezone = "symlink";
       Capability = "all";
       PrivateUsers = "no";
       ResolvConf = "copy-host";
@@ -103,12 +103,17 @@ in
 
         "/run/udev"
 
+        "/dev/fuse"
+        "/dev/snd"
         "/dev/input"
         "/dev/shm"
         "/dev/kfd"
         "/dev/dri"
         "/dev/tty"
         "/dev/tty0"
+
+        "/var/lib/flatpak"
+        "/var/lib/containers"
 
         "/tmp/.X11-unix"
 

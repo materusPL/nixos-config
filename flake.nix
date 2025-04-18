@@ -29,14 +29,14 @@
       type = "github";
       owner = "NixOS";
       repo = "nixpkgs";
-      ref = "nixos-24.05";
+      ref = "nixos-24.11";
     };
 
     hm-stable = {
       type = "github";
       owner = "nix-community";
       repo = "home-manager";
-      ref = "release-24.05";
+      ref = "release-24.11";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
 

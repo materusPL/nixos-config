@@ -16,10 +16,10 @@
 
   environment.variables = {
     DISABLE_LAYER_AMD_SWITCHABLE_GRAPHICS_1 = "1";
-    VK_ICD_FILENAMES = "${pkgs.mesa.drivers}/share/vulkan/icd.d/radeon_icd.x86_64.json:${pkgs.driversi686Linux.mesa.drivers}/share/vulkan/icd.d/radeon_icd.i686.json";
+    #VK_ICD_FILENAMES = "${pkgs.mesa.drivers}/share/vulkan/icd.d/radeon_icd.x86_64.json:${pkgs.driversi686Linux.mesa.drivers}/share/vulkan/icd.d/radeon_icd.i686.json";
     AMD_VULKAN_ICD = "RADV";
     RADV_PERFTEST = "gpl,rt,sam";
-    OCL_ICD_VENDORS = "${pkgs.rocmPackages.clr.icd}/etc/OpenCL/vendors/";
+    #OCL_ICD_VENDORS = "${pkgs.rocmPackages.clr.icd}/etc/OpenCL/vendors/";
   };
   hardware.cpu.amd.updateMicrocode = lib.mkForce true;
 

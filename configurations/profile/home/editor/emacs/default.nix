@@ -7,7 +7,7 @@
   ...
 }:
 let
-  emacs-pkg = materusCfg.configInputs.emacs-overlay.packages.x86_64-linux.emacs-unstable;
+  emacs-pkg = pkgs.emacs;
 
   materus-config =
     e:
@@ -81,6 +81,7 @@ let
       org-present
       org-modern
       org-auto-tangle
+      ox-pandoc
       visual-fill-column
       csharp-mode
       markdown-mode
@@ -112,7 +113,7 @@ let
       zones
       sudo-edit
       toc-org
-      empv
+      #empv
       volatile-highlights
       highlight
       elfeed
@@ -150,6 +151,7 @@ let
     name = "emacs-env";
     paths = with pkgs; [
       luaformatter
+      pandoc
       (luajit.withPackages (p: [p.fennel p.lua-lsp]))
       fennel-ls
       fnlfmt
@@ -280,7 +282,7 @@ in
           #withXwidgets = true;
           withGTK3 = true;
           withAlsaLib = true;
-          withGconf = true;
+          #withGconf = true;
           withImageMagick = true;
         }).overrideAttrs
           (

@@ -25,7 +25,7 @@
   materus.profile.nix.enable = true;
   materus.profile.nixpkgs.enable = true;
   materus.profile.fonts.enable = true;
-  materus.profile.steam.enable = true;
+  materus.profile.steam.enable = false;
 
   services.logind.extraConfig  = ''
     NAutoVTs=4

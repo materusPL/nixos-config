@@ -10,7 +10,7 @@ let
   startedHook = ''
     QEMU_PID=$(ps aux | grep qemu-system-x86_64 | grep "${VM_UUID}" | tr -s ' ' | cut -d " " -f 2)
 
-    for pid in $(cat /sys/fs/cgroup/cpu/machine.slice/machine-qemu*$1.scope/libvirt/vcpu*/tasks); do 
+    for pid in $(ls /proc/$QEMU_PID/task); do 
       renice -n "-15" -p "$pid";
     done
     renice -n "-10" -p "$QEMU_PID";
@@ -47,7 +47,8 @@ let
       chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render 
       chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
       fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
-      pkill Xwayland
+      fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
+      #pkill Xwayland
 
       # Seems to fix reset bug for 7900 XTX
       echo "0" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/d3cold_allowed"
@@ -64,9 +65,11 @@ let
       echo ''$VIRSH_GPU_VIDEO > /sys/bus/pci/drivers/amdgpu/bind
       
       sleep 1s
-
-      chmod 0 /dev/dri/renderD128 
-      fuser -k /dev/dri/renderD128
+      
+      chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
+      chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
+      fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
+      fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
       #####################################################################
       
       echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
@@ -152,7 +155,15 @@ in
 
 
 
-
+  virtualisation.libvirtd.qemu.verbatimConfig = ''
+  cgroup_device_acl = [
+    "/dev/null", "/dev/full", "/dev/zero",
+    "/dev/random", "/dev/urandom",
+    "/dev/ptmx", "/dev/kvm", "/dev/kqemu",
+    "/dev/rtc","/dev/hpet", "/dev/vfio/vfio",
+    "/dev/kvmfr0"
+  ]
+  '';
   virtualisation.libvirtd.hooks.qemu = {
     "windows-vfio" = pkgs.writeShellScript "windows.sh" ''
       VIRSH_GPU_VIDEO="0000:03:00.0"

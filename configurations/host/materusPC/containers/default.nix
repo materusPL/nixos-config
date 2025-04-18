@@ -2,6 +2,7 @@
 {
   imports = [
     ./arch.nix
+    ./fedora.nix
   ];
   virtualisation.lxc.enable = true;
   virtualisation.lxc.lxcfs.enable = true;

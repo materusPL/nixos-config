@@ -10,7 +10,7 @@
   services.adguardhome.enable = true;
 
   valkyrieService.pihole.enable = false;
-  valkyrieService.pleroma.enable = true;
+  valkyrieService.pleroma.enable = false;
   valkyrieService.dcbot.enable = true;
   valkyrieService.secureyoursoul.enable = true;
 

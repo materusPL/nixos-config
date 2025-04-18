@@ -1,9 +1,12 @@
-{ config, pkgs, lib, materusArg, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  materusArg,
+  ...
+}:
 {
   options.valkyrieService.dcbot.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable muse bot";
-
-
-
 
   config =
     let
@@ -24,18 +27,12 @@
       systemd.tmpfiles.rules = [
         "d    /var/lib/muse  0776    root    root     -"
       ];
-
       virtualisation.oci-containers.containers.dcbot = {
         image = "ghcr.io/museofficial/muse:latest";
-        volumes = [
-          "/var/lib/muse:/data"
-        ];
-        environmentFiles = [
-          config.sops.templates."muse.env".path
-        ];
+        volumes = [ "/var/lib/muse:/data" ];
+        environmentFiles = [ config.sops.templates."muse.env".path ];
       };
 
     };
-
 
 }

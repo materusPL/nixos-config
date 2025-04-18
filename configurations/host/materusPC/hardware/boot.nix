@@ -35,10 +35,11 @@ in
     "iommu=pt"
     "psi=1"
   ] ++ video;
-  boot.kernelModules = [ "pci-stub" "amdgpu" "i2c_dev" "kvm_amd" "vfio" "vfio_iommu_type1" "vfio-pci" ];
+  boot.kernelModules = [ "pci-stub" "amdgpu" "i2c_dev" "kvm_amd" "vfio" "vfio_iommu_type1" "vfio-pci" "kvmfr" ];
   boot.extraModprobeConfig = ''
     options kvm_amd nested=1 avic=1 npt=1 sev=0
     options vfio_iommu_type1 allow_unsafe_interrupts=1
+    options kvmfr static_size_mb=64
   '';
   boot.kernel.sysctl = {
     "vm.max_map_count" = 1000000;
@@ -50,7 +51,7 @@ in
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ "amdgpu" ];
 
-  boot.extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback ];
+  boot.extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback kvmfr ];
 
 
   boot.supportedFilesystems = [ "ntfs" "btrfs" "vfat" "exfat" "ext4" ];

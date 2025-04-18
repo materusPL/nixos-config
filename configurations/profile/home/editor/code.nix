@@ -16,9 +16,9 @@ let
     vscode-marketplace.cs128.cs128-clang-tidy
 
     #Python
-    vscode-marketplace.ms-python.python
-    vscode-marketplace.ms-python.vscode-pylance
-    vscode-marketplace.ms-python.debugpy
+    #vscode-marketplace.ms-python.python
+    #vscode-marketplace.ms-python.vscode-pylance
+    #vscode-marketplace.ms-python.debugpy
 
     # CSharp
     open-vsx.muhammad-sammy.csharp
@@ -51,15 +51,15 @@ let
 
     #Git
     open-vsx.donjayamanne.githistory
-    open-vsx.mhutchie.git-graph
+    #open-vsx.mhutchie.git-graph
     open-vsx.eamodio.gitlens
 
     #Other 
     open-vsx.ms-azuretools.vscode-docker
     open-vsx.webfreak.debug
     open-vsx.mkhl.direnv
-    vscode-marketplace.ms-vscode-remote.remote-wsl
-    vscode-marketplace.ms-vscode-remote.remote-containers
+    #vscode-marketplace.ms-vscode-remote.remote-wsl
+    #vscode-marketplace.ms-vscode-remote.remote-containers
     open-vsx.esbenp.prettier-vscode
     open-vsx.formulahendry.code-runner
     open-vsx.leonardssh.vscord

@@ -1,32 +1,28 @@
-{ config, pkgs, materusArg, ... }:
+{
+  config,
+  pkgs,
+  materusArg,
+  ...
+}:
 
 {
-
 
   programs.gamemode.enable = true;
   programs.corectrl.enable = true;
 
-
-
   services.teamviewer.enable = true;
 
-  systemd.tmpfiles.rules = [
-    "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}"
-  ];
+  systemd.tmpfiles.rules = [ "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}" ];
 
   services.flatpak.enable = true;
   services.gvfs.enable = true;
 
-
   services.xserver.xkb.layout = "pl";
-
 
   services.xserver.enable = true;
   services.xserver.videoDrivers = [ "amdgpu" ];
   services.dbus.enable = true;
   services.dbus.packages = [ pkgs.gcr ];
-
-
 
   services.xserver.displayManager.startx.enable = false;
 
@@ -44,14 +40,9 @@
 
   '';
 
-
-
-
   services.printing.enable = true;
 
   services.libinput.enable = true;
-
-
 
   environment.sessionVariables = {
     XDG_CACHE_HOME = "\${HOME}/.cache";
@@ -64,11 +55,8 @@
     XMODIFIERS = "@im=fcitx";
     SDL_IM_MODULE = "fcitx";
 
-
     MOZ_USE_XINPUT2 = "1";
-    PATH = [
-      "\${XDG_BIN_HOME}"
-    ];
+    PATH = [ "\${XDG_BIN_HOME}" ];
   };
   environment.shellInit = ''
     if ! [ -z "$DISPLAY" ]; then xhost +si:localuser:root &> /dev/null; fi;
@@ -76,9 +64,13 @@
   '';
 
   i18n.inputMethod.enabled = "fcitx5";
-  i18n.inputMethod.fcitx5.addons = [ pkgs.kdePackages.fcitx5-configtool pkgs.fcitx5-lua pkgs.fcitx5-mozc pkgs.fcitx5-gtk pkgs.kdePackages.fcitx5-qt ];
-
-
+  i18n.inputMethod.fcitx5.addons = [
+    pkgs.kdePackages.fcitx5-configtool
+    pkgs.fcitx5-lua
+    pkgs.fcitx5-mozc
+    pkgs.fcitx5-gtk
+    pkgs.kdePackages.fcitx5-qt
+  ];
 
   services.pcscd.enable = true;
 
@@ -89,21 +81,21 @@
     package = pkgs.sambaFull;
     securityType = "user";
     openFirewall = true;
-    extraConfig = ''
-      workgroup = WORKGROUP
-      server string = smbmaterus
-      netbios name = smbmaterus
-      security = user 
-      hosts allow = 192.168.122. 127.0.0.1 localhost
-      hosts deny = 0.0.0.0/0
-      guest account = nobody
-      map to guest = bad user
-      allow insecure wide links = yes
-    '';
-    shares = {
+    settings = {
+      global = {
+        "workgroup" = "WORKGROUP";
+        "server string" = "smbmaterus";
+        "netbios name " = "smbmaterus";
+        "security" = "user";
+        "hosts allow" = "192.168.122. 127.0.0.1 localhost";
+        "hosts deny" = "0.0.0.0/0";
+        "guest account" = "nobody";
+        "map to guest" = "bad user";
+        "allow insecure wide links" = "yes";
+      };
       windows = {
-        path = "/materus/data/VM/windows_shared";
-        browseable = "yes";
+        "path" = "/materus/data/VM/windows_shared";
+        "browseable" = "yes";
         "read only" = "no";
         "guest ok" = "no";
         "create mask" = "0644";
@@ -113,6 +105,7 @@
         "follow symlinks" = "yes";
         "wide links" = "yes";
       };
+
     };
   };
 
@@ -134,13 +127,21 @@
     openFirewall = true;
     autoStart = false;
   };
-  
+
   hardware.sane.enable = true;
   hardware.sane.extraBackends = [ pkgs.hplipWithPlugin ];
 
   environment.enableAllTerminfo = true;
-  environment.pathsToLink = [ "/share/zsh" "/share/bash-completion" "/share/fish" ];
-  environment.shells = with pkgs; [ zsh bashInteractive fish ];
+  environment.pathsToLink = [
+    "/share/zsh"
+    "/share/bash-completion"
+    "/share/fish"
+  ];
+  environment.shells = with pkgs; [
+    zsh
+    bashInteractive
+    fish
+  ];
   programs = {
     fish.enable = true;
     command-not-found.enable = false;
@@ -149,9 +150,6 @@
 
   materus.profile.browser.enable = true;
 
-
   services.davfs2.enable = true;
-
-
 
 }

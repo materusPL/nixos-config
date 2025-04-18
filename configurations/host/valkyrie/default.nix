@@ -165,12 +165,5 @@
     dnsProvider = "ovh";
   };
 
-  security.acme.certs."podkos.xyz" = {
-    domain = "podkos.xyz";
-    group = "nginx";
-    extraDomainNames = [ "*.podkos.xyz" ];
-    dnsProvider = "ovh";
-  };
-
 }
 

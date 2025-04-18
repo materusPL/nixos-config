@@ -6,13 +6,23 @@
 }:
 {
 
-  services.jackett.enable = true;
+  #services.jackett.enable = true;
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
 
   ];
+  programs.chromium.enable = true;
+  programs.chromium.enablePlasmaBrowserIntegration = true;
 
   environment.systemPackages = with pkgs; [
+
+    (vivaldi.overrideAttrs
+      (oldAttrs: {
+        dontWrapQtApps = false;
+        dontPatchELF = true;
+        nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [pkgs.kdePackages.wrapQtAppsHook];
+      }))
+
     #(pkgs.lutris.override { extraLibraries = pkgs: with pkgs;  [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
     materusArg.pkgs.amdgpu-pro-libs.prefixes
     (pkgs.bottles.override {
