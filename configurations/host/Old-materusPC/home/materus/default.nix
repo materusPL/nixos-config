@@ -98,7 +98,7 @@
       dub
     ]);
 
-    editor.emacs.enable = true;
+    editor.emacs.enable = false;
 
   };
   xdg.desktopEntries.brave-browser =
@@ -152,7 +152,7 @@
     };
   home.packages = [
     pkgs.papirus-icon-theme
-    (materusArg.pkgs.polymc-qt5.wrap { withWaylandGLFW = true; extraJDKs = [ pkgs.graalvm-ce ]; })
+    (materusArg.pkgs.polymc.wrap { withWaylandGLFW = true; extraJDKs = [ pkgs.graalvm-ce ]; })
   ];
 
 }

@@ -88,7 +88,7 @@ in
   hardware.opengl.enable = true;
   hardware.opengl.driSupport32Bit = true;
 
-  materus.profile.steam.enable = true;
+  materus.profile.steam.enable = false;
 
   # Configure keymap in X11
   services.xserver.xkb.layout = "pl";
@@ -101,13 +101,14 @@ in
   services.printing.enable = true;
 
   # Enable sound.
-  sound.enable = true;
+  #sound.enable = true;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    systemWide = true;
     # If you want to use JACK applications, uncomment this
     jack.enable = true;
   };
@@ -172,6 +173,14 @@ in
   ];
 
   environment.systemPackages = with pkgs; [
+
+    (vivaldi.overrideAttrs
+      (oldAttrs: {
+        dontWrapQtApps = false;
+        dontPatchELF = true;
+        nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [pkgs.kdePackages.wrapQtAppsHook];
+      }))
+
     brave
 
     glibc
@@ -293,7 +302,7 @@ in
   environment.shells = with pkgs; [ zsh ];
   programs = {
     steam = {
-      enable = true;
+      enable = false;
       dedicatedServer.openFirewall = true;
       remotePlay.openFirewall = true;
     };
