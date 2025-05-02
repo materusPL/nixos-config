@@ -3,30 +3,48 @@
   lib,
   pkgs,
   materusArg,
-  materusCfg,
   ...
-}:
-let
+}: let
   emacs-pkg = pkgs.emacs;
 
-  materus-config =
-    e:
+  materus-nix = e:
     e.trivialBuild {
-      pname = "materus-config";
-      src = pkgs.writeText "materus-config.el" ''
+      pname = "materus-nix";
+      src = pkgs.writeText "materus-nix.el" ''
         (when (file-exists-p "${config.programs.emacs.package}/opt/emacs/buildtime")
         (setq emacs-build-time (decode-time (seconds-to-time (string-to-number (with-temp-buffer
         (insert-file-contents "${config.programs.emacs.package}/opt/emacs/buildtime")
         (buffer-string)))))))
-        (provide 'materus-config)
+
+
+
+
+        (defvar lsp-java-configuration-runtimes nil)
+        (setq dap-lldb-debug-program '("${pkgs.llvmPackages.lldb}/bin/lldb-vscode"))
+        (setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
+                                                      :path "${pkgs.jdk8}/lib/openjdk/")
+                                                (:name "JavaSE-17"
+                                                      :path "${pkgs.jdk17}/lib/openjdk/")
+                                                (:name "JavaSE-21"
+                                                      :path "${pkgs.jdk21}/lib/openjdk/"
+                                                      :default t)])
+
+        (setq lsp-nix-nixd-nixos-options-expr (concat "(builtins.getFlake \"/etc/nixos\").nixosConfigurations." (system-name) ".options"))
+        (setenv "JAVA_HOME" "${pkgs.jdk21}/lib/openjdk")
+        (setenv "PATH" (concat "${emacsEnv}/bin:" (getenv "PATH")))
+        (setq exec-path (append '("${emacsEnv}/bin") exec-path))
+
+
+        (call-process-shell-command "${pkgs.xorg.xmodmap}/bin/xmodmap -e \"keycode 148 = Hyper_L\" -e \"remove Mod4 = Hyper_L\" -e \"add Mod3 = Hyper_L\" &" nil 0)
+        (call-process-shell-command "${pkgs.xorg.xmodmap}/bin/xmodmap -e \"keycode 66 = Hyper_L\" -e \"remove Mod4 = Hyper_L\" -e \"add Mod3 = Hyper_L\" &" nil 0)
+
+        (provide 'materus-nix)
       '';
       version = "1.0.0";
     };
 
-  configPath = "${materusArg.cfg.path}" + "/extraFiles/config/emacs/";
-  packages =
-    epkgs: with epkgs; [
-      (materus-config epkgs)
+  packages = epkgs:
+    with epkgs; [
       treesit-grammars.with-all-grammars
       use-package
       elcord
@@ -150,12 +168,18 @@ let
   emacsEnv = pkgs.buildEnv {
     name = "emacs-env";
     paths = with pkgs; [
+      jdk21
+
       luaformatter
       pandoc
-      (luajit.withPackages (p: [p.fennel p.lua-lsp]))
+      (luajit.withPackages (p: [
+        p.fennel
+        p.lua-lsp
+      ]))
       fennel-ls
       fnlfmt
-      
+      sbcl
+      silver-searcher
       guile
       plantuml
       mermaid-cli
@@ -176,7 +200,6 @@ let
       gdb
       materusArg.unstable.nixd
       jdt-language-server
-      jdk
       gradle
       fpc
       nodejs
@@ -186,50 +209,12 @@ let
   };
 
   cfg = config.materus.profile.editor.emacs;
-
-  setNixInit = ''
-    (defvar lsp-java-configuration-runtimes nil)
-    (setq dap-lldb-debug-program '("${pkgs.llvmPackages.lldb}/bin/lldb-vscode"))
-    (setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
-                                                   :path "${pkgs.jdk8}/lib/openjdk/")
-                                            (:name "JavaSE-17"
-                                                   :path "${pkgs.jdk17}/lib/openjdk/")
-                                            (:name "JavaSE-21"
-                                                   :path "${pkgs.jdk21}/lib/openjdk/"
-                                                   :default t)])
-    (setq lsp-nix-nixd-nixos-options-expr (concat "(builtins.getFlake \"/etc/nixos\").nixosConfigurations." (system-name) ".options"))                                           
-    (setenv "PATH" (concat (getenv "PATH") ":${emacsEnv}/bin"))
-    (setq exec-path (append exec-path '("${emacsEnv}/bin")))
-    (call-process-shell-command "${pkgs.xorg.xmodmap}/bin/xmodmap -e \"keycode 148 = Hyper_L\" -e \"remove Mod4 = Hyper_L\" -e \"add Mod3 = Hyper_L\" &" nil 0)
-    (call-process-shell-command "${pkgs.xorg.xmodmap}/bin/xmodmap -e \"keycode 66 = Hyper_L\" -e \"remove Mod4 = Hyper_L\" -e \"add Mod3 = Hyper_L\" &" nil 0)
-  '';
-in
-{
-  options.materus.profile.editor.emacs.enable = materusArg.pkgs.lib.mkBoolOpt false "Enable emacs with materus cfg";
+in {
+  options.materus.profile.editor.emacs.enable =
+    materusArg.pkgs.lib.mkBoolOpt false "Enable emacs with materus cfg";
 
   config = lib.mkIf cfg.enable {
-    home.activation.emacsSetup = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-      mkdir -p ${config.xdg.configHome}/emacs/var/recovery
-      mkdir -p ${config.xdg.configHome}/emacs/etc/materus
-      mkdir -p ${config.xdg.configHome}/emacs/var/backups
-      ${pkgs.rsync}/bin/rsync -zr --no-times --chmod=744 "${configPath}" "${config.xdg.configHome}/emacs"
-
-
-      run ${config.programs.emacs.finalPackage}/bin/emacs -Q --batch \
-      --eval '(setq warning-minimum-log-level :error)' \
-      --eval '(setq package-user-dir (concat user-emacs-directory "var/elpa/" emacs-version "/" ))' \
-      --eval '(setq package-gnupghome-dir (concat user-emacs-directory "var/elpa/gnupg/" ))' \
-      --eval '(package-initialize)' \
-      --eval '(byte-recompile-directory (concat user-emacs-directory "etc/materus/extra") 0 t)' \
-      --eval '(byte-compile-file "${config.xdg.configHome}/emacs/early-init.el")' \
-      --eval '(byte-compile-file "${config.xdg.configHome}/emacs/init.el")' \
-      --eval '(byte-compile-file "${config.xdg.configHome}/emacs/etc/materus/nix-init.el")' \
-      --eval '(byte-compile-file "${config.xdg.configHome}/emacs/etc/materus/emacs-config.el")'
-    '';
-
-    xdg.configFile = {
-      "emacs/etc/materus/nix-init.el".text = setNixInit;
-    };
+    home.activation.emacsSetup = lib.hm.dag.entryAfter ["linkGeneration"] '''';
 
     #Emacsclient with COLORTERM env variable, without it display in "-nw" client is broken
     xdg.desktopEntries.emacs = {
@@ -274,6 +259,7 @@ in
 
     programs.emacs = {
       enable = true;
+      extraPackages = epkgs: [(materus-nix epkgs) epkgs.vterm epkgs.treesit-grammars.with-all-grammars];
       package = lib.mkDefault (
         (emacs-pkg.override {
           withSQLite3 = true;
@@ -282,111 +268,24 @@ in
           #withXwidgets = true;
           withGTK3 = true;
           withAlsaLib = true;
+
           #withGconf = true;
           withImageMagick = true;
-        }).overrideAttrs
-          (
-            f: p: {
-              #Remove .desktop files, will use my own. Add file with buildtime in case of using elpaca
-              postInstall =
-                p.postInstall
-                + ''
-                  rm -fr $out/share/applications/*
-                  mkdir -p $out/opt/emacs
-                  date +%s | tr -d '\n' > $out/opt/emacs/buildtime
-                '';
-            }
-          )
+        })
+        .overrideAttrs
+        (
+          f: p: {
+            #Remove .desktop files, will use my own. Add file with buildtime in case of using elpaca
+            postInstall =
+              p.postInstall
+              + ''
+                rm -fr $out/share/applications/*
+                mkdir -p $out/opt/emacs
+                date +%s | tr -d '\n' > $out/opt/emacs/buildtime
+              '';
+          }
+        )
       );
-      extraPackages =
-        epkgs:
-        (packages (
-          epkgs.overrideScope (
-            ff: pp: {
-              #Build lsp-mode with plist support, need to set this in emacs too
-
-              lsp-mode = (
-                pp.lsp-mode.overrideAttrs (
-                  f: p: {
-                    patches = [ ./lsp-mode.patch ];
-                    buildPhase =
-                      ''
-                        export LSP_USE_PLISTS=true
-                      ''
-                      + p.buildPhase;
-                  }
-                )
-              );
-              lsp-java = (
-                pp.lsp-java.overrideAttrs (
-                  f: p: {
-                    buildPhase =
-                      ''
-                        export LSP_USE_PLISTS=true
-                      ''
-                      + p.buildPhase;
-                  }
-                )
-              );
-              lsp-jedi = (
-                pp.lsp-jedi.overrideAttrs (
-                  f: p: {
-                    buildPhase =
-                      ''
-                        export LSP_USE_PLISTS=true
-                      ''
-                      + p.buildPhase;
-                  }
-                )
-              );
-              lsp-haskell = (
-                pp.lsp-haskell.overrideAttrs (
-                  f: p: {
-                    buildPhase =
-                      ''
-                        export LSP_USE_PLISTS=true
-                      ''
-                      + p.buildPhase;
-                  }
-                )
-              );
-              lsp-ui = (
-                pp.lsp-ui.overrideAttrs (
-                  f: p: {
-                    buildPhase =
-                      ''
-                        export LSP_USE_PLISTS=true
-                      ''
-                      + p.buildPhase;
-                  }
-                )
-              );
-              lsp-treemacs = (
-                pp.lsp-treemacs.overrideAttrs (
-                  f: p: {
-                    buildPhase =
-                      ''
-                        export LSP_USE_PLISTS=true
-                      ''
-                      + p.buildPhase;
-                  }
-                )
-              );
-              dap-mode = (
-                pp.dap-mode.overrideAttrs (
-                  f: p: {
-                    buildPhase =
-                      ''
-                        export LSP_USE_PLISTS=true
-                      ''
-                      + p.buildPhase;
-                  }
-                )
-              );
-            }
-          )
-        ));
     };
-
   };
 }

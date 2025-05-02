@@ -1,12 +1,10 @@
 ;;; -*- lexical-binding: t; -*-
+  
+;;; VARIABLES
 
-;; [[file:emacs-materus-config.org::*Early Init Variables][Early Init Variables:1]]
-(defvar materus/init-early t
-  "Is emacs using materus early init")                                                    ; Var to ensure early-init loaded, not used anymore but keeping it anyway
-(setq materus/init-early t)                                                               ; Probably useless
 
 (setenv "LSP_USE_PLISTS" "true")                                                          ; Make lsp-mode use plists
-;; 
+
 (setq c-default-style nil)                                                                ; Clear default styles for languages, will set them up later
 (setq default-input-method nil)                                                           ; Disable default input method, I'm not using them anyway so far
 (setq initial-major-mode 'fundamental-mode)                                               ; Use fundamental mode in scratch buffer, speed up loading, not really important when emacs used as daemon
@@ -18,14 +16,16 @@
 (setq auto-save-list-file-prefix (concat user-emacs-directory "var/auto-save/sessions/")) ; Set auto-save-list location
 (setq load-prefer-newer t)                                                                ; Prefer newer files to load
 
-;; Packages
-(setq package-enable-at-startup t)                                                        ; Ensure packages are enable since I'm either using built in package manager or nix
-(setq package-quickstart nil)                                                             ; Disable package quickstart, it's annoying if forget to update it and doesn't speed up much
-;;
+
+(setq package-enable-at-startup nil)                                                       
+(setq package-quickstart nil)                                                             ; Disable package quickstart
+
+(setq inhibit-startup-screen t)
 
 (setq inhibit-compacting-font-caches t)                                                   ; Don't compact fonts
 
 (set-language-environment "UTF-8")                                                        ; Use UTF-8
+(setq-default buffer-file-coding-system 'utf-8-unix)
 
 (setq custom-file (concat user-emacs-directory "etc/custom.el"))                          ; Set custom file location, don't want clutter in main directory
 (setq custom-theme-directory
@@ -34,19 +34,22 @@
 (setq ring-bell-function 'ignore)                                                         ; Disable bell
 
 
-(defvar materus-emacs-gc-cons-threshold (* 64 1024 1024)
+(defvar materus/emacs-gc-cons-threshold (* 64 1024 1024)
   "The value of `gc-cons-threshold' after Emacs startup.")                                ; Define after init garbage collector threshold
-;; Early Init Variables:1 ends here
 
-;; [[file:emacs-materus-config.org::*Garbage Collector][Garbage Collector:1]]
+
+;;; GARBAGE COLLECTOR 
 (setq gc-cons-threshold most-positive-fixnum)                                             ; Set `gc-cons-threshold' so it won't collectect during initialization 
 
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (setq gc-cons-threshold materus-emacs-gc-cons-threshold)))                    ; Set `gc-cons-threshold' to desired value after startup
-;; Garbage Collector:1 ends here
+            (setq gc-cons-threshold materus/emacs-gc-cons-threshold)))                    ; Set `gc-cons-threshold' to desired value after startup
 
-;; [[file:emacs-materus-config.org::*Early Frame Settings][Early Frame Settings:1]]
+
+
+
+;;; FRAMES
+
 (setq frame-inhibit-implied-resize t)
 (setq frame-resize-pixelwise t)
 (setq window-resize-pixelwise t)                                ; Allow pixelwise resizing of window and frame
@@ -64,9 +67,10 @@
               (advice-remove #'tty-run-terminal-initialization #'ignore) 
               (tty-run-terminal-initialization (selected-frame) nil t)
               )))
-;; Early Frame Settings:1 ends here
 
-;; [[file:emacs-materus-config.org::*Native compilation][Native compilation:1]]
+
+;;; NATIVE COMPILATION
+
 (setq native-comp-async-report-warnings-errors nil) ; Silence warnings
 (setq native-comp-speed 3)                          ; Set native-comp speed
 
@@ -83,4 +87,3 @@
   (startup-redirect-eln-cache
    (convert-standard-filename
     (concat user-emacs-directory "var/eln-cache/"))))
-;; Native compilation:1 ends here
