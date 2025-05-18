@@ -8,6 +8,7 @@
 }:
 {
   imports = [
+    ./materusPC-private.nix
 # * CONFIG
 # **  Nix System Settings
     {

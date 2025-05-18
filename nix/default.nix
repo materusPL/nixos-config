@@ -1,4 +1,4 @@
-# * default.nix
+# * Outputs - default.nix
 { inputs, configRootPath }:
 let
   stable = inputs.config-stable;
@@ -24,7 +24,7 @@ in
         ./hosts/materusPC.nix
       ];
     };
-
+# * default.nix END
   };
 
 }

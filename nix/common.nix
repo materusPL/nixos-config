@@ -178,49 +178,58 @@
           assertion = builtins ? currentSystem;
           message = "MKK must be build with --impure";
         }
+
         {
-          assertion =
-            let
-              file = ../private/check-encryption;
-              resultFile = pkgs.runCommandLocal "check-encryption" { src = file; } ''
-                if [[ "$(< $src)" != "DECRYPTED" ]]; then
-                   echo -n "no" >> $out;
-                else
-                   echo -n "yes" >> $out;
-                fi 
-              '';
-            in
-            (builtins.readFile resultFile == "yes");
+          assertion = config.konfig.decrypted;
           message = "Need to decrypt MKK repo to build";
         }
       ];
     }
 # * Args
-    {
-      options.konfig = lib.mkOption { default = { }; };
-      config = {
-        konfig = {
-          unstable = mkkArg.unstable;
-          stable = mkkArg.stable;
-          current = mkkArg.current;
-          nixerusPkgs =
-            (import mkkArg.current.nixerus { inherit pkgs; })
-            // (
-              if (pkgs.system == "x86_64-linux") then
-                {
-                  i686Linux = import mkkArg.current.nixerus { pkgs = pkgs.pkgsi686Linux; };
-                }
-              else
-                { }
-            );
 
-          arg = mkkArg;
-          rootFlake = (builtins.getFlake mkkArg.configRootPath);
-          vars = lib.mkDefault { };
+    (
+      let
+        decryptedBool =
+          let
+            file = ../private/check-encryption;
+            resultFile = pkgs.runCommandLocal "check-encryption" { src = file; } ''
+              if [[ "$(< $src)" != "DECRYPTED" ]]; then
+                 echo -n "no" >> $out;
+              else
+                 echo -n "yes" >> $out;
+              fi 
+            '';
+          in
+          (builtins.readFile resultFile == "yes");
+
+      in
+      {
+        options.konfig = lib.mkOption { default = { }; };
+        config = {
+          konfig = {
+            decrypted = decryptedBool;
+            unstable = mkkArg.unstable;
+            stable = mkkArg.stable;
+            current = mkkArg.current;
+            nixerusPkgs =
+              (import mkkArg.current.nixerus { inherit pkgs; })
+              // (
+                if (pkgs.system == "x86_64-linux") then
+                  {
+                    i686Linux = import mkkArg.current.nixerus { pkgs = pkgs.pkgsi686Linux; };
+                  }
+                else
+                  { }
+              );
+
+            arg = mkkArg;
+            rootFlake = (builtins.getFlake mkkArg.configRootPath);
+            vars = lib.mkDefault { };
+          };
+          _module.args.konfig = config.konfig;
         };
-        _module.args.konfig = config.konfig;
-      };
-    }
+      }
+    )
 # * common.nix END
   ];
 
