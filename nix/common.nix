@@ -180,7 +180,7 @@
         }
 
         {
-          assertion = config.konfig.decrypted;
+          assertion = config.mkk.isDecrypted;
           message = "Need to decrypt MKK repo to build";
         }
       ];
@@ -205,9 +205,9 @@
       in
       {
         options.konfig = lib.mkOption { default = { }; };
+        options.mkk.isDecrypted = lib.mkOption { default = decryptedBool; }; 
         config = {
           konfig = {
-            decrypted = decryptedBool;
             unstable = mkkArg.unstable;
             stable = mkkArg.stable;
             current = mkkArg.current;
