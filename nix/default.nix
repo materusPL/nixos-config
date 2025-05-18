@@ -44,9 +44,8 @@ in
               mkkArg
               // {
                 current = (if isStable then stable else unstable);
-              }
-              // {
                 isDecrypted = (isDecrypted (if isStable then stable else unstable).nixpkgs system);
+                isStable = isStable;
               }
               // extraArgs;
           };

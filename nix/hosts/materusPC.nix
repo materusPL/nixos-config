@@ -18,6 +18,25 @@
 # ** Network
     {
       networking.hostName = "materusPC";
+      networking.useDHCP = lib.mkDefault true;
+      networking.wireless.iwd.enable = true;
+      networking.networkmanager.enable = true;
+      #networking.networkmanager.wifi.backend = "iwd";
+      networking.firewall.enable = true;
+
+      networking.firewall = {
+        logReversePathDrops = false;
+        # wireguard trips rpfilter up
+        extraCommands = ''
+          ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport ${konfig.vars.wireguard.ports.materusPC} -j RETURN
+          ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --dport ${konfig.vars.wireguard.ports.materusPC} -j RETURN
+        '';
+        extraStopCommands = ''
+          ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --sport ${konfig.vars.wireguard.ports.materusPC} -j RETURN || true
+          ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport ${konfig.vars.wireguard.ports.materusPC} -j RETURN || true
+        '';
+      };
+
     }
 # ** Hardware
 # *** Filesystems

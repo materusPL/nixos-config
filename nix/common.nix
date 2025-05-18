@@ -8,6 +8,7 @@
 }:
 {
   imports = [
+    (if mkkArg.isDecrypted then ./variables-private.nix else {})
 # * NIX & NIXPKGS
     {
       nixpkgs.config = {
@@ -186,38 +187,32 @@
       ];
     }
 # * Args
+    {
+      options.konfig = lib.mkOption { default = { }; };
+      config = {
+        konfig = {
+          unstable = mkkArg.unstable;
+          stable = mkkArg.stable;
+          current = mkkArg.current;
+          nixerusPkgs =
+            (import mkkArg.current.nixerus { inherit pkgs; })
+            // (
+              if (pkgs.system == "x86_64-linux") then
+                {
+                  i686Linux = import mkkArg.current.nixerus { pkgs = pkgs.pkgsi686Linux; };
+                }
+              else
+                { }
+            );
 
-    (
-      let
-       
-
-      in
-      {
-        options.konfig = lib.mkOption { default = { }; }; 
-        config = {
-          konfig = {
-            unstable = mkkArg.unstable;
-            stable = mkkArg.stable;
-            current = mkkArg.current;
-            nixerusPkgs =
-              (import mkkArg.current.nixerus { inherit pkgs; })
-              // (
-                if (pkgs.system == "x86_64-linux") then
-                  {
-                    i686Linux = import mkkArg.current.nixerus { pkgs = pkgs.pkgsi686Linux; };
-                  }
-                else
-                  { }
-              );
-
-            arg = mkkArg;
-            rootFlake = (builtins.getFlake mkkArg.configRootPath);
-            vars = lib.mkDefault { };
-          };
-          _module.args.konfig = config.konfig;
+          arg = mkkArg;
+          rootFlake = (builtins.getFlake mkkArg.configRootPath);
+          vars = { };
         };
-      }
-    )
+        _module.args.konfig = config.konfig;
+      };
+    }
+
 # * common.nix END
   ];
 
