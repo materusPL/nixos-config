@@ -9,19 +9,50 @@
 {
   imports = [
 # * CONFIG
-# **  Nix System Settings
+# ** General Settings
+# *** SOPS
+    {
+      sops.age.generateKey = false;
+      sops.gnupg.home = null;
+      sops.gnupg.sshKeyPaths = [ ];
+      sops.age.sshKeyPaths = [ (konfig.vars.path.mkk + "/host/keys/ssh_host_ed25519_key") ];
+      sops.defaultSopsFile = konfig.rootFlake + "/private/materusPC-secrets.yaml";
+      #sops.secrets."users/materus" = { neededForUsers = true; };
+      sops.secrets.wireguard = { };
+
+      services.openssh.hostKeys = [
+        {
+          bits = 4096;
+          path = konfig.vars.path.mkk + "/host/keys/ssh_host_rsa_key";
+          type = "rsa";
+        }
+        {
+          path = konfig.vars.path.mkk + "/host/keys/ssh_host_ed25519_key";
+          type = "ed25519";
+        }
+      ];
+    }
+# ***  Nix System Settings
     {
       nixpkgs.hostPlatform = "x86_64-linux";
       system.copySystemConfiguration = false;
       system.stateVersion = "23.05";
     }
 # ** Network
+# *** Firewall & Others
     {
+      services = {
+        syncthing = {
+          enable = true;
+          user = "materus";
+          dataDir = "/home/materus";
+        };
+      };
+
       networking.hostName = "materusPC";
       networking.useDHCP = lib.mkDefault true;
       networking.wireless.iwd.enable = true;
-      networking.networkmanager.enable = true;
-      #networking.networkmanager.wifi.backend = "iwd";
+
       networking.firewall.enable = true;
 
       networking.firewall = {
@@ -35,8 +66,84 @@
           ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --sport ${konfig.vars.wireguard.ports.materusPC} -j RETURN || true
           ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport ${konfig.vars.wireguard.ports.materusPC} -j RETURN || true
         '';
+
+        allowedTCPPorts = [
+          24800
+          5900
+          5357
+          4656
+          8080
+          9943
+          9944
+          # Syncthing
+          22000
+          config.services.syncthing.relay.statusPort
+          config.services.syncthing.relay.port
+        ];
+        allowedUDPPorts = [
+          (lib.strings.toInt konfig.vars.wireguard.ports.materusPC)
+          24800
+          5900
+          3702
+          4656
+          6000
+          9943
+          9944
+          # Syncthing
+          22000
+          21027
+          # Zomboid
+          17000
+          17001
+        ];
       };
 
+    }
+# *** NetworkManager
+    {
+      sops.templates."networkmanager.env".content = ''
+        WIREGUARD_PRIVATEKEY="${config.sops.placeholder.wireguard}"
+      '';
+      networking.networkmanager.ensureProfiles.environmentFiles = [
+        config.sops.templates."networkmanager.env".path
+      ];
+      networking.networkmanager.enable = true;
+      #networking.networkmanager.wifi.backend = "iwd";
+
+      networking.networkmanager.settings = {
+        connectivity = {
+          uri = "http://nmcheck.gnome.org/check_network_status.txt";
+        };
+      };
+
+      networking.networkmanager.ensureProfiles.profiles = {
+        wg0 = {
+          connection = {
+            id = "wg0";
+            type = "wireguard";
+            interface-name = "wg0";
+          };
+          wireguard = {
+            private-key = "$WIREGUARD_PRIVATEKEY";
+          };
+          "wireguard-peer.${konfig.vars.wireguard.pubKeys.valkyrie}" = {
+            endpoint = "${konfig.vars.ip.valkyrie.ipv4}:${konfig.vars.wireguard.ports.valkyrie}";
+            allowed-ips = "${konfig.vars.wireguard.masks.general};";
+            persistent-keepalive = "20";
+          };
+          ipv4 = {
+            address1 = "${konfig.vars.wireguard.ip.materusPC}/23";
+            dns = "${konfig.vars.wireguard.ip.valkyrie};";
+            method = "manual";
+            never-default = "true";
+          };
+          ipv6 = {
+            addr-gen-mode = "stable-privacy";
+            method = "disabled";
+          };
+          proxy = { };
+        };
+      };
     }
 # ** Hardware
 # *** Filesystems
@@ -219,6 +326,9 @@
 
 # *** Firmware & Others
     {
+      hardware.uinput.enable = true;
+      hardware.steam-hardware.enable = true;
+      
       hardware.firmware = with pkgs; [
         konfig.nixerusPkgs.amdgpu-pro-libs.firmware.vcn
         konfig.nixerusPkgs.amdgpu-pro-libs.firmware

@@ -8,8 +8,8 @@
 }:
 {
   imports = [
-    (if mkkArg.isDecrypted then ./variables-private.nix else {})
-# * NIX & NIXPKGS
+# * Config
+# ** NIX & NIXPKGS
     {
       nixpkgs.config = {
         allowUnfree = lib.mkDefault true;
@@ -172,7 +172,7 @@
 
       };
     }
-# * Assertions
+# ** Assertions
     {
       config.assertions = [
         {
@@ -186,9 +186,15 @@
         }
       ];
     }
-# * Args
+# ** Args
     {
+      imports = [
+        (if mkkArg.isDecrypted then ./variables-private.nix else {})
+        (if mkkArg.isOs then ./common-os.nix else {})
+      ];
       options.konfig = lib.mkOption { default = { }; };
+      options.mkk.commonVariables = lib.mkOption { default = { }; };
+      
       config = {
         konfig = {
           unstable = mkkArg.unstable;
@@ -207,7 +213,7 @@
 
           arg = mkkArg;
           rootFlake = (builtins.getFlake mkkArg.configRootPath);
-          vars = { };
+          vars = config.mkk.commonVariables;
         };
         _module.args.konfig = config.konfig;
       };

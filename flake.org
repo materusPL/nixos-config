@@ -5,7 +5,7 @@
 #+OPTIONS: \n:t
 #+auto_tangle: t
  
-
+ 
 * Flakes
 ** Main Flake
 Flake of entire repo. [[./flake.nix][link]]

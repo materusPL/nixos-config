@@ -46,10 +46,12 @@ in
                 current = (if isStable then stable else unstable);
                 isDecrypted = (isDecrypted (if isStable then stable else unstable).nixpkgs system);
                 isStable = isStable;
+                isOs = true;
               }
               // extraArgs;
           };
           modules = [
+            ./common.nix
             ./hosts/${hostname}.nix
             (
               if
@@ -62,8 +64,7 @@ in
               else
                 { }
             )
-            ./common.nix
-            ./common-os.nix
+            
           ] ++ extraModules;
         };
 
