@@ -13,9 +13,8 @@ let
               fi 
       '';
     in
-      (builtins.readFile resultFile == "yes");
+    (builtins.readFile resultFile == "yes");
 
-  
   stable = inputs.config-stable;
   unstable = inputs.config-unstable;
   nixpkgs = stable.nixpkgs;
@@ -28,20 +27,52 @@ let
 in
 {
 # * NixOS configurations
-  nixosConfigurations = {
-# ** materusPC
+  nixosConfigurations =
+    let
+      mkSystem =
+        hostname:
+        {
+          system ? "x86_64-linux",
+          isStable ? true,
+          extraArgs ? { },
+          extraModules ? [ ],
+        }:
+        (if isStable then nixpkgs else nixpkgs-unstable).lib.nixosSystem {
+          system = system;
+          specialArgs = {
+            mkkArg =
+              mkkArg
+              // {
+                current = (if isStable then stable else unstable);
+              }
+              // {
+                isDecrypted = (isDecrypted (if isStable then stable else unstable).nixpkgs system);
+              }
+              // extraArgs;
+          };
+          modules = [
+            ./hosts/${hostname}.nix
+            (
+              if
+                (
+                  (isDecrypted (if isStable then stable else unstable).nixpkgs system)
+                  && builtins.pathExists ./hosts/${hostname}-private.nix
+                )
+              then
+                ./hosts/${hostname}-private.nix
+              else
+                { }
+            )
+            ./common.nix
+            ./common-os.nix
+          ] ++ extraModules;
+        };
 
-    "materusPC" = nixpkgs.lib.nixosSystem rec {
-      system = "x86_64-linux";
-      specialArgs = { mkkArg =  mkkArg // {current = stable;}; };
-      modules = [
-        ./hosts/materusPC.nix
-        (if (isDecrypted stable.nixpkgs system) then ./hosts/materusPC-private.nix else {} )
-        ./common.nix
-        
-      ];
-    };
+    in
+    {
+# ** materusPC
+      "materusPC" = mkSystem "materusPC" { };
 # * default.nix END
-  };
+    };
 
 }

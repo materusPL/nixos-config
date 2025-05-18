@@ -180,7 +180,7 @@
         }
 
         {
-          assertion = config.mkk.isDecrypted;
+          assertion = mkkArg.isDecrypted;
           message = "Need to decrypt MKK repo to build";
         }
       ];
@@ -189,23 +189,11 @@
 
     (
       let
-        decryptedBool =
-          let
-            file = ../private/check-encryption;
-            resultFile = pkgs.runCommandLocal "check-encryption" { src = file; } ''
-              if [[ "$(< $src)" != "DECRYPTED" ]]; then
-                 echo -n "no" >> $out;
-              else
-                 echo -n "yes" >> $out;
-              fi 
-            '';
-          in
-          (builtins.readFile resultFile == "yes");
+       
 
       in
       {
-        options.konfig = lib.mkOption { default = { }; };
-        options.mkk.isDecrypted = lib.mkOption { default = decryptedBool; }; 
+        options.konfig = lib.mkOption { default = { }; }; 
         config = {
           konfig = {
             unstable = mkkArg.unstable;
