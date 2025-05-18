@@ -1,10 +1,9 @@
-#+TITLE: Lemon
+#+TITLE: Materus Komplete Konfig
 #+DESCRIPTION: NixOS config and dotfiles
 #+AUTHOR: Mateusz "materus" Słodkowicz
 #+OPTIONS: \n:t
 #+LANGUAGE: en
 
-Lemon is mine collection of NixOS config, dotfiles and some scripts.
-Most of my config is tangled from Emacs Org files located [[./org-conf/][there]].
+This is collection of all mine systems config. NixOS, dotfiles, VFIO etc.
 Part of it is encrypted with [[https://github.com/AGWA/git-crypt][git-crypt]].
 

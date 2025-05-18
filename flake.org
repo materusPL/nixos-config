@@ -1,29 +1,20 @@
-:PROPERTIES:
-:NIX-DIR: ../nix/
-:END:
 #+TITLE: Nix Flakes Config
 #+AUTHOR: materus
-#+DESCRIPTION: Nix flake declarations and some configuration maker functions.
+#+DESCRIPTION: Nix flake declarations
 #+STARTUP: overview
-#+PROPERTY: header-args :tangle (concat (org-entry-get nil "NIX-DIR" t) "default.nix") :comments link
 #+OPTIONS: \n:t
 #+auto_tangle: t
  
 
 * Flakes
 ** Main Flake
-Flake of entire repo. [[../flake.nix][link]]
-#+begin_src nix header-args :tangle (concat (org-entry-get nil "NIX-DIR" t) "../flake.nix") :comments link
-  {
-    description = "Lemon flake: NixOS and home manager configs";
-    inputs = {
-      private = {
-        type = "github";
-        owner = "materusPL";
-        repo = "Nixerus";
-        ref = "mock";
-      };
+Flake of entire repo. [[./flake.nix][link]]
 
+#+name: main_flake
+#+begin_src nix header-args :tangle ./flake.nix
+  {
+    description = "MKK flake: NixOS and home manager configs";
+    inputs = {
       nixpkgs = {
         type = "github";
         owner = "NixOS";
@@ -31,16 +22,8 @@ Flake of entire repo. [[../flake.nix][link]]
         ref = "nixos-unstable";
       };
 
-      configInputs = {
-        type = "github";
-        owner = "materusPL";
-        repo = "nixos-config";
-        ref = "inputs";
-        inputs = {
-          nixpkgs.follows = "nixpkgs";
-        };
-      };
-
+      
+      
       nixpkgs-stable = {
         type = "github";
         owner = "NixOS";
@@ -55,31 +38,31 @@ Flake of entire repo. [[../flake.nix][link]]
         ref = "release-24.11";
         inputs.nixpkgs.follows = "nixpkgs-stable";
       };
-
-      configInputs-stable = {
-        type = "github";
-        owner = "materusPL";
-        repo = "nixos-config";
-        ref = "inputs";
+      
+      config-unstable = {
+        url = "path:./nix/subflake";
+        inputs = {
+          nixpkgs.follows = "nixpkgs";
+        };
+      };
+      
+      config-stable = {
+        url = "path:./nix/subflake";
         inputs = {
           nixpkgs.follows = "nixpkgs-stable";
           home-manager.follows = "hm-stable";
         };
       };
     };
-    outputs =
-      let
-        rootPath = builtins.toString ./.;
-      in
-      inputs@{ self, ... }:
-      {
+    outputs = inputs: import (builtins.toString ./nix) { inherit inputs; configRootPath = (builtins.toString ./.); };
 
-      };
   }
 #+end_src
 ** Subflake
-Subflake with dependencies, use so there's no need for duplication for stable and unstable. [[../nix/subflake/flake.nix][link]]
-#+begin_src nix  header-args :tangle (concat (org-entry-get nil "NIX-DIR" t) "/subflake/flake.nix") :comments link
+Subflake with dependencies, used so there's no need for duplication for stable and unstable. [[./nix/subflake/flake.nix][link]]
+
+#+name: subflake
+#+begin_src nix  header-args :tangle ./nix/subflake/flake.nix
   {
     description = "Subflake of Lemon repository, contains dependencies";
     inputs = {
@@ -131,7 +114,6 @@ Subflake with dependencies, use so there's no need for duplication for stable an
         ref = "master";
         inputs = {
           nixpkgs.follows = "nixpkgs";
-          flake-utils.follows = "flake-utils";
         };
       };
 
@@ -194,6 +176,13 @@ Subflake with dependencies, use so there's no need for duplication for stable an
           nixpkgs.follows = "nixpkgs";
           home-manager.follows = "home-manager";
         };
+      };
+
+      impermanence = {
+        type = "github";
+        owner = "nix-community";
+        repo = "impermanence";
+        ref = "master";
       };
 
       nur = {

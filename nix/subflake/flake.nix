@@ -1,4 +1,3 @@
-# [[file:../../org-conf/nix-flake.org::*Subflake][Subflake:1]]
 {
   description = "Subflake of Lemon repository, contains dependencies";
   inputs = {
@@ -50,7 +49,6 @@
       ref = "master";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-utils.follows = "flake-utils";
       };
     };
 
@@ -115,6 +113,13 @@
       };
     };
 
+    impermanence = {
+      type = "github";
+      owner = "nix-community";
+      repo = "impermanence";
+      ref = "master";
+    };
+
     nur = {
       type = "github";
       owner = "nix-community";
@@ -126,4 +131,3 @@
 
   outputs = inputs: inputs;
 }
-# Subflake:1 ends here
