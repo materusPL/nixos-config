@@ -179,7 +179,18 @@
           message = "MKK must be build with --impure";
         }
         {
-          assertion = (builtins.readFile "${mkkArg.configRootPath}/private/check-encryption") == "DECRYPTED";
+          assertion =
+            let
+              file = ../private/check-encryption;
+              resultFile = pkgs.runCommandLocal "check-encryption" { src = file; } ''
+                if [[ "$(< $src)" != "DECRYPTED" ]]; then
+                   echo -n "no" >> $out;
+                else
+                   echo -n "yes" >> $out;
+                fi 
+              '';
+            in
+            (builtins.readFile resultFile == "yes");
           message = "Need to decrypt MKK repo to build";
         }
       ];
@@ -192,12 +203,17 @@
           unstable = mkkArg.unstable;
           stable = mkkArg.stable;
           current = mkkArg.current;
-          nixerusPkgs = 
-            (import mkkArg.current.nixerus { inherit pkgs; }) //
-            (if (pkgs.system == "x86_64-linux") then {
-              i686Linux = import mkkArg.current.nixerus { pkgs = pkgs.pkgsi686Linux; };
-            } else {});
-          
+          nixerusPkgs =
+            (import mkkArg.current.nixerus { inherit pkgs; })
+            // (
+              if (pkgs.system == "x86_64-linux") then
+                {
+                  i686Linux = import mkkArg.current.nixerus { pkgs = pkgs.pkgsi686Linux; };
+                }
+              else
+                { }
+            );
+
           arg = mkkArg;
           rootFlake = (builtins.getFlake mkkArg.configRootPath);
           vars = lib.mkDefault { };
