@@ -7,9 +7,9 @@ in
   config = lib.mkIf cfg.enable {
     programs.neovim = {
       enable = true;
-      package = materusArg.unstable.neovim-unwrapped;
+      package = pkgs.neovim-unwrapped;
       coc.enable = true;
-      coc.package = materusArg.unstable.vimPlugins.coc-nvim;
+      coc.package = pkgs.vimPlugins.coc-nvim;
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
@@ -25,7 +25,7 @@ in
       extraPackages = with pkgs;[
       ];
 
-      plugins = with materusArg.unstable.vimPlugins;[
+      plugins = with pkgs.vimPlugins;[
         syntastic
         vim-fugitive
         vim-airline

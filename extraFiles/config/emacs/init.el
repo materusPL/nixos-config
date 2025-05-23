@@ -6,7 +6,7 @@
     (print "WARN: emacs-build-time not set up, using current time")
     (setq emacs-build-time (decode-time (current-time))))
   (add-to-list 'load-path (concat user-emacs-directory "etc/pkgs/"))                ; Extra load path for packages
-
+  (defvar materus/nixos-config (getenv "MATERUS_CONFIG_DIR"))  
   (setq read-process-output-max (* 1024 1024 3))
 
 ;; Elpaca Init
@@ -61,6 +61,33 @@
          (use-package ,package :ensure nil ,@body))
     `(use-package ,package ,@body)))
 
+(defun materus/--outli-modes ()
+  "Check if supported mode"
+  (or (eq major-mode 'nix-mode)
+      (eq major-mode 'nix-ts-mode)
+      (eq major-mode 'c-mode)
+      (eq major-mode 'c-ts-mode)
+      (eq major-mode 'c++-mode)
+      (eq major-mode 'c++-ts-mode)))
+
+(defun materus/--fix-outli-formatting (FORMATTER STATUS)
+  "Remove whitespaces before outli headers"
+  (when (and (materus/--outli-modes)
+             (eq STATUS :reformatted))
+    (save-excursion
+      (save-restriction
+        (widen)
+        (goto-char (point-min))
+        (while (re-search-forward (concat "^[ 	]+\\(" comment-start "\\*+ +[^ ].*\\)[ 	]*") nil t)
+          (replace-match "\\1"))))))
+
+(defun materus/--electric-indent-ignore-outli (char)
+  "Don't indent outli headers"
+  (when (materus/--outli-modes)
+    (save-excursion
+      (backward-char)
+      (beginning-of-line)
+      (if (not (looking-at-p  (concat "^\\(" comment-start "\\*+ +[^ ].*\\)[ 	]*"))) nil 'no-indent))))
 (use-package no-littering
   :ensure (:wait t)
   :config
@@ -90,6 +117,8 @@
                               (set-frame-parameter frame 'fullscreen 'maximized)) 
               (select-frame-set-input-focus frame) )))
 (global-tab-line-mode 1)
+(setq tab-line-close-tab-function 'kill-buffer)
+
 (setq window-divider-default-bottom-width 1)
 (setq window-divider-default-right-width 1)
 (window-divider-mode 1)
@@ -126,6 +155,7 @@
 
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'electric-indent-local-mode)
+(add-hook 'electric-indent-functions 'materus/--electric-indent-ignore-outli)
 (use-package dracula-theme :config
   (if (daemonp)
       (add-hook 'after-make-frame-functions
@@ -146,19 +176,19 @@
   (set-face-attribute 'rainbow-delimiters-depth-5-face nil :foreground "#6A5ACD")
   (set-face-attribute 'rainbow-delimiters-unmatched-face nil :foreground "#FF0000"))
 
-;; (use-package doom-modeline
-;;   :init (setq doom-modeline-support-imenu t)
-;;   :hook (elpaca-after-init . doom-modeline-mode)
-;;   :config
-;;   (setq doom-modeline-icon t)
-;;   (setq doom-modeline-project-detection 'auto)
-;;   (setq doom-modeline-height 20)
-;;   (setq doom-modeline-enable-word-count t)
-;;   (setq doom-modeline-minor-modes t)
-;;   (setq display-time-24hr-format t)
-;;   (display-time-mode 1)
-;;   (column-number-mode 1)
-;;   (line-number-mode 1))
+(use-package doom-modeline
+  :init (setq doom-modeline-support-imenu t)
+  :hook (elpaca-after-init . doom-modeline-mode)
+  :config
+  (setq doom-modeline-icon t)
+  (setq doom-modeline-project-detection 'auto)
+  (setq doom-modeline-height 20)
+  (setq doom-modeline-enable-word-count t)
+  (setq doom-modeline-minor-modes t)
+  (setq display-time-24hr-format t)
+  (display-time-mode 1)
+  (column-number-mode 1)
+  (line-number-mode 1))
 
 (use-package minions
   :hook (elpaca-after-init . minions-mode))
@@ -182,29 +212,112 @@
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))) ; Show dashboard when emacs is running as daemon)
 (use-package highlight-indent-guides
   :hook ((prog-mode . highlight-indent-guides-mode)))
+(use-package outli
+  :ensure (:host github :repo "jdtsmith/outli")
+  :hook ((prog-mode . outli-mode)))
+(use-package visual-replace
+  :defer t
+  :bind (("C-r" . visual-replace)
+         :map isearch-mode-map
+         ("C-r" . visual-replace-from-isearch)))
 (use-package eat)
 
 (materus/use-package vterm)
-(use-package helm
+(use-package orderless
+  :init
+  ;; Tune the global completion style settings to your liking!
+  ;; This affects the minibuffer and non-lsp completion at point.
+  (setq completion-styles '(basic partial-completion orderless)
+        completion-category-defaults nil
+        completion-category-overrides nil))
+(use-package consult)
+(use-package marginalia)
+(use-package embark)
+(use-package embark-consult
+  :after (embark consult))
+
+(use-package vertico
+  :ensure t
+  :after (consult marginalia embark)
   :config
-  (setq helm-x-icons-provider 'nerd-icons)
-  (setq helm-move-to-line-cycle-in-source nil)
-  (helm-mode 1)
-  )
-(use-package helm-projectile
-  :after (helm projectile))
-(use-package helm-ag
-  :after (helm))
-(use-package helm-rg
-  :after (helm)) 
-(use-package helm-ls-git
-  :after (helm))
-(use-package company
+  (setq completion-in-region-function
+        (lambda (&rest args)
+          (apply (if vertico-mode
+                     #'consult-completion-in-region
+                   #'completion--in-region)
+                 args)))
+  (vertico-mode 1)
+  (marginalia-mode 1))
+(use-package vertico-mouse
+  :config
+  (vertico-mouse-mode 1)
+  :ensure nil
+  :after (vertico))
+(use-package cape)
+
+(use-package corfu
+  :ensure t
+  :after (lsp-mode cape)
+  ;; Optional customizations
+  :custom
+  (corfu-cycle nil)                 ;; Enable cycling for `corfu-next/previous'
+  (corfu-auto t)                    ;; Enable auto completion
+  (global-corfu-minibuffer nil)
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  (corfu-preview-current nil)       ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+
+  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+  ;; be used globally (M-/).  See also the customization variable
+  ;; `global-corfu-modes' to exclude certain modes.
+  :init
+  (global-corfu-mode 1)
+  (corfu-popupinfo-mode 1)
+  (corfu-history-mode 1)
+
+  (defun materus/orderless-dispatch-flex-first (_pattern index _total)
+    (and (eq index 0) 'orderless-flex))
+
+  (defun materus/lsp-mode-setup-completion ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless))
+    ;; Optionally configure the first word as flex filtered.
+    (add-hook 'orderless-style-dispatchers #'materus/orderless-dispatch-flex-first nil 'local)
+    ;; Optionally configure the cape-capf-buster.
+    (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point))))
+
   :hook
-  ((prog-mode . company-mode)))
-(use-package slime-company
-  :if (executable-find "sbcl")
-  :after (company slime))
+  (lsp-completion-mode . materus/lsp-mode-setup-completion))
+
+
+
+(use-package corfu-terminal
+  :after (corfu)
+  :config
+  (when (or (daemonp) (not (display-graphic-p)))
+    (corfu-terminal-mode)))
+
+(use-package corfu-mouse
+   :after (corfu)
+   :ensure (:type git :repo "https://codeberg.org/materus/emacs-corfu-mouse.git")
+   :config
+   (corfu-mouse-mode)
+   (keymap-set corfu--mouse-ignore-map "<mouse-movement>" 'ignore)
+   (keymap-set corfu-map "<mouse-movement>" 'ignore))
+
+(use-package kind-icon
+  :after (corfu)
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+
 
 (use-package dirvish
   :after (nerd-icons)
@@ -237,7 +350,7 @@
   ;; (lsp-completion-provider :none) ;; we use Corfu!
   :config
   (setq lsp-keep-workspace-alive nil)
-
+  (setq lsp-enable-on-type-formatting nil)
   
   (defun lsp-booster--advice-json-parse (old-fn &rest args)
     "Try to parse bytecode instead of json."
@@ -284,6 +397,15 @@
   (setq dap-gdb-lldb-extension-version "0.27.0")
   (dap-auto-configure-mode 1))
 
+(use-package format-all
+  :hook ((prog-mode . format-all-mode))
+  :config
+  (defun format-all--buffer-from-hook () nil) ; I don't want formatting on save
+  (add-hook 'format-all-after-format-functions 'materus/--fix-outli-formatting)
+  (setq-default format-all-formatters  
+                '(("Nix" (nixfmt))
+                  ("C++" (clang-format "--fallback-style=microsoft"))
+                  ("C" (clang-format "--fallback-style=microsoft")))))
 (use-package yasnippet
   :config
   (yas-global-mode 1))
@@ -302,8 +424,8 @@
   (add-hook 'c++-mode-hook 'display-line-numbers-mode)
   (add-hook 'c++-ts-mode-hook 'lsp-deferred)
   (add-hook 'c++-ts-mode-hook 'display-line-numbers-mode)
-  ;(when (treesit-language-available-p 'c) (push '(c-mode . c-ts-mode) major-mode-remap-alist))
-  ;(when (treesit-language-available-p 'cpp) (push '(c++-mode . c++-ts-mode) major-mode-remap-alist))
+  (when (treesit-language-available-p 'c) (push '(c-mode . c-ts-mode) major-mode-remap-alist))
+  (when (treesit-language-available-p 'cpp) (push '(c++-mode . c++-ts-mode) major-mode-remap-alist))
 
   (add-to-list 'c-default-style '(c-mode . "bsd"))
   (add-to-list 'c-default-style '(c++-mode . "bsd"))
@@ -337,15 +459,14 @@
 (use-package nix-mode)
 (use-package nix-ts-mode)
 (use-package lsp-nix
-  :after (lsp-mode nix-mode nix-ts-mode)
+  :after (lsp-mode nix-mode nix-ts-mode format-all)
   :ensure nil
   :config
   (add-to-list 'lsp-disabled-clients '(nix-mode . nix-nil)) 
   (setq lsp-nix-nixd-server-path "nixd")
   (when (executable-find "nixfmt")  
-    (setq lsp-nix-nixd-formatting-command [ "nixfmt" ]) )
+    (setq lsp-nix-nixd-formatting-command [ "nixfmt" ]))
   
-
   (unless lsp-nix-nixd-nixos-options-expr
     (setq lsp-nix-nixd-nixos-options-expr (concat "(builtins.getFlake \"/etc/nixos\").nixosConfigurations." (system-name) ".options")))
   (unless lsp-nix-nixd-nixpkgs-expr
@@ -362,8 +483,7 @@
 (use-package slime
   :if (executable-find "sbcl")
   :config
-  (setq inferior-lisp-program "sbcl")
-  (slime-setup '(slime-fancy slime-company)))
+  (setq inferior-lisp-program "sbcl"))
 (use-package bash-completion)
 (use-package diff-hl
   :config
@@ -379,33 +499,33 @@
 (use-package git-timemachine
   :defer t)
 (use-package org
-:mode (("\\.org$" . org-mode))
-:hook
-((org-mode . org-indent-mode)
- (org-mode . display-line-numbers-mode)
- )
-:config
-(require 'org-mouse)
-(require 'org-tempo)
-(setq org-src-window-setup 'current-window)
-(setq org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f -output-directory=%o %f"))
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((latex . t)
-   (emacs-lisp . t)
-   (shell . t)
-   (css . t)
-   (C . t)
-   (calc . t)
-   (awk . t)
-   (sql . t)
-   (sqlite . t)))
-(add-hook 'org-mode-hook (lambda ()
-                           (setq-local
-                            electric-pair-inhibit-predicate
-                            `(lambda (c)
-                               (if
-                                   (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
+  :mode (("\\.org$" . org-mode))
+  :hook
+  ((org-mode . org-indent-mode)
+   (org-mode . display-line-numbers-mode)
+   )
+  :config
+  (require 'org-mouse)
+  (require 'org-tempo)
+  (setq org-src-window-setup 'current-window)
+  (setq org-latex-pdf-process '("latexmk -xelatex -quiet -shell-escape -f -output-directory=%o %f"))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((latex . t)
+     (emacs-lisp . t)
+     (shell . t)
+     (css . t)
+     (C . t)
+     (calc . t)
+     (awk . t)
+     (sql . t)
+     (sqlite . t)))
+  (add-hook 'org-mode-hook (lambda ()
+                             (setq-local
+                              electric-pair-inhibit-predicate
+                              `(lambda (c)
+                                 (if
+                                     (char-equal c ?<) t (,electric-pair-inhibit-predicate c)))))))
 (use-package org-modern
   :after (org)
   :hook
@@ -477,10 +597,6 @@
 
   ;; CUA-like global
   (define-key global-map (kbd "C-s") 'save-buffer)
-  (define-key global-map (kbd "C-r") 'query-replace)
-  (define-key global-map (kbd "C-S-r") 'replace-string)
-  (define-key global-map (kbd "M-r") 'query-replace-regexp)
-  (define-key global-map (kbd "M-S-r") 'replace-regexp)
   (define-key global-map (kbd "C-a") 'mark-whole-buffer)
   (define-key global-map (kbd "C-f") 'isearch-forward)
   (define-key global-map (kbd "C-S-f") 'isearch-backward)
@@ -534,11 +650,6 @@
   (advice-add 'eat-char-mode :after #'cua--eat-char-override-keymap)
   (add-hook 'eat-char-mode-hook #'cua--eat-char-override-keymap)
   
-  ;; Helm
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
-  (global-set-key (kbd "C-x C-f") #'helm-find-files)
-  (global-set-key (kbd "C-x b") #'helm-mini)
   ;; Treemacs
   (define-key global-map (kbd "C-H-t") 'treemacs))
 

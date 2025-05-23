@@ -24,7 +24,8 @@ in
     "rcu_nocbs=${materusArg.materusPC.vmCores}"
     "nohz_full=${materusArg.materusPC.vmCores}"
     "vfio_iommu_type1.allow_unsafe_interrupts=1"
-    "pcie_acs_override=downstream,multifunction" /*"pci-stub.ids=1002:744c"*/
+    "pcie_acs_override=downstream,multifunction"
+    #''vfio-pci.ids="1002:744c"''
     "nox2apic"
     "nvme_core.default_ps_max_latency_us=0"
     "nvme_core.io_timeout=255"
@@ -32,10 +33,13 @@ in
     "nvme_core.shutdown_timeout=10"
     "amd_iommu=on"
     "amdgpu.ppfeaturemask=0xffffffff"
+    "amdgpu.runpm=0"
     "iommu=pt"
     "psi=1"
+    "i915.force_probe=!56a6" 
+    "xe.force_probe=56a6"
   ] ++ video;
-  boot.kernelModules = [ "pci-stub" "amdgpu" "i2c_dev" "kvm_amd" "vfio" "vfio_iommu_type1" "vfio-pci" "kvmfr" ];
+  boot.kernelModules = [ "pci-stub" "amdgpu" "i2c_dev" "kvm_amd" "vfio" "vfio_iommu_type1" "vfio-pci" "kvmfr" "xe" ];
   boot.extraModprobeConfig = ''
     options kvm_amd nested=1 avic=1 npt=1 sev=0
     options vfio_iommu_type1 allow_unsafe_interrupts=1
@@ -49,8 +53,8 @@ in
 
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
-  boot.initrd.kernelModules = [ "amdgpu" ];
-
+  boot.initrd.kernelModules = [ "vfio-pci" "amdgpu" ];
+  
   boot.extraModulePackages = with config.boot.kernelPackages; [ v4l2loopback kvmfr ];
 
 

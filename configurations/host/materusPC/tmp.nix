@@ -6,7 +6,7 @@
 }:
 
 {
-
+  
   programs.gamemode.enable = true;
   programs.corectrl.enable = true;
 
@@ -14,13 +14,29 @@
 
   systemd.tmpfiles.rules = [ "L+    /opt/rocm/hip   -    -    -     -    ${pkgs.rocmPackages.clr}" ];
 
+  # Gamepad
+  services.udev = {
+    packages = with pkgs; [
+      game-devices-udev-rules
+    ];
+  };
+  hardware.uinput.enable = true;
+  hardware.steam-hardware.enable = true;
+
+  nix.package = pkgs.nixVersions.nix_2_28;
+  programs.steam = {
+    enable = false;
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+    localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+  };
   services.flatpak.enable = true;
   services.gvfs.enable = true;
 
   services.xserver.xkb.layout = "pl";
 
   services.xserver.enable = true;
-  services.xserver.videoDrivers = [ "amdgpu" ];
+  #services.xserver.videoDrivers = [ "amdgpu" "intel" ];
   services.dbus.enable = true;
   services.dbus.packages = [ pkgs.gcr ];
 
@@ -127,9 +143,6 @@
     openFirewall = true;
     autoStart = false;
   };
-
-  hardware.sane.enable = true;
-  hardware.sane.extraBackends = [ pkgs.hplipWithPlugin ];
 
   environment.enableAllTerminfo = true;
   environment.pathsToLink = [

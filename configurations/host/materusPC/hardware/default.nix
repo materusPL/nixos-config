@@ -31,6 +31,8 @@
   hardware.opengl.driSupport32Bit = true;
   hardware.opengl.extraPackages = with pkgs; [
     vaapiVdpau
+    vpl-gpu-rt
+    intel-media-driver 
     libvdpau-va-gl
     amdvlk
     vkbasalt

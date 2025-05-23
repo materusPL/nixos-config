@@ -102,10 +102,15 @@ in
         "/:/run/host-root"
 
         "/run/udev"
+        "/run/pipewire"
+
+        "/sys/class"
+        "/sys/devices"
 
         "/dev/fuse"
         "/dev/snd"
         "/dev/input"
+        "/dev/uinput"
         "/dev/shm"
         "/dev/kfd"
         "/dev/dri"
@@ -131,9 +136,10 @@ in
     overrideStrategy = "asDropin";
     serviceConfig = {
       DeviceAllow = [
-        "char-tty rwm"
-        "char-input rwm"
-        "char-drm rwm"
+        "char-* rwm"
+        "block-* rwm"
+        "/dev/shm rwm"
+
       ];
     };
   };

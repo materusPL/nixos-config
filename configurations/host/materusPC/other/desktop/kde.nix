@@ -1,6 +1,5 @@
 { config, pkgs, lib, ... }:
 {
-  services.displayManager.defaultSession = "plasma";
 
   xdg.portal.enable = true;
   xdg.portal.wlr.enable = true;

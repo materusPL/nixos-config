@@ -1,16 +1,21 @@
-{ pkgs, materusArg, lib, ... }:
+{
+  pkgs,
+  materusArg,
+  lib,
+  ...
+}:
 {
   imports = [
     ./plasma.nix
   ];
   home.stateVersion = "23.05";
   home.homeDirectory = "/home/materus";
-  
+
   programs.git.signing.signByDefault = true;
 
   xdg.userDirs.enable = true;
   materus.profile = {
-    
+
     fonts.enable = lib.mkDefault true;
     nixpkgs.enable = lib.mkDefault false;
     enableDesktop = lib.mkDefault true;
@@ -19,78 +24,86 @@
     enableNixDevel = lib.mkDefault true;
     editor.emacs.enable = true;
     editor.code.fhs.enable = true;
-    editor.code.fhs.packages = (ps: with ps; let llvmpkgs = llvmPackages_18; in [
-      llvmpkgs.clang
-      llvmpkgs.llvm
-      llvmpkgs.bintools
-      llvmpkgs.lld
-      llvmpkgs.lldb
-      llvmpkgs.libllvm
-      llvmpkgs.mlir
-      llvmpkgs.libllvm.dev
+    editor.code.fhs.packages = (
+      ps:
+      with ps;
+      let
+        llvmpkgs = llvmPackages_18;
+      in
+      [
+        llvmpkgs.clang
+        llvmpkgs.llvm
+        llvmpkgs.bintools
+        llvmpkgs.lld
+        llvmpkgs.lldb
+        llvmpkgs.libllvm
+        llvmpkgs.mlir
+        llvmpkgs.libllvm.dev
 
-      fpc
-      xmake
-      raylib
-      gcc
-      gdb
-      materusArg.unstable.nixd
-      nixfmt-rfc-style
-      nixpkgs-fmt
-      cmake
-      gnumake
-      ninja
-      binutils
-      coreutils
-      util-linux
-      openssl
-      openssl.dev
-      pkg-config
-      dotnet-sdk_8
-      mono
-      mold
-      python3
-      lua
-      gtk4.dev
-      gtk4
-      glib
-      glib.dev
-      miniaudio
-      SDL2.dev
-      SDL2
-      freeglut.dev
-      freeglut
-      boost.dev
-      boost
-      glew.dev
-      libGL.dev
-      libGLU.dev
-      vulkan-loader.dev
-      vulkan-headers
-      xorg.xorgproto
-      xorg.libX11.dev
-      xorg.libXrandr.dev
-      xorg.libXrender.dev
-      rustup
-      freetype.dev
+        fpc
+        xmake
+        raylib
+        gcc
+        gdb
+        materusArg.unstable.nixd
+        nixfmt-rfc-style
+        nixpkgs-fmt
+        cmake
+        gnumake
+        ninja
+        binutils
+        coreutils
+        util-linux
+        openssl
+        openssl.dev
+        pkg-config
+        dotnet-sdk_8
+        mono
+        mold
+        python3
+        lua
+        gtk4.dev
+        gtk4
+        glib
+        glib.dev
+        miniaudio
+        SDL2.dev
+        SDL2
+        freeglut.dev
+        freeglut
+        boost.dev
+        boost
+        glew.dev
+        libGL.dev
+        libGLU.dev
+        vulkan-loader.dev
+        vulkan-headers
+        xorg.xorgproto
+        xorg.libX11.dev
+        xorg.libXrandr.dev
+        xorg.libXrender.dev
+        rustup
+        freetype.dev
 
-      fpc
-      gradle
-      bison
-      flex
+        fpc
+        gradle
+        bison
+        flex
 
-      ldc
-      dmd
-      dub
-    ]);
-
-    
+        ldc
+        dmd
+        dub
+      ]
+    );
 
   };
 
   home.packages = [
     materusArg.pkgs.ffmpeg_7-amf-full
-    (materusArg.pkgs.polymc-qt5.wrap { extraJDKs = [ pkgs.graalvm-ce ]; extraLibs = [ ]; })
+    (materusArg.pkgs.polymc.wrap {
+      extraJDKs = [ pkgs.graalvm-ce ];
+      extraLibs = [ ];
+    })
     pkgs.git-crypt
     pkgs.obsidian
   ];
@@ -133,7 +146,11 @@
       exec = "${script} %U";
       icon = "brave-browser";
       terminal = false;
-      categories = [ "Application" "Network" "WebBrowser" ];
+      categories = [
+        "Application"
+        "Network"
+        "WebBrowser"
+      ];
       mimeType = [
         "application/pdf"
         "application/rdf+xml"

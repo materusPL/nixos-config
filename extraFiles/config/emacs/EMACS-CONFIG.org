@@ -5,6 +5,7 @@
 #+PROPERTY: header-args :tangle no :noweb yes
 #+OPTIONS: \n:t
 #+auto_tangle: t
+
 * Table of Contents    :noexport:TOC_3:
 - [[#early-init][Early Init]]
 - [[#init-core][Init Core]]
@@ -23,12 +24,14 @@
     - [[#modeline][Modeline]]
     - [[#dashboard][Dashboard]]
     - [[#highlight-indent-guides][Highlight Indent Guides]]
+    - [[#outli][Outli]]
+    - [[#visual-replace][Visual Replace]]
   - [[#terminal][Terminal]]
     - [[#eat][Eat]]
     - [[#vterm][Vterm]]
   - [[#navigation-and-completion][Navigation and Completion]]
-    - [[#helm][HELM]]
-    - [[#comapny][Comapny]]
+    - [[#minibuffer-orderless-vertico-marginalia-consult][minibuffer (orderless, vertico, marginalia, consult)]]
+    - [[#code-completion-cape-corfu][Code completion (Cape, corfu)]]
     - [[#dirvish][Dirvish]]
     - [[#treemacs][Treemacs]]
   - [[#programming][Programming]]
@@ -66,9 +69,11 @@
 - [[#keybindings][Keybindings]]
 - [[#final-code][Final Code]]
 - [[#links][Links]]
+- [[#tests][Tests]]
 - [[#archive][Archive]]
-  - [[#minibuffer-orderless-vertico-marginalia-consult][minibuffer (orderless, vertico, marginalia, consult)]]
-  - [[#code-completion-cape-corfu][Code completion (Cape, corfu)]]
+  - [[#navigation-and-completion-1][Navigation and completion]]
+    - [[#helm][HELM]]
+    - [[#comapny][Comapny]]
 
 * Early Init
 #+begin_src emacs-lisp :tangle (expand-file-name "early-init.el" user-emacs-directory) :noweb-ref early-init
@@ -81,7 +86,9 @@
 
   (setq c-default-style nil)                                                                ; Clear default styles for languages, will set them up later
   (setq default-input-method nil)                                                           ; Disable default input method, I'm not using them anyway so far
-  (setq initial-major-mode 'fundamental-mode)                                               ; Use fundamental mode in scratch buffer, speed up loading, not really important when emacs used as daemon
+
+  (setq initial-major-mode 'emacs-lisp-mode)                                              
+
   (setq auto-save-default nil)                                                              ; TODO: configure auto saves, disable for now
   (setq backup-directory-alist
         `((".*" . ,(concat user-emacs-directory "var/backups/"))))                          ; Set backup location
@@ -95,7 +102,7 @@
   (setq package-quickstart nil)                                                             ; Disable package quickstart
 
   (setq inhibit-startup-screen t)
-  
+
   (setq inhibit-compacting-font-caches t)                                                   ; Don't compact fonts
 
   (set-language-environment "UTF-8")                                                        ; Use UTF-8
@@ -146,21 +153,17 @@
   ;;; NATIVE COMPILATION
 
   (setq native-comp-async-report-warnings-errors nil) ; Silence warnings
-  (setq native-comp-speed 3)                          ; Set native-comp speed
+  (setq native-comp-speed 2)                          ; Set native-comp speed
 
   (setq native-comp-jit-compilation t
-        ;;native-comp-deferred-compilation t 
+        native-comp-deferred-compilation t 
         package-native-compile t)
 
 
   ;; Setting up native-comp cache location
 
-  (when (and (fboundp 'startup-redirect-eln-cache)
-             (fboundp 'native-comp-available-p)
-             (native-comp-available-p))
-    (startup-redirect-eln-cache
-     (convert-standard-filename
-      (concat user-emacs-directory "var/eln-cache/"))))
+(when (boundp 'native-comp-eln-load-path)
+  (startup-redirect-eln-cache (expand-file-name "var/eln-cache/" user-emacs-directory)))
 #+end_src
 
 * Init Core
@@ -176,7 +179,7 @@
     (print "WARN: emacs-build-time not set up, using current time")
     (setq emacs-build-time (decode-time (current-time))))
   (add-to-list 'load-path (concat user-emacs-directory "etc/pkgs/"))                ; Extra load path for packages
-
+  (defvar materus/nixos-config (getenv "MATERUS_CONFIG_DIR"))  
   (setq read-process-output-max (* 1024 1024 3))
 
 #+END_src
@@ -237,6 +240,33 @@
            (use-package ,package :ensure nil ,@body))
       `(use-package ,package ,@body)))
 
+  (defun materus/--outli-modes ()
+    "Check if supported mode"
+    (or (eq major-mode 'nix-mode)
+        (eq major-mode 'nix-ts-mode)
+        (eq major-mode 'c-mode)
+        (eq major-mode 'c-ts-mode)
+        (eq major-mode 'c++-mode)
+        (eq major-mode 'c++-ts-mode)))
+
+  (defun materus/--fix-outli-formatting (FORMATTER STATUS)
+    "Remove whitespaces before outli headers"
+    (when (and (materus/--outli-modes)
+               (eq STATUS :reformatted))
+      (save-excursion
+        (save-restriction
+          (widen)
+          (goto-char (point-min))
+          (while (re-search-forward (concat "^[ 	]+\\(" comment-start "\\*+ +[^ ].*\\)[ 	]*") nil t)
+            (replace-match "\\1"))))))
+
+  (defun materus/--electric-indent-ignore-outli (char)
+    "Don't indent outli headers"
+    (when (materus/--outli-modes)
+      (save-excursion
+        (backward-char)
+        (beginning-of-line)
+        (if (not (looking-at-p  (concat "^\\(" comment-start "\\*+ +[^ ].*\\)[ 	]*"))) nil 'no-indent))))
 #+END_src
 
 ** Custom File
@@ -269,6 +299,8 @@
                                 (set-frame-parameter frame 'fullscreen 'maximized)) 
                 (select-frame-set-input-focus frame) )))
   (global-tab-line-mode 1)
+  (setq tab-line-close-tab-function 'kill-buffer)
+
   (setq window-divider-default-bottom-width 1)
   (setq window-divider-default-right-width 1)
   (window-divider-mode 1)
@@ -329,19 +361,19 @@ Setting up mouse
 #+end_src
 *** Modeline
 #+begin_src emacs-lisp
-  ;; (use-package doom-modeline
-  ;;   :init (setq doom-modeline-support-imenu t)
-  ;;   :hook (elpaca-after-init . doom-modeline-mode)
-  ;;   :config
-  ;;   (setq doom-modeline-icon t)
-  ;;   (setq doom-modeline-project-detection 'auto)
-  ;;   (setq doom-modeline-height 20)
-  ;;   (setq doom-modeline-enable-word-count t)
-  ;;   (setq doom-modeline-minor-modes t)
-  ;;   (setq display-time-24hr-format t)
-  ;;   (display-time-mode 1)
-  ;;   (column-number-mode 1)
-  ;;   (line-number-mode 1))
+  (use-package doom-modeline
+    :init (setq doom-modeline-support-imenu t)
+    :hook (elpaca-after-init . doom-modeline-mode)
+    :config
+    (setq doom-modeline-icon t)
+    (setq doom-modeline-project-detection 'auto)
+    (setq doom-modeline-height 20)
+    (setq doom-modeline-enable-word-count t)
+    (setq doom-modeline-minor-modes t)
+    (setq display-time-24hr-format t)
+    (display-time-mode 1)
+    (column-number-mode 1)
+    (line-number-mode 1))
 
   (use-package minions
     :hook (elpaca-after-init . minions-mode))
@@ -376,6 +408,20 @@ Setting up mouse
 #+begin_src emacs-lisp
   (use-package highlight-indent-guides
     :hook ((prog-mode . highlight-indent-guides-mode)))
+#+end_src
+*** Outli
+#+begin_src emacs-lisp
+  (use-package outli
+    :ensure (:host github :repo "jdtsmith/outli")
+    :hook ((prog-mode . outli-mode)))
+#+end_src
+*** Visual Replace
+#+begin_src emacs-lisp
+  (use-package visual-replace
+    :defer t
+    :bind (("C-r" . visual-replace)
+           :map isearch-mode-map
+           ("C-r" . visual-replace-from-isearch)))
 #+end_src
 ** Terminal
 *** Eat
@@ -414,40 +460,109 @@ Setting up mouse
 (materus/use-package vterm)
 #+end_src
 ** Navigation and Completion
-*** HELM
+*** minibuffer (orderless, vertico, marginalia, consult)
 #+begin_src emacs-lisp
-  (use-package helm
-    :config
-    (setq helm-x-icons-provider 'nerd-icons)
-    (setq helm-move-to-line-cycle-in-source nil)
-    (helm-mode 1)
-    )
-  (use-package helm-projectile
-    :after (helm projectile))
-  (use-package helm-ag
-    :after (helm))
-  (use-package helm-rg
-    :after (helm)) 
-  (use-package helm-ls-git
-    :after (helm))
-#+end_src
-#+begin_src emacs-lisp :tangle no :noweb-ref keybindings
-  ;; Helm
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
-  (global-set-key (kbd "C-x C-f") #'helm-find-files)
-  (global-set-key (kbd "C-x b") #'helm-mini)
-#+end_src
-*** Comapny
-#+begin_src emacs-lisp
-    (use-package company
-      :hook
-      ((prog-mode . company-mode)))
-    (use-package slime-company
-      :if (executable-find "sbcl")
-      :after (company slime))
+  (use-package orderless
+    :init
+    ;; Tune the global completion style settings to your liking!
+    ;; This affects the minibuffer and non-lsp completion at point.
+    (setq completion-styles '(basic partial-completion orderless)
+          completion-category-defaults nil
+          completion-category-overrides nil))
+  (use-package consult)
+  (use-package marginalia)
+  (use-package embark)
+  (use-package embark-consult
+    :after (embark consult))
 
+  (use-package vertico
+    :ensure t
+    :after (consult marginalia embark)
+    :config
+    (setq completion-in-region-function
+          (lambda (&rest args)
+            (apply (if vertico-mode
+                       #'consult-completion-in-region
+                     #'completion--in-region)
+                   args)))
+    (vertico-mode 1)
+    (marginalia-mode 1))
+  (use-package vertico-mouse
+    :config
+    (vertico-mouse-mode 1)
+    :ensure nil
+    :after (vertico))
 #+end_src
+
+*** Code completion (Cape, corfu)
+#+begin_src emacs-lisp
+  (use-package cape)
+
+  (use-package corfu
+    :ensure t
+    :after (lsp-mode cape)
+    ;; Optional customizations
+    :custom
+    (corfu-cycle nil)                 ;; Enable cycling for `corfu-next/previous'
+    (corfu-auto t)                    ;; Enable auto completion
+    (global-corfu-minibuffer nil)
+    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+    (corfu-preview-current nil)       ;; Disable current candidate preview
+    ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+
+    ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+    ;; :hook ((prog-mode . corfu-mode)
+    ;;        (shell-mode . corfu-mode)
+    ;;        (eshell-mode . corfu-mode))
+
+    ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
+    ;; be used globally (M-/).  See also the customization variable
+    ;; `global-corfu-modes' to exclude certain modes.
+    :init
+    (global-corfu-mode 1)
+    (corfu-popupinfo-mode 1)
+    (corfu-history-mode 1)
+
+    (defun materus/orderless-dispatch-flex-first (_pattern index _total)
+      (and (eq index 0) 'orderless-flex))
+
+    (defun materus/lsp-mode-setup-completion ()
+      (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+            '(orderless))
+      ;; Optionally configure the first word as flex filtered.
+      (add-hook 'orderless-style-dispatchers #'materus/orderless-dispatch-flex-first nil 'local)
+      ;; Optionally configure the cape-capf-buster.
+      (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point))))
+
+    :hook
+    (lsp-completion-mode . materus/lsp-mode-setup-completion))
+
+
+
+  (use-package corfu-terminal
+    :after (corfu)
+    :config
+    (when (or (daemonp) (not (display-graphic-p)))
+      (corfu-terminal-mode)))
+
+  (use-package corfu-mouse
+     :after (corfu)
+     :ensure (:type git :repo "https://codeberg.org/materus/emacs-corfu-mouse.git")
+     :config
+     (corfu-mouse-mode)
+     (keymap-set corfu--mouse-ignore-map "<mouse-movement>" 'ignore)
+     (keymap-set corfu-map "<mouse-movement>" 'ignore))
+
+  (use-package kind-icon
+    :after (corfu)
+    :config
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
+
+
+ #+end_src
 *** Dirvish
 #+begin_src emacs-lisp
   (use-package dirvish
@@ -503,6 +618,7 @@ Setting up mouse
 
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
   (add-hook 'prog-mode-hook 'electric-indent-local-mode)
+  (add-hook 'electric-indent-functions 'materus/--electric-indent-ignore-outli)
 #+end_src
 **** LSP
 #+begin_src emacs-lisp
@@ -513,7 +629,7 @@ Setting up mouse
     ;; (lsp-completion-provider :none) ;; we use Corfu!
     :config
     (setq lsp-keep-workspace-alive nil)
-
+    (setq lsp-enable-on-type-formatting nil)
     
     (defun lsp-booster--advice-json-parse (old-fn &rest args)
       "Try to parse bytecode instead of json."
@@ -564,6 +680,18 @@ Setting up mouse
     (dap-auto-configure-mode 1))
 
 #+end_src
+**** Formatting
+#+begin_src emacs-lisp
+  (use-package format-all
+    :hook ((prog-mode . format-all-mode))
+    :config
+    (defun format-all--buffer-from-hook () nil) ; I don't want formatting on save
+    (add-hook 'format-all-after-format-functions 'materus/--fix-outli-formatting)
+    (setq-default format-all-formatters  
+                  '(("Nix" (nixfmt))
+                    ("C++" (clang-format "--fallback-style=microsoft"))
+                    ("C" (clang-format "--fallback-style=microsoft")))))
+#+end_src
 *** Snippets
 #+begin_src emacs-lisp 
   (use-package yasnippet
@@ -588,8 +716,8 @@ Setting up mouse
     (add-hook 'c++-mode-hook 'display-line-numbers-mode)
     (add-hook 'c++-ts-mode-hook 'lsp-deferred)
     (add-hook 'c++-ts-mode-hook 'display-line-numbers-mode)
-    ;(when (treesit-language-available-p 'c) (push '(c-mode . c-ts-mode) major-mode-remap-alist))
-    ;(when (treesit-language-available-p 'cpp) (push '(c++-mode . c++-ts-mode) major-mode-remap-alist))
+    (when (treesit-language-available-p 'c) (push '(c-mode . c-ts-mode) major-mode-remap-alist))
+    (when (treesit-language-available-p 'cpp) (push '(c++-mode . c++-ts-mode) major-mode-remap-alist))
 
     (add-to-list 'c-default-style '(c-mode . "bsd"))
     (add-to-list 'c-default-style '(c++-mode . "bsd"))
@@ -632,15 +760,14 @@ Setting up mouse
   (use-package nix-mode)
   (use-package nix-ts-mode)
   (use-package lsp-nix
-    :after (lsp-mode nix-mode nix-ts-mode)
+    :after (lsp-mode nix-mode nix-ts-mode format-all)
     :ensure nil
     :config
     (add-to-list 'lsp-disabled-clients '(nix-mode . nix-nil)) 
     (setq lsp-nix-nixd-server-path "nixd")
     (when (executable-find "nixfmt")  
-      (setq lsp-nix-nixd-formatting-command [ "nixfmt" ]) )
+      (setq lsp-nix-nixd-formatting-command [ "nixfmt" ]))
     
-
     (unless lsp-nix-nixd-nixos-options-expr
       (setq lsp-nix-nixd-nixos-options-expr (concat "(builtins.getFlake \"/etc/nixos\").nixosConfigurations." (system-name) ".options")))
     (unless lsp-nix-nixd-nixpkgs-expr
@@ -666,8 +793,7 @@ Setting up mouse
   (use-package slime
     :if (executable-find "sbcl")
     :config
-    (setq inferior-lisp-program "sbcl")
-    (slime-setup '(slime-fancy slime-company)))
+    (setq inferior-lisp-program "sbcl"))
 #+end_src
 *** Shell
 **** Bash
@@ -704,7 +830,7 @@ Setting up mouse
 ** Notes & Organization
 *** Org Mode
 #+begin_src emacs-lisp
-    (use-package org
+  (use-package org
     :mode (("\\.org$" . org-mode))
     :hook
     ((org-mode . org-indent-mode)
@@ -885,10 +1011,6 @@ Setting up mouse
 
     ;; CUA-like global
     (define-key global-map (kbd "C-s") 'save-buffer)
-    (define-key global-map (kbd "C-r") 'query-replace)
-    (define-key global-map (kbd "C-S-r") 'replace-string)
-    (define-key global-map (kbd "M-r") 'query-replace-regexp)
-    (define-key global-map (kbd "M-S-r") 'replace-regexp)
     (define-key global-map (kbd "C-a") 'mark-whole-buffer)
     (define-key global-map (kbd "C-f") 'isearch-forward)
     (define-key global-map (kbd "C-S-f") 'isearch-backward)
@@ -922,7 +1044,6 @@ Setting up mouse
   (add-hook 'elpaca-after-init-hook #'materus/keybind-set )
 #+end_src
 
-
 * Final Code
 #+begin_src emacs-lisp :tangle (expand-file-name "init.el" user-emacs-directory) :noweb-ref final
   ;;; -*- lexical-binding: t; -*-
@@ -936,115 +1057,80 @@ Setting up mouse
   <<init-custom-file>>
 #+end_src
 Make copy in this repository
-#+begin_src emacs-lisp :tangle ./early-init.el
+#+begin_src emacs-lisp :tangle (if (not (string= default-directory user-emacs-directory)) "./early-init.el" "no")
   <<early-init>>
 #+end_src
-#+begin_src emacs-lisp :tangle ./init.el
+#+begin_src emacs-lisp :tangle (if (not (string= default-directory user-emacs-directory)) "./init.el" "no")
   <<final>>
 #+end_src
 * Links
-[[https://github.com/emacs-tw/awesome-emacs][awesome-emacs]]
+[[https://github.com/emacs-tw/awesome-emacs][awesome-emacs]] - Nice list of Emacs Packages
+[[https://codeberg.org/ashton314/emacs-bedrock][Emacs Bedrock]] - Initial Config to base on
+[[https://github.com/benide/emacs-config][benide Config]] - Took use-package macro for NixOS from there
+[[https://gitlab.com/dwt1/dotfiles/-/blob/master/.config/emacs/config.org][DT's Config]] - Some inspiration
+* Tests
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+#+begin_src emacs-lisp :tangle no
+
+
+
+
+  (let* ((current-pos (point))
+         (start (re-search-backward "^[ \t]*\\(#\\|//\\|;;\\)-NARROW_START[ \t]+\\[\\(.*\\)\\]" nil t))
+         (match (match-string-no-properties 2))
+         (end (re-search-forward (concat "^[ \t]*\\(#\\|//\\|;;\\)-NARROW_END[ \t]+\\[\\" (regexp-quote match) "\\]") nil t))) 
+    (if (buffer-narrowed-p)
+        (progn (widen) (goto-char current-pos))
+      (progn 
+        (if start
+            (if end 
+                (if ( >= end current-pos) (narrow-to-region start end)
+                  (message "Not between narrow tags"))
+              (message "Not between narrow tags"))
+          (message "Not between narrow tags"))
+        (goto-char current-pos)))) 
+#+end_src
 * Archive
 :PROPERTIES:
 :header-args: :tangle no
 :END:
-** minibuffer (orderless, vertico, marginalia, consult)
+** Navigation and completion
+*** HELM
 #+begin_src emacs-lisp
-  (use-package orderless
-    :init
-    ;; Tune the global completion style settings to your liking!
-    ;; This affects the minibuffer and non-lsp completion at point.
-    (setq completion-styles '(basic partial-completion orderless)
-          completion-category-defaults nil
-          completion-category-overrides nil))
-  (use-package consult)
-  (use-package marginalia)
-
-  
-
-  (use-package vertico
-    :after (consult marginalia)
+  (use-package helm
     :config
-    (setq completion-in-region-function
-          (lambda (&rest args)
-            (apply (if vertico-mode
-                       #'consult-completion-in-region
-                     #'completion--in-region)
-                   args)))
-    (vertico-mode 1)
-    (marginalia-mode 1))
-  (use-package vertico-mouse
-    :config
-    (vertico-mouse-mode 1)
-    :ensure nil
-    :after (vertico))
+    (setq helm-x-icons-provider 'nerd-icons)
+    (setq helm-move-to-line-cycle-in-source nil)
+    (helm-mode 1)
+    )
+  (use-package helm-projectile
+    :after (helm projectile))
+  (use-package helm-ag
+    :after (helm))
+  (use-package helm-rg
+    :after (helm)) 
+  (use-package helm-ls-git
+    :after (helm))
 #+end_src
+#+begin_src emacs-lisp :tangle no
+  ;; Helm
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "C-x r b") #'helm-filtered-bookmarks)
+  (global-set-key (kbd "C-x C-f") #'helm-find-files)
+  (global-set-key (kbd "C-x b") #'helm-mini)
 
-** Code completion (Cape, corfu)
+  (define-key helm-map (kbd "<right>") #'right-char)
+  (define-key helm-map (kbd "<left>") #'left-char)
+#+end_src
+*** Comapny
 #+begin_src emacs-lisp
-  (use-package cape)
+    (use-package company
+      :hook
+      ((prog-mode . company-mode)))
+    (use-package slime-company
+      :if (executable-find "sbcl")
+      :after (company slime))
 
-  (use-package corfu
-    :after (lsp-mode cape)
-    ;; Optional customizations
-    :custom
-    (corfu-cycle nil)                 ;; Enable cycling for `corfu-next/previous'
-    (corfu-auto t)                    ;; Enable auto completion
-    (global-corfu-minibuffer nil)
-    ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
-    ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-    (corfu-preview-current nil)       ;; Disable current candidate preview
-    ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
-    ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
-
-    ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
-    ;; :hook ((prog-mode . corfu-mode)
-    ;;        (shell-mode . corfu-mode)
-    ;;        (eshell-mode . corfu-mode))
-
-    ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
-    ;; be used globally (M-/).  See also the customization variable
-    ;; `global-corfu-modes' to exclude certain modes.
-    :init
-    (global-corfu-mode 1)
-    (corfu-popupinfo-mode 1)
-    (corfu-history-mode 1)
-
-    (defun materus/orderless-dispatch-flex-first (_pattern index _total)
-      (and (eq index 0) 'orderless-flex))
-
-    (defun materus/lsp-mode-setup-completion ()
-      (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
-            '(orderless))
-      ;; Optionally configure the first word as flex filtered.
-      (add-hook 'orderless-style-dispatchers #'materus/orderless-dispatch-flex-first nil 'local)
-      ;; Optionally configure the cape-capf-buster.
-      (setq-local completion-at-point-functions (list (cape-capf-buster #'lsp-completion-at-point))))
-
-    :hook
-    (lsp-completion-mode . materus/lsp-mode-setup-completion))
-
-
-
-  (use-package corfu-terminal
-    :after (corfu)
-    :config
-    (when (or (daemonp) (not (display-graphic-p)))
-      (corfu-terminal-mode)))
-
-  ;; (use-package corfu-mouse
-  ;;   :after (corfu)
-  ;;   :config
-  ;;   :ensure nil
-  ;;   (corfu-mouse-mode)
-  ;;   (keymap-set corfu--mouse-ignore-map "<mouse-movement>" 'ignore)
-  ;;   (keymap-set corfu-map "<mouse-movement>" 'ignore))
-
-  (use-package kind-icon
-    :after (corfu)
-    :config
-    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
-
-
-
- #+end_src
+#+end_src
