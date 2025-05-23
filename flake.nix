@@ -7,21 +7,19 @@
       repo = "nixpkgs";
       ref = "nixos-unstable";
     };
-
-    
-    
+       
     nixpkgs-stable = {
       type = "github";
       owner = "NixOS";
       repo = "nixpkgs";
-      ref = "nixos-24.11";
+      ref = "nixos-25.05";
     };
 
     hm-stable = {
       type = "github";
       owner = "nix-community";
       repo = "home-manager";
-      ref = "release-24.11";
+      ref = "release-25.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     
@@ -41,5 +39,4 @@
     };
   };
   outputs = inputs: import (builtins.toString ./nix) { inherit inputs; configRootPath = (builtins.toString ./.); };
-
 }

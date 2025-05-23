@@ -9,9 +9,14 @@
 * Flakes
 ** Main Flake
 Flake of entire repo. [[./flake.nix][link]]
+#+name: version
+#+begin_src txt :noweb-ref version
+  25.05
+#+end_src
+
 
 #+name: main_flake
-#+begin_src nix header-args :tangle ./flake.nix
+#+begin_src nix header-args :tangle ./flake.nix :noweb yes
   {
     description = "MKK flake: NixOS and home manager configs";
     inputs = {
@@ -21,21 +26,19 @@ Flake of entire repo. [[./flake.nix][link]]
         repo = "nixpkgs";
         ref = "nixos-unstable";
       };
-
-      
-      
+         
       nixpkgs-stable = {
         type = "github";
         owner = "NixOS";
         repo = "nixpkgs";
-        ref = "nixos-24.11";
+        ref = "nixos-<<version>>";
       };
 
       hm-stable = {
         type = "github";
         owner = "nix-community";
         repo = "home-manager";
-        ref = "release-24.11";
+        ref = "release-<<version>>";
         inputs.nixpkgs.follows = "nixpkgs-stable";
       };
       
@@ -55,7 +58,6 @@ Flake of entire repo. [[./flake.nix][link]]
       };
     };
     outputs = inputs: import (builtins.toString ./nix) { inherit inputs; configRootPath = (builtins.toString ./.); };
-
   }
 #+end_src
 ** Subflake

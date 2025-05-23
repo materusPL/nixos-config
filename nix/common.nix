@@ -17,7 +17,7 @@
         nvidia.acceptLicense = lib.mkDefault true;
       };
 
-      nix.package = lib.mkDefault pkgs.nixVersions.nix_2_28;
+      nix.package = lib.mkDefault pkgs.nixVersions.latest;
       nix.settings = {
         experimental-features = [
           "nix-command"
@@ -170,6 +170,42 @@
           flake = mkkArg.current.impermanence;
         };
 
+      };
+    }
+# ** Variables
+    {
+      mkk.commonVariables = {
+        packageLists = rec {
+          defaultFonts = [
+            pkgs.dejavu_fonts
+            pkgs.freefont_ttf
+            pkgs.gyre-fonts
+            pkgs.liberation_ttf
+            pkgs.unifont
+          ];
+          fonts = [
+            pkgs.noto-fonts
+            pkgs.noto-fonts-extra
+            pkgs.noto-fonts-emoji
+            pkgs.noto-fonts-cjk-sans
+            pkgs.noto-fonts-cjk-serif
+            
+            pkgs.wqy_zenhei
+            
+            pkgs.corefonts
+            pkgs.hack-font
+            pkgs.ubuntu_font_family
+            pkgs.monocraft
+
+            pkgs.nerd-fonts.hack
+            pkgs.nerd-fonts.meslo-lg
+            pkgs.nerd-fonts.droid-sans-mono
+            pkgs.nerd-fonts.profont
+            pkgs.nerd-fonts.fira-code
+            
+          ] ++ defaultFonts;
+          
+        };
       };
     }
 # ** Assertions
