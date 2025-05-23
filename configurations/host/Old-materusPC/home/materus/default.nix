@@ -152,7 +152,7 @@
     };
   home.packages = [
     pkgs.papirus-icon-theme
-    (materusArg.pkgs.polymc.wrap { withWaylandGLFW = true; extraJDKs = [ pkgs.graalvm-ce ]; })
+    (materusArg.pkgs.polymc.wrap { extraJDKs = [ pkgs.graalvm-ce ]; })
   ];
 
 }
