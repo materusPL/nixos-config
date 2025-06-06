@@ -31,9 +31,7 @@ in
     '';
 
       home.packages = [
-        (lib.mkIf cfg.enableHackFont (pkgs.nerdfonts.override {
-          fonts = [ "Hack" ];
-        }))
+        (lib.mkIf cfg.enableHackFont (pkgs.nerd-fonts.hack))
         (lib.mkIf cfg.enableWezcraft (pkgs.monocraft))
         (lib.mkIf cfg.enableWezcraft (pkgs.writeShellScriptBin "wezcraft" ''
           ${lib.getExe config.programs.wezterm.package} --config font="wezterm.font 'Monocraft Nerd Font'" $@

@@ -3,9 +3,10 @@
   lib,
   pkgs,
   materusArg,
+  materusCfg,
   ...
 }: let
-  emacs-pkg = pkgs.emacs;
+  emacs-pkg = materusCfg.configInputs.emacs-overlay.packages.x86_64-linux.emacs-git;
 
   materus-nix = e:
     e.trivialBuild {
@@ -188,8 +189,12 @@
       ripgrep
       cmake
       gnumake
-      nixfmt-rfc-style
-      python3Full
+      nixfmt-rfc-style  
+      (python3.withPackages (python-pkgs: with python-pkgs; [
+        matplotlib
+        pandas
+        requests
+      ]))
       multimarkdown
       git
       emacs-lsp-booster

@@ -17,14 +17,17 @@ let
     pkgs.wqy_zenhei
     pkgs.corefonts
     pkgs.hack-font
-    (pkgs.nerdfonts.override { fonts = [ "Hack" ]; })
+    pkgs.nerd-fonts.hack
 
   ] ++ defaultFonts;
 
   moreFonts = [
     pkgs.ubuntu_font_family
     pkgs.monocraft
-    (pkgs.nerdfonts.override { fonts = [ "DroidSansMono" "Meslo" "ProFont" "FiraCode"]; })
+    pkgs.nerd-fonts.droid-sans-mono
+    pkgs.nerd-fonts.meslo-lg
+    pkgs.nerd-fonts.profont
+    pkgs.nerd-fonts.fira-code
   ];
 in
 {

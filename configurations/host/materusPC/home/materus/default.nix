@@ -2,6 +2,7 @@
   pkgs,
   materusArg,
   lib,
+  config,
   ...
 }:
 {
@@ -10,7 +11,9 @@
   ];
   home.stateVersion = "23.05";
   home.homeDirectory = "/home/materus";
-
+  
+  materus.profile.wezterm.enable = true;
+  
   programs.git.signing.signByDefault = true;
 
   xdg.userDirs.enable = true;
@@ -129,6 +132,7 @@
     org.gradle.java.installations.fromEnv=JAVA_8_HOME,JAVA_17_HOME,JAVA_21_HOME
     org.gradle.home=${pkgs.jdk21}
   '';
+  
 
   xdg.desktopEntries.brave-browser =
     let

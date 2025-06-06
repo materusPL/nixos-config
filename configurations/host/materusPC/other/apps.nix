@@ -16,12 +16,7 @@
 
   environment.systemPackages = with pkgs; [
 
-    (vivaldi.overrideAttrs
-      (oldAttrs: {
-        dontWrapQtApps = false;
-        dontPatchELF = true;
-        nativeBuildInputs = oldAttrs.nativeBuildInputs ++ [pkgs.kdePackages.wrapQtAppsHook];
-      }))
+    vivaldi
 
     #(pkgs.lutris.override { extraLibraries = pkgs: with pkgs;  [ pkgs.samba pkgs.jansson pkgs.tdb pkgs.libunwind pkgs.libusb1 pkgs.gnutls pkgs.gtk3 pkgs.pango ]; })
     materusArg.pkgs.amdgpu-pro-libs.prefixes
@@ -112,7 +107,7 @@
 
     nix-du
 
-    kate
+    kdePackages.kate
     krusader
 
     wineWowPackages.stagingFull

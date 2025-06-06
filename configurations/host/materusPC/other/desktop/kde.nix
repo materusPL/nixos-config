@@ -8,8 +8,8 @@
 
   services.desktopManager.plasma6.enable = true;
   services.desktopManager.plasma6.enableQt5Integration = true;
-  programs.gnupg.agent.pinentryPackage = lib.mkForce pkgs.pinentry-gnome3;
-  environment.plasma6.excludePackages = with pkgs.kdePackages; [ kwallet kwalletmanager kwallet-pam ];
+  #programs.gnupg.agent.pinentryPackage = lib.mkForce pkgs.pinentry-gnome3;
+  #environment.plasma6.excludePackages = with pkgs.kdePackages; [ kwallet kwalletmanager kwallet-pam ];
   environment.variables = {
     # Old fix for black cursor on amdgpu, seems to work fine now
     #KWIN_DRM_NO_AMS = "1";

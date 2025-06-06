@@ -2,7 +2,7 @@
 {
   home.packages = [
     pkgs.papirus-icon-theme
-    (pkgs.nerdfonts.override { fonts = [ "Hack" ]; })
+    pkgs.nerd-fonts.hack
   ];
 
   xdg.dataFile."konsole/materus-linux.keytab".source = ("${materusArg.cfg.path}" + "/extraFiles/config/plasma/materus-linux.keytab");

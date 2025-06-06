@@ -264,14 +264,10 @@ in
     ubuntu_font_family
     wqy_zenhei
     monocraft
-    (nerdfonts.override {
-      fonts = [
-        "FiraCode"
-        "DroidSansMono"
-        "Meslo"
-        "ProFont"
-      ];
-    })
+    nerd-fonts.fira-code
+    nerd-fonts.droid-sans-mono
+    nerd-fonts.meslo-lg
+    nerd-fonts.profont
   ];
   fonts.fontconfig.enable = true;
   fonts.fontconfig.cache32Bit = true;

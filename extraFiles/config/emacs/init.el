@@ -110,6 +110,8 @@
 (global-completion-preview-mode 1)
 (electric-pair-mode 1)
 (electric-indent-mode -1)
+
+(setq isearch-allow-scroll t) ; Allows scrolling without closing isearch
 ;; Frame Init
 (when (daemonp)
   (add-hook 'after-make-frame-functions 
@@ -321,17 +323,18 @@
 
 (use-package dirvish
   :after (nerd-icons)
- :config
- (setq dired-mouse-drag-files t)
- (dirvish-override-dired-mode 1)
- (setq dirvish-attributes
-       '(vc-state
-         subtree-state
-         nerd-icons
-         collapse
-         git-msg
-         file-time 
-         file-size)))
+  :config
+  (setq dired-mouse-drag-files t)
+  (dirvish-override-dired-mode 1)
+  (setq dirvish-attributes
+        '(vc-state
+          subtree-state
+          nerd-icons
+          collapse
+          git-msg
+          file-time 
+          file-size))
+  )
 
 (use-package treemacs)
 (use-package treemacs-projectile
@@ -385,7 +388,7 @@
 (use-package lsp-treemacs
   :after (lsp-mode treemacs)
   :config
-  (lsp-treemacs-sync-mode 1))
+  (lsp-treemacs-sync-mode 0))
 
 
 (use-package dap-mode
@@ -437,12 +440,16 @@
   :config
   (setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx4G" "-Xms512m"))
   ;;(add-hook 'java-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
-  (add-hook 'java-mode-hook 'lsp-deferred)
-  (add-hook 'java-mode-hook 'display-line-numbers-mode)
+  (add-hook 'java-mode-hook #'lsp)
+  (add-hook 'java-mode-hook #'display-line-numbers-mode)
+  (add-hook 'java-mode-hook #'lsp-lens-mode)
+  (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
 
   ;;(add-hook 'java-ts-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
-  (add-hook 'java-ts-mode-hook 'lsp-deferred)
-  (add-hook 'java-ts-mode-hook 'display-line-numbers-mode)
+  (add-hook 'java-ts-mode-hook #'lsp)
+  (add-hook 'java-ts-mode-hook #'display-line-numbers-mode)
+  (add-hook 'java-ts-mode-hook #'lsp-lens-mode)
+  (add-hook 'java-ts-mode-hook #'lsp-java-boot-lens-mode)
 
   (when (treesit-language-available-p 'java) (push '(java-mode . java-ts-mode) major-mode-remap-alist))
 
