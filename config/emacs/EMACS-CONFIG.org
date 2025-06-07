@@ -26,7 +26,6 @@
     - [[#highlight-indent-guides][Highlight Indent Guides]]
     - [[#outli][Outli]]
     - [[#visual-replace][Visual Replace]]
-    - [[#folding][Folding]]
   - [[#terminal][Terminal]]
     - [[#eat][Eat]]
     - [[#vterm][Vterm]]
@@ -289,6 +288,8 @@
   (global-completion-preview-mode 1)
   (electric-pair-mode 1)
   (electric-indent-mode -1)
+
+  (setq isearch-allow-scroll t) ; Allows scrolling without closing isearch
 #+end_src
 
 ** Frame
@@ -423,15 +424,6 @@ Setting up mouse
     :bind (("C-r" . visual-replace)
            :map isearch-mode-map
            ("C-r" . visual-replace-from-isearch)))
-#+end_src
-*** Folding
-Treesit-fold
-#+begin_src emacs-lisp
-  (use-package treesit-fold)
-#+end_src
-Hideshowvis
-#+begin_src emacs-lisp
-  (use-package hideshowvis)
 #+end_src
 ** Terminal
 *** Eat
@@ -577,17 +569,18 @@ Hideshowvis
 #+begin_src emacs-lisp
   (use-package dirvish
     :after (nerd-icons)
-   :config
-   (setq dired-mouse-drag-files t)
-   (dirvish-override-dired-mode 1)
-   (setq dirvish-attributes
-         '(vc-state
-           subtree-state
-           nerd-icons
-           collapse
-           git-msg
-           file-time 
-           file-size)))
+    :config
+    (setq dired-mouse-drag-files t)
+    (dirvish-override-dired-mode 1)
+    (setq dirvish-attributes
+          '(vc-state
+            subtree-state
+            nerd-icons
+            collapse
+            git-msg
+            file-time 
+            file-size))
+    )
 
 #+end_src
 *** Treemacs
@@ -674,7 +667,7 @@ Hideshowvis
   (use-package lsp-treemacs
     :after (lsp-mode treemacs)
     :config
-    (lsp-treemacs-sync-mode 1))
+    (lsp-treemacs-sync-mode 0))
 
 
 #+end_src
@@ -742,12 +735,16 @@ Hideshowvis
     :config
     (setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx4G" "-Xms512m"))
     ;;(add-hook 'java-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
-    (add-hook 'java-mode-hook 'lsp-deferred)
-    (add-hook 'java-mode-hook 'display-line-numbers-mode)
+    (add-hook 'java-mode-hook #'lsp)
+    (add-hook 'java-mode-hook #'display-line-numbers-mode)
+    (add-hook 'java-mode-hook #'lsp-lens-mode)
+    (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
 
     ;;(add-hook 'java-ts-mode-hook (lambda ()  (when (getenv "JDTLS_PATH") (setq lsp-java-server-install-dir (getenv "JDTLS_PATH")))))
-    (add-hook 'java-ts-mode-hook 'lsp-deferred)
-    (add-hook 'java-ts-mode-hook 'display-line-numbers-mode)
+    (add-hook 'java-ts-mode-hook #'lsp)
+    (add-hook 'java-ts-mode-hook #'display-line-numbers-mode)
+    (add-hook 'java-ts-mode-hook #'lsp-lens-mode)
+    (add-hook 'java-ts-mode-hook #'lsp-java-boot-lens-mode)
 
     (when (treesit-language-available-p 'java) (push '(java-mode . java-ts-mode) major-mode-remap-alist))
 
@@ -770,7 +767,7 @@ Hideshowvis
   (use-package nix-mode)
   (use-package nix-ts-mode)
   (use-package lsp-nix
-    :after (lsp-mode nix-mode nix-ts-mode format-all orglink)
+    :after (lsp-mode nix-mode nix-ts-mode format-all)
     :ensure nil
     :config
     (add-to-list 'lsp-disabled-clients '(nix-mode . nix-nil)) 
@@ -784,11 +781,9 @@ Hideshowvis
       (setq lsp-nix-nixd-nixpkgs-expr (concat "(builtins.getFlake \"/etc/nixos\").nixosConfigurations." (system-name) ".pkgs")))
     (add-hook 'nix-mode-hook 'lsp-deferred)
     (add-hook 'nix-mode-hook 'display-line-numbers-mode)
-    (add-hook 'nix-mode-hook 'orglink-mode)
 
     (add-hook 'nix-ts-mode-hook 'lsp-deferred)
     (add-hook 'nix-ts-mode-hook 'display-line-numbers-mode)
-    (add-hook 'nix-ts-mode-hook 'orglink-mode)
 
     (when (treesit-language-available-p 'nix) (push '(nix-mode . nix-ts-mode) major-mode-remap-alist)))
 #+end_src
@@ -802,7 +797,7 @@ Hideshowvis
 #+end_src
 **** Common Lisp
 #+begin_src emacs-lisp
-  (use-package slime
+  (use-package sly
     :if (executable-find "sbcl")
     :config
     (setq inferior-lisp-program "sbcl"))
@@ -904,12 +899,6 @@ Hideshowvis
 
 #+begin_src emacs-lisp
   (use-package org-roam
-    :after (org))
-
-#+end_src
-
-#+begin_src emacs-lisp
-  (use-package orglink
     :after (org))
 
 #+end_src
