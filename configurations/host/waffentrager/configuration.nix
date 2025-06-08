@@ -28,7 +28,7 @@
     gzip
 
   ];
-  sound.enable = false;
+  
   boot.tmp.useTmpfs = true;
   services.xserver.enable = false;
   networking.hostName = "waffentrager";

@@ -50,7 +50,7 @@ in
       "L+   /var/lib/pleroma/static/frontends/soapbox/${soapbox.version}  0766 pleroma pleroma - ${soapbox}"
     ];
 
-   s ervices.nginx.virtualHosts."podkos.xyz" = {
+   services.nginx.virtualHosts."podkos.xyz" = {
       http2 = true;
       useACMEHost = "podkos.xyz";
       forceSSL = true;

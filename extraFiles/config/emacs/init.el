@@ -1,13 +1,12 @@
 ;;; -*- lexical-binding: t; -*-
 ;; Prepare
-  (require 'materus-nix nil t)
-  (require 'elec-pair)
-  (when (not emacs-build-time)
-    (print "WARN: emacs-build-time not set up, using current time")
-    (setq emacs-build-time (decode-time (current-time))))
-  (add-to-list 'load-path (concat user-emacs-directory "etc/pkgs/"))                ; Extra load path for packages
-  (defvar materus/nixos-config (getenv "MATERUS_CONFIG_DIR"))  
-  (setq read-process-output-max (* 1024 1024 3))
+(require 'materus-nix nil t)
+(require 'elec-pair)
+(when (not emacs-build-time)
+  (print "WARN: emacs-build-time not set up, using current time")
+  (setq emacs-build-time (decode-time (current-time))))
+(add-to-list 'load-path (concat user-emacs-directory "etc/pkgs/"))                ; Extra load path for packages  
+(setq read-process-output-max (* 1024 1024 3))
 
 ;; Elpaca Init
 (defvar elpaca-installer-version 0.11)
@@ -53,6 +52,13 @@
   (elpaca-use-package-mode)
   (setq elpaca-use-package-by-default t))
 
+(defvar materus/nixos-config (getenv "MATERUS_CONFIG_DIR"))
+(defvar materus/server-env nil)
+(defvar materus/pkgs/vterm-enable nil)
+
+(let ((vars-file (expand-file-name "etc/variables.el" user-emacs-directory)))
+  (unless (file-exists-p vars-file) (make-empty-file vars-file))
+  (load vars-file))
 ;; Use package preffering built-in / nix packages
 (defmacro materus/use-package (package &rest body)
   (if (locate-library (symbol-name `,package))
@@ -224,7 +230,8 @@
          ("C-r" . visual-replace-from-isearch)))
 (use-package eat)
 
-(materus/use-package vterm)
+(when (or materus/pkgs/vterm-enable (locate-library (symbol-name 'vterm)))
+(materus/use-package vterm))
 (use-package orderless
   :init
   ;; Tune the global completion style settings to your liking!
@@ -487,7 +494,7 @@
   (when (treesit-language-available-p 'nix) (push '(nix-mode . nix-ts-mode) major-mode-remap-alist)))
 (use-package paredit)
 
-(use-package slime
+(use-package sly
   :if (executable-find "sbcl")
   :config
   (setq inferior-lisp-program "sbcl"))
@@ -575,14 +582,16 @@
   (setq persp-modestring-short t)
   (persp-mode 1)
   )
-(defun materus/elcord-toggle (&optional _frame)
-  "Toggle elcord based on visible frames"
-  (if (> (length (frame-list)) 1)
-      (elcord-mode 1)
-    (elcord-mode -1))
-  )
+
 (use-package elcord
+  :if (not materus/server-env)
   :config
+  (defun materus/elcord-toggle (&optional _frame)
+    "Toggle elcord based on visible frames"
+    (if (> (length (frame-list)) 1)
+        (elcord-mode 1)
+      (elcord-mode -1))
+    )
   (unless (daemonp) (elcord-mode 1))
   (add-hook 'after-delete-frame-functions 'materus/elcord-toggle)
   (add-hook 'server-after-make-frame-hook 'materus/elcord-toggle))

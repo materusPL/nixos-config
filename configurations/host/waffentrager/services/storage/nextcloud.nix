@@ -22,7 +22,7 @@
       services.nextcloud = {
         enable = true;
         notify_push.enable = true;
-        package = pkgs.nextcloud29;
+        package = pkgs.nextcloud31;
         hostName = "waffentrager.materus.pl";
         home = config.waffentragerService.elements.nextcloudDir;
         config.adminuser = "nextcloud-master";
@@ -37,7 +37,7 @@
         appstoreEnable = true;
         database.createLocally = true;
         nginx.recommendedHttpHeaders = true;
-        extraApps = with pkgs.nextcloud29Packages.apps; {
+        extraApps = with pkgs.nextcloud31Packages.apps; {
           inherit notify_push previewgenerator;
         };
         settings = {

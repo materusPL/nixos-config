@@ -8,7 +8,7 @@
 
   services.desktopManager.plasma6.enable = true;
   services.desktopManager.plasma6.enableQt5Integration = true;
-  #programs.gnupg.agent.pinentryPackage = lib.mkForce pkgs.pinentry-gnome3;
+  #programs.gnupg.agent.pinentryPackage = lib.mkForce (pkgs.kwalletcli.overrideAttrs {meta.mainProgram = "pinentry-kwallet";});
   #environment.plasma6.excludePackages = with pkgs.kdePackages; [ kwallet kwalletmanager kwallet-pam ];
   environment.variables = {
     # Old fix for black cursor on amdgpu, seems to work fine now
@@ -17,7 +17,7 @@
     #Fix for amdgpu crashes
     KWIN_DRM_USE_MODIFIERS = "0";
     KWIN_DRM_NO_DIRECT_SCANOUT = "1";
-    QT_PLUGIN_PATH = [ 
+    QT_PLUGIN_PATH = [
       "${pkgs.qt6.qtimageformats}/${pkgs.qt6.qtbase.qtPluginPrefix}"
       "${pkgs.kdePackages.ffmpegthumbs}/${pkgs.qt6.qtbase.qtPluginPrefix}"
      ];
@@ -29,4 +29,12 @@
   ];
   programs.kdeconnect.enable = true;
   materus.profile.steam.extraPkgs = [ pkgs.kdePackages.breeze pkgs.kdePackages.breeze-gtk pkgs.kdePackages.dolphin pkgs.vlc pkgs.vkbasalt-cli ];
+
+  programs.firefox = {
+    enable = true;
+    autoConfig = builtins.readFile(builtins.fetchurl {
+      url = "https://raw.githubusercontent.com/MrOtherGuy/fx-autoconfig/master/program/config.js";
+      sha256 = "1mx679fbc4d9x4bnqajqx5a95y1lfasvf90pbqkh9sm3ch945p40";
+    });
+  };
 }
