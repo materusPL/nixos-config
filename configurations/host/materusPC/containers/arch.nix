@@ -103,7 +103,8 @@ in
 
         "/run/udev"
         "/run/pipewire"
-
+        "/run/pulse"
+        
         "/sys/class"
         "/sys/devices"
 

@@ -1,12 +1,19 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   plasma-materus = pkgs.writeScript "plasma-materus" ''
-  export KWIN_DRM_DEVICES="/dev/dri/by-path/pci-0000\:53\:00.0-card"
-  ${pkgs.kdePackages.plasma-workspace}/libexec/plasma-dbus-run-session-if-needed ${pkgs.kdePackages.plasma-workspace}/bin/startplasma-wayland
+    export KWIN_DRM_DEVICES="/dev/dri/by-path/pci-0000\:53\:00.0-card"
+    ${pkgs.kdePackages.plasma-workspace}/libexec/plasma-dbus-run-session-if-needed ${pkgs.kdePackages.plasma-workspace}/bin/startplasma-wayland
   '';
-
-  westonSddm = let xcfg = config.services.xserver; in  pkgs.writeText "weston.ini"
-    ''
+  westonSddm =
+    let
+      xcfg = config.services.xserver;
+    in
+    pkgs.writeText "weston.ini" ''
       [core]
       xwayland=false
       shell=fullscreen-shell.so
@@ -37,7 +44,7 @@ let
 in
 {
   services.displayManager.defaultSession = "plasma-materus";
-  
+
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
   services.displayManager.sddm.wayland.compositor = lib.mkForce "weston";
@@ -47,16 +54,20 @@ in
     "-c ${westonSddm}"
   ];
   services.displayManager.sessionPackages = [
-  ((pkgs.writeTextDir "share/wayland-sessions/plasma-materus.desktop" ''
-    [Desktop Entry]
-    Name=Plasma (Wayland Materus)
-    Comment=Plasma Desktop with KWIN_DRM_DEVICES env
-    Exec=${plasma-materus}
-    DesktopNames=KDE
-    Type=Application
-  '')
-  .overrideAttrs (_: {passthru.providedSessions = ["plasma-materus"];})) 
-];
+    (
+      (pkgs.writeTextDir "share/wayland-sessions/plasma-materus.desktop" ''
+        [Desktop Entry]
+        Name=Plasma (Wayland Materus)
+        Comment=Plasma Desktop with KWIN_DRM_DEVICES env
+        Exec=${plasma-materus}
+        DesktopNames=KDE
+        Type=Application
+      '').overrideAttrs
+      (_: {
+        passthru.providedSessions = [ "plasma-materus" ];
+      })
+    )
+  ];
 
   services.displayManager.sddm.settings = {
     General = {
