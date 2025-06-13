@@ -11,6 +11,7 @@
 - [[#init-core][Init Core]]
   - [[#prepare][Prepare]]
   - [[#elpaca][Elpaca]]
+  - [[#variables][Variables]]
   - [[#functions][Functions]]
   - [[#custom-file][Custom File]]
   - [[#font--text][Font & Text]]
@@ -172,14 +173,13 @@
 :END:
 ** Prepare
 #+begin_src emacs-lisp :noweb-ref init
-;; Prepare
+  ;; Prepare
   (require 'materus-nix nil t)
   (require 'elec-pair)
   (when (not emacs-build-time)
     (print "WARN: emacs-build-time not set up, using current time")
     (setq emacs-build-time (decode-time (current-time))))
-  (add-to-list 'load-path (concat user-emacs-directory "etc/pkgs/"))                ; Extra load path for packages
-  (defvar materus/nixos-config (getenv "MATERUS_CONFIG_DIR"))  
+  (add-to-list 'load-path (concat user-emacs-directory "etc/pkgs/"))                ; Extra load path for packages  
   (setq read-process-output-max (* 1024 1024 3))
 
 #+END_src
@@ -230,6 +230,16 @@
     (setq elpaca-use-package-by-default t))
 
 #+END_src
+** Variables
+#+begin_src emacs-lisp :noweb-ref init-variables
+  (defvar materus/nixos-config (getenv "MATERUS_CONFIG_DIR"))
+  (defvar materus/server-env nil)
+  (defvar materus/pkgs/vterm-enable nil)
+
+  (let ((vars-file (expand-file-name "etc/variables.el" user-emacs-directory)))
+    (unless (file-exists-p vars-file) (make-empty-file vars-file))
+    (load vars-file))
+#+end_src
 ** Functions
 #+begin_src emacs-lisp :noweb-ref init-functions
   ;; Use package preffering built-in / nix packages
@@ -459,7 +469,8 @@ Setting up mouse
 #+end_src
 *** Vterm
 #+begin_src emacs-lisp
-(materus/use-package vterm)
+(when (or materus/pkgs/vterm-enable (locate-library (symbol-name 'vterm)))
+(materus/use-package vterm))
 #+end_src
 ** Navigation and Completion
 *** minibuffer (orderless, vertico, marginalia, consult)
@@ -941,14 +952,16 @@ Setting up mouse
 #+end_src
 *** Elcord
 #+begin_src emacs-lisp
-  (defun materus/elcord-toggle (&optional _frame)
-    "Toggle elcord based on visible frames"
-    (if (> (length (frame-list)) 1)
-        (elcord-mode 1)
-      (elcord-mode -1))
-    )
+
   (use-package elcord
+    :if (not materus/server-env)
     :config
+    (defun materus/elcord-toggle (&optional _frame)
+      "Toggle elcord based on visible frames"
+      (if (> (length (frame-list)) 1)
+          (elcord-mode 1)
+        (elcord-mode -1))
+      )
     (unless (daemonp) (elcord-mode 1))
     (add-hook 'after-delete-frame-functions 'materus/elcord-toggle)
     (add-hook 'server-after-make-frame-hook 'materus/elcord-toggle))
@@ -1056,6 +1069,7 @@ Setting up mouse
   ;;; -*- lexical-binding: t; -*-
   <<init>>
   <<init-elpaca>>
+  <<init-variables>>
   <<init-functions>>
   <<package-no-littering>>
   <<init-extra>>
