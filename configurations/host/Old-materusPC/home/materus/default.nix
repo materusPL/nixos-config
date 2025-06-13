@@ -98,7 +98,7 @@
       dub
     ]);
 
-    editor.emacs.enable = false;
+    editor.emacs.enable = true;
 
   };
   xdg.desktopEntries.brave-browser =
