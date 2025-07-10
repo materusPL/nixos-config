@@ -33,7 +33,7 @@ in
     "nvme_core.shutdown_timeout=10"
     "amd_iommu=on"
     "amdgpu.ppfeaturemask=0xffffffff"
-    "amdgpu.runpm=0"
+    #"amdgpu.runpm=0"
     "iommu=pt"
     "psi=1"
     "i915.force_probe=!56a6" 

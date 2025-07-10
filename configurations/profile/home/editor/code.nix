@@ -67,6 +67,7 @@ let
     open-vsx.ms-vscode.hexeditor
     open-vsx.alefragnani.project-manager
     vscode-marketplace.cantonios.project-templates
+    vscode-marketplace.betterthantomorrow.joyride
 
     #Icons
     open-vsx.pkief.material-icon-theme

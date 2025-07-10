@@ -124,7 +124,7 @@
 
       "dolphinrc"."General"."RememberOpenedTabs" = false;
 
-      "kwalletrc"."Wallet"."Enabled" = false;
+      "kwalletrc"."Wallet"."Enabled" = true;
 
     };
     dataFile = {

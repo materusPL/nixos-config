@@ -76,16 +76,17 @@
       (eq major-mode 'c++-mode)
       (eq major-mode 'c++-ts-mode)))
 
-(defun materus/--fix-outli-formatting (FORMATTER STATUS)
+(defun materus/anchor-outli-headers ()
   "Remove whitespaces before outli headers"
-  (when (and (materus/--outli-modes)
-             (eq STATUS :reformatted))
-    (save-excursion
-      (save-restriction
-        (widen)
-        (goto-char (point-min))
-        (while (re-search-forward (concat "^[ 	]+\\(" comment-start "\\*+ +[^ ].*\\)[ 	]*") nil t)
-          (replace-match "\\1"))))))
+  (save-excursion
+    (save-restriction
+      (widen)
+      (goto-char (point-min))
+      (while (re-search-forward (concat "^[ 	]+\\(" comment-start "\\*+ +[^ ].*\\)[ 	]*") nil t)
+        (replace-match "\\1")))))
+(defun materus/--fix-outli-formatting (FORMATTER STATUS)
+  (materus/anchor-outli-headers)
+  )
 
 (defun materus/--electric-indent-ignore-outli (char)
   "Don't indent outli headers"
@@ -361,6 +362,7 @@
   :config
   (setq lsp-keep-workspace-alive nil)
   (setq lsp-enable-on-type-formatting nil)
+  (setq lsp-ui-doc-show-with-mouse nil)
   
   (defun lsp-booster--advice-json-parse (old-fn &rest args)
     "Try to parse bytecode instead of json."
@@ -405,6 +407,7 @@
   (require 'dap-gdb-lldb)
   (require 'dap-cpptools)
   (setq dap-gdb-lldb-extension-version "0.27.0")
+  (setq dap-auto-configure-features '(sessions locals breakpoints controls))
   (dap-auto-configure-mode 1))
 
 (use-package format-all
@@ -470,7 +473,9 @@
   (add-hook 'python-mode-hook 'lsp-deferred)
   (add-hook 'python-ts-mode-hook 'lsp-deferred)
   (when (treesit-language-available-p 'python) (push '(python-mode . python-ts-mode) major-mode-remap-alist)))
-(use-package nix-mode)
+(use-package nix-mode
+  :config
+  (advice-add 'nix-format-buffer :after #'materus/anchor-outli-headers))
 (use-package nix-ts-mode)
 (use-package lsp-nix
   :after (lsp-mode nix-mode nix-ts-mode format-all)

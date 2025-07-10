@@ -44,6 +44,8 @@ let
       systemctl stop windows-share-mount.service
 
       # Make sure nothing renders on gpu to prevent "sysfs: cannot create duplicate filename" after rebinding to amdgpu
+      echo remove > /sys/bus/pci/devices/$VIRSH_GPU_VIDEO/drm/card*/uevent
+      sleep 2s
       chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render 
       chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
       fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
@@ -57,19 +59,19 @@ let
       # Weird bug on kernel 6.7+, after changing bar sizes and binding to vfio driver, performance after returning to host will be lower than expected
       # binding to amdgpu after changing bar sizes and binding after it to vfio will work as expected.
       # I could skip changing bar sizes since I'm able to use full bar, but keeping it just in case
-      echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
-      sleep 1s
-      echo "${bar0_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
-      echo "${bar2_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
+      #echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
+      #sleep 1s
+      #echo "${bar0_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
+      #echo "${bar2_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
 
-      echo ''$VIRSH_GPU_VIDEO > /sys/bus/pci/drivers/amdgpu/bind
+      #echo ''$VIRSH_GPU_VIDEO > /sys/bus/pci/drivers/amdgpu/bind
       
-      sleep 1s
-      
-      chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
-      chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
-      fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
-      fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
+      #sleep 1s
+      #echo remove > /sys/bus/pci/devices/$VIRSH_GPU_VIDEO/drm/card*/uevent
+      #chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
+      #chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
+      #fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
+      #fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
       #####################################################################
       
       echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
@@ -175,9 +177,9 @@ in
           ${startHook}
         fi
 
-        if [ ''$2 = "started" ] && [ ''$3 = "begin" ]; then
-          ${startedHook}
-        fi
+        #if [ ''$2 = "started" ] && [ ''$3 = "begin" ]; then
+          
+        #fi
 
         if [ ''$2 = "release" ] && [ ''$3 = "end" ]; then
           ${stopHook}
