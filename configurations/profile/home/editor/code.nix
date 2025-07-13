@@ -113,6 +113,11 @@ let
     "[cpp]" = {
       "editor.defaultFormatter" = lib.mkDefault "xaver.clang-format";
     };
+    "[javascript]" = {
+      "editor.defaultFormatter" = lib.mkDefault "esbenp.prettier-vscode";
+    };
+    "typescript.tsserver.maxTsServerMemory" = 1024 * 8;
+    "typescript.tsserver.nodePath"= lib.mkDefault "${pkgs.nodejs}/bin/node";
     "cmake.showOptionsMovedNotification" = false;
     "cmake.pinnedCommands" = [
       "workbench.action.tasks.configureTaskRunner"
