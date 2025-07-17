@@ -6,7 +6,7 @@
       ./configuration.nix
     ];
   materus.profile.nix.enable = true;
-  materus.profile.steam.enable = true;
+  #materus.profile.steam.enable = true;
 
 
 }

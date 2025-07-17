@@ -56,11 +56,12 @@
   time.timeZone = "Europe/Warsaw";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "pl_PL.utf8";
+  i18n.defaultLocale = "pl_PL.UTF-8";
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  hardware.nvidia.open = false;
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.opengl.enable = true;
   hardware.nvidia.prime = {
@@ -76,7 +77,7 @@
 
   # Enable the KDE Plasma Desktop Environment.
   services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
+  services.xserver.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
   services.xserver = {
@@ -91,7 +92,7 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  sound.enable = true;
+  #sound.enable = true;
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -117,7 +118,7 @@
     extraGroups = [ "networkmanager" "wheel" ];
     openssh.authorizedKeys.keyFiles = [ ("${materusArg.cfg.path}" + "/extraFiles/keys/ssh/materus.pub") ];
     packages = with pkgs; [
-      kate
+      kdePackages.kate
     ];
     shell = pkgs.zsh;
   };
@@ -138,7 +139,7 @@
     distrobox
 
 
-    config.materus.profile.packages.firefox
+    firefox
     config.programs.java.package
 
 
