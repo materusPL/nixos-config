@@ -26,11 +26,13 @@
   networking.firewall.allowedTCPPorts = [ 
     24800 5900 5357 4656 8080 9943 9944 
     22000 config.services.syncthing.relay.statusPort config.services.syncthing.relay.port # Syncthing
+    26656 8100 # Minecraft + BlueMap 
   ];
   networking.firewall.allowedUDPPorts = [ (lib.strings.toInt materusArg.wireguard.port) 
     24800 5900 3702 4656 6000 9943 9944 
     22000 21027 # Syncthing
     17000 17001 # zomboid
+    24454 # Minecraft Voice Chat
   ];
   networking.networkmanager.settings = {
     connectivity = {
