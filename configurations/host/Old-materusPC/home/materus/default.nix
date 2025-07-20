@@ -35,6 +35,9 @@
     "C_Cpp.clang_format_path" = "${pkgs.clang-tools}/bin/clang-format";
     "C_Cpp.clang_format_fallbackStyle" = "Microsoft";
     "clang-tidy.executable" = "${pkgs.clang-tools}/bin/clang-tidy";
+    
+    "typescript.tsserver.maxTsServerMemory" = 1024 * 8;
+    "typescript.tsserver.nodePath"= lib.mkDefault "${pkgs.nodejs}/bin/node";
 
     "python.defaultInterpreterPath" = "${pkgs.python3Full}/bin/python";
     "[cpp]" = {
