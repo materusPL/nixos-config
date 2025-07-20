@@ -304,6 +304,7 @@ in
     };
     fish.enable = true;
     java.enable = true;
+    java.package = pkgs.graalvmPackages.graalvm-oracle;
     command-not-found.enable = false;
     dconf.enable = true;
   };
