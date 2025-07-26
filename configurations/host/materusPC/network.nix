@@ -26,7 +26,7 @@
   networking.firewall.allowedTCPPorts = [ 
     24800 5900 5357 4656 8080 9943 9944 
     22000 config.services.syncthing.relay.statusPort config.services.syncthing.relay.port # Syncthing
-    26656 8100 # Minecraft + BlueMap 
+    25565 8100 # Minecraft + BlueMap 
   ];
   networking.firewall.allowedUDPPorts = [ (lib.strings.toInt materusArg.wireguard.port) 
     24800 5900 3702 4656 6000 9943 9944 
@@ -60,7 +60,7 @@
         persistent-keepalive = "20";
       };
       ipv4 = {
-        address1 = "${materusArg.ips.wireguard.materusPC}/23";
+        address1 = "${materusArg.ips.wireguard.materusPC}/32";
         dns = "${materusArg.ips.wireguard.valkyrie};";
         method = "manual";
         never-default = "true";

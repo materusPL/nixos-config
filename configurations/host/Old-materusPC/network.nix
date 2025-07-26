@@ -42,7 +42,7 @@
         persistent-keepalive = "20";
       };
       ipv4 = {
-        address1 = "${materusArg.ips.wireguard.Old-materusPC}/23";
+        address1 = "${materusArg.ips.wireguard.Old-materusPC}/32";
         dns = "${materusArg.ips.wireguard.valkyrie};";
         method = "manual";
         never-default = "true";
