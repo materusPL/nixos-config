@@ -196,7 +196,7 @@ metadata_providers = ["spotify","deezer","lastfm","audiodb","musicbrainz"]
           locations."/" = {
             proxyPass = "http://127.0.0.1:42011";
             extraConfig = ''
-              allow ${materusArg.ip-masks.wireguard.private};
+              allow ${materusArg.ip-masks.wireguard.main};
               allow 192.168.100.0/24;
               deny all;
               proxy_http_version 1.1;

@@ -24,7 +24,7 @@
             proxy_set_header    X-Forwarded-Proto   $scheme;
 
 
-            allow ${materusArg.ip-masks.wireguard.private};
+            allow ${materusArg.ip-masks.wireguard.main};
             allow 192.168.100.0/24;
             deny all;
           '';

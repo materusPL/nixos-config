@@ -38,7 +38,7 @@
       };
       "wireguard-peer.${materusArg.wireguard.pubKeys.valkyrie}" = {
         endpoint = "${materusArg.ips.valkyrie}:${materusArg.wireguard.port}";
-        allowed-ips = "${materusArg.ip-masks.wireguard.general};";
+        allowed-ips = "${materusArg.ip-masks.wireguard.main};${materusArg.ip-masks.wireguard.guest};${materusArg.ip-masks.wireguard.asia};${materusArg.ips.wireguard.valkyrie}/32;";
         persistent-keepalive = "20";
       };
       ipv4 = {
