@@ -144,6 +144,18 @@ in
     description = "Mateusz Słodkowicz";
 
   };
+
+  virtualisation.libvirtd = {
+    enable = true;
+    onBoot = "ignore";
+    onShutdown = "shutdown";
+    qemu.ovmf.enable = true;
+    qemu.ovmf.packages = [ pkgs.OVMFFull.fd ];
+    qemu.runAsRoot = true;
+    qemu.swtpm.enable = true;
+    qemu.package = pkgs.qemu_full;
+  };
+  
   environment.sessionVariables = rec {
     XDG_CACHE_HOME = "\${HOME}/.cache";
     XDG_CONFIG_HOME = "\${HOME}/.config";
