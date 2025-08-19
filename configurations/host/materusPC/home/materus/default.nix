@@ -15,7 +15,7 @@
   materus.profile.wezterm.enable = true;
   
   programs.git.signing.signByDefault = true;
-
+  
   xdg.userDirs.enable = true;
   materus.profile = {
 
@@ -133,7 +133,10 @@
     org.gradle.home=${pkgs.jdk21}
   '';
   
-
+  xdg.dataFile."java-runtimes/graalvm-oracle-17".source = pkgs.graalvmPackages.graalvm-oracle_17;
+  xdg.dataFile."java-runtimes/graalvm-oracle-latest".source = pkgs.graalvmPackages.graalvm-oracle;
+  xdg.dataFile."java-runtimes/openjdk21".source = pkgs.jdk21;
+  
   xdg.desktopEntries.brave-browser =
     let
       env = lib.concatStringsSep " " [

@@ -2,6 +2,10 @@
 {
   home.stateVersion = "23.05";
   home.homeDirectory = "/home/materus";
+  
+  xdg.dataFile."java-runtimes/graalvm-oracle-17".source = pkgs.graalvmPackages.graalvm-oracle_17;
+  xdg.dataFile."java-runtimes/graalvm-oracle-latest".source = pkgs.graalvmPackages.graalvm-oracle;
+  xdg.dataFile."java-runtimes/openjdk21".source = pkgs.jdk21;
 
   materus.profile = {
     fonts.enable = lib.mkDefault true;

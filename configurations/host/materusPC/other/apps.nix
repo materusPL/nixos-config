@@ -14,6 +14,9 @@
   programs.chromium.enable = true;
   programs.chromium.enablePlasmaBrowserIntegration = true;
 
+  services.guix.enable = true;
+
+  
   environment.systemPackages = with pkgs; [
 
     vivaldi

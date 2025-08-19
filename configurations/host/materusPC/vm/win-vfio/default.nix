@@ -14,18 +14,6 @@ let
       renice -n "-15" -p "$pid";
     done
     renice -n "-10" -p "$QEMU_PID";
-
-    echo "${materusArg.materusPC.hostCoresMask}" > /proc/irq/default_smp_affinity
-    for irq in /proc/irq/[0-9]*/smp_affinity; do 
-      if [ $(cat $irq) = "${materusArg.materusPC.allCoresMask}" ]; then
-        echo "${materusArg.materusPC.hostCoresMask}" > $irq 2> /dev/null 
-      fi;
-    done;
-    for irq in $(cat /proc/interrupts | grep vfio | cut -d ":" -f 1); do 
-      echo "${materusArg.materusPC.vmCoresMask}" > /proc/irq/$irq/smp_affinity; 
-    done
-
-
   '';
   startHook = /*''
 
@@ -50,29 +38,9 @@ let
       chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
       fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
       fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
-      #pkill Xwayland
 
       # Seems to fix reset bug for 7900 XTX
       echo "0" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/d3cold_allowed"
-
-      #####################################################################
-      # Weird bug on kernel 6.7+, after changing bar sizes and binding to vfio driver, performance after returning to host will be lower than expected
-      # binding to amdgpu after changing bar sizes and binding after it to vfio will work as expected.
-      # I could skip changing bar sizes since I'm able to use full bar, but keeping it just in case
-      #echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
-      #sleep 1s
-      #echo "${bar0_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
-      #echo "${bar2_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
-
-      #echo ''$VIRSH_GPU_VIDEO > /sys/bus/pci/drivers/amdgpu/bind
-      
-      #sleep 1s
-      #echo remove > /sys/bus/pci/devices/$VIRSH_GPU_VIDEO/drm/card*/uevent
-      #chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
-      #chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
-      #fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
-      #fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
-      #####################################################################
       
       echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
       echo ''$VIRSH_GPU_AUDIO > "/sys/bus/pci/devices/''${VIRSH_GPU_AUDIO}/driver/unbind"
@@ -116,12 +84,6 @@ let
 
     sysctl vm.stat_interval=1
     sysctl -w kernel.watchdog=1
-    echo "${materusArg.materusPC.allCoresMask}" > /proc/irq/default_smp_affinity
-    for irq in /proc/irq/[0-9]*/smp_affinity; do 
-      if [ $(cat $irq) = "${materusArg.materusPC.hostCoresMask}" ] || [ $(cat $irq) = "${materusArg.materusPC.vmCoresMask}" ]; then
-        echo "${materusArg.materusPC.allCoresMask}" > $irq 2> /dev/null 
-      fi;
-    done;
 
         
     sleep 1s
@@ -178,7 +140,7 @@ in
         fi
 
         #if [ ''$2 = "started" ] && [ ''$3 = "begin" ]; then
-          
+          ${startedHook}
         #fi
 
         if [ ''$2 = "release" ] && [ ''$3 = "end" ]; then

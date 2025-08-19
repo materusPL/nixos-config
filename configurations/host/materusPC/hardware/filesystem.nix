@@ -2,7 +2,7 @@
 {
   zramSwap = {
     enable = true;
-    memoryPercent = 25;
+    memoryPercent = 50;
   };
 
   swapDevices = [

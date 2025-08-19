@@ -26,6 +26,12 @@
       fsType = "btrfs";
       options = [ "subvol=@nix" "noatime" "compress=zstd" "ssd" "space_cache=v2" ];
     };
+    fileSystems."/data" =
+    {
+      device = "/dev/disk/by-label/HDD_DATA";
+      fsType = "btrfs";
+      options = [ "noatime" "compress=zstd" "nossd" "autodefrag" ];
+    };
   fileSystems."/boot" =
     {
       device = "/dev/disk/by-label/NixOS_Root_Laptop";
@@ -48,9 +54,14 @@
     };
 
   swapDevices = [{
-    device = "/var/.swapfile";
+    device = "/data/.swapfile";
     size = 32 * 1024;
   }];
+
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+  };
 
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
