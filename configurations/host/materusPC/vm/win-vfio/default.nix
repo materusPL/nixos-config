@@ -59,7 +59,6 @@ let
       systemctl set-property --runtime -- user.slice AllowedCPUs=${materusArg.materusPC.hostCores}
       systemctl set-property --runtime -- system.slice AllowedCPUs=${materusArg.materusPC.hostCores}
       systemctl set-property --runtime -- init.scope AllowedCPUs=${materusArg.materusPC.hostCores}
-      echo "${materusArg.materusPC.hostCoresMask}" > /sys/bus/workqueue/devices/writeback/cpumask
       echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 
       sysctl vm.stat_interval=120
@@ -107,7 +106,6 @@ let
     systemctl set-property --runtime -- user.slice AllowedCPUs=${materusArg.materusPC.allCores}
     systemctl set-property --runtime -- system.slice AllowedCPUs=${materusArg.materusPC.allCores}
     systemctl set-property --runtime -- init.scope AllowedCPUs=${materusArg.materusPC.allCores}
-    echo "${materusArg.materusPC.allCoresMask}" > /sys/bus/workqueue/devices/writeback/cpumask
 
   '';
 in
