@@ -55,7 +55,7 @@ let
     open-vsx.eamodio.gitlens
 
     #Other 
-    open-vsx.asciidoctor.asciidoctor-vscode
+    #open-vsx.asciidoctor.asciidoctor-vscode
     open-vsx.ms-azuretools.vscode-docker
     open-vsx.webfreak.debug
     open-vsx.mkhl.direnv

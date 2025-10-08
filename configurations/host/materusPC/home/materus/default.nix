@@ -102,7 +102,7 @@
   };
 
   home.packages = [
-    materusArg.pkgs.ffmpeg_7-amf-full
+    (pkgs.ffmpeg-full)
     (materusArg.pkgs.polymc.wrap {
       extraJDKs = [ pkgs.graalvm-ce ];
       extraLibs = [ ];

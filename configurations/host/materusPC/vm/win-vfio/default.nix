@@ -8,8 +8,9 @@ let
   VM_UUID = "ad2632db-0da0-4204-98b3-0592a185ebd0";
 
   startedHook = ''
-    QEMU_PID=$(ps aux | grep qemu-system-x86_64 | grep "${VM_UUID}" | tr -s ' ' | cut -d " " -f 2)
+    # Renice QEMU process and threads
 
+    QEMU_PID=$(ps aux | grep qemu-system-x86_64 | grep "${VM_UUID}" | tr -s ' ' | cut -d " " -f 2)
     for pid in $(ls /proc/$QEMU_PID/task); do 
       renice -n "-15" -p "$pid";
     done
@@ -29,25 +30,36 @@ let
     ''
     +*/
     ''
+      # Service for my shared qcow2 drive, it's mounted to host when VM not running
       systemctl stop windows-share-mount.service
+      systemctl stop systemd-nspawn@archlinux
+      
+      # Remember non symlink path to card and render, symlink might get deleted
+      DRI_RENDER=$(readlink -f /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render)
+      DRI_CARD=$(readlink -f /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card)
 
-      # Make sure nothing renders on gpu to prevent "sysfs: cannot create duplicate filename" after rebinding to amdgpu
+      # Send "remove" event so wayland compositors can release gpu, sleep because it doesnt work instantly
       echo remove > /sys/bus/pci/devices/$VIRSH_GPU_VIDEO/drm/card*/uevent
-      sleep 2s
-      chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render 
-      chmod 0 /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
-      fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-render
-      fuser -k /dev/dri/by-path/pci-$VIRSH_GPU_VIDEO-card
+      sleep 3s
+
+      # Remove all permissions from DRI nodes so no new processes will attach to it, kill all processes currently using it 
+      chmod 0 $DRI_RENDER 
+      chmod 0 $DRI_CARD
+      fuser -k $DRI_RENDER
+      fuser -k $DRI_CARD
 
       # Seems to fix reset bug for 7900 XTX
       echo "0" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/d3cold_allowed"
       
+      # Unbind GPU from drivers
       echo ''$VIRSH_GPU_VIDEO > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/driver/unbind"
       echo ''$VIRSH_GPU_AUDIO > "/sys/bus/pci/devices/''${VIRSH_GPU_AUDIO}/driver/unbind"
 
+      # Optionally resize bars, it's pointless for me since it's full size here but keeping just in case
       echo "${bar0_guest}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
       echo "${bar2_guest}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
 
+      # Compact memory if possible to make continuous space for transparent huge pages
       sync
       echo "3" > /proc/sys/vm/drop_caches
       sync
@@ -55,14 +67,17 @@ let
       
 
       
-
+      # Set host cgroups and workqueue to use defined cpu cores (I'm using first half of cpu on host, second half on guest)
       systemctl set-property --runtime -- user.slice AllowedCPUs=${materusArg.materusPC.hostCores}
       systemctl set-property --runtime -- system.slice AllowedCPUs=${materusArg.materusPC.hostCores}
       systemctl set-property --runtime -- init.scope AllowedCPUs=${materusArg.materusPC.hostCores}
+      echo "${materusArg.materusPC.hostCoresMask}" > /sys/bus/workqueue/devices/writeback/cpumask
+
+      # Set performance governor if not set
       echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 
+      # Reduce interval of memory statistics to 120s from default 1s
       sysctl vm.stat_interval=120
-      sysctl -w kernel.watchdog=0
 
 
       
@@ -79,10 +94,11 @@ let
     #  exec 3>&1 4>&2
     #  trap 'exec 2>&4 1>&3' 0 1 2 3
     #  exec 1>/home/materus/stoplogfile.out 2>&1
-    echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+
+
+    #  echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 
     sysctl vm.stat_interval=1
-    sysctl -w kernel.watchdog=1
 
         
     sleep 1s
@@ -94,6 +110,7 @@ let
 
     echo "${bar0_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource0_resize"
     echo "${bar2_host}" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/resource2_resize"
+
     echo "1" > "/sys/bus/pci/devices/''${VIRSH_GPU_VIDEO}/d3cold_allowed"
 
 
@@ -106,6 +123,7 @@ let
     systemctl set-property --runtime -- user.slice AllowedCPUs=${materusArg.materusPC.allCores}
     systemctl set-property --runtime -- system.slice AllowedCPUs=${materusArg.materusPC.allCores}
     systemctl set-property --runtime -- init.scope AllowedCPUs=${materusArg.materusPC.allCores}
+    echo "${materusArg.materusPC.allCoresMask}" > /sys/bus/workqueue/devices/writeback/cpumask
 
   '';
 in
@@ -145,20 +163,7 @@ in
           ${stopHook}
         fi
 
-      fi
-
-
-      if [ ''$1 = "windows" ]; then
-        if [ ''$2 = "prepare" ] && [ ''$3 = "begin" ]; then
-          systemctl stop windows-share-mount.service
-        fi
-
-        if [ ''$2 = "release" ] && [ ''$3 = "end" ]; then
-          systemctl start windows-share-mount.service
-        fi
-      fi
-
-    
+      fi    
     '';
   };
 
