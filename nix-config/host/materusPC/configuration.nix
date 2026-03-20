@@ -307,6 +307,6 @@ in
     AllowHybridSleep=no
     AllowSuspendThenHibernate=no
   '';
-
+  
   system.stateVersion = "25.11";
 }

@@ -11,7 +11,7 @@
   '';
 
   networking.hostName = "materusPC";
-  networking.wireless.iwd.enable = true;
+  #networking.wireless.iwd.enable = true;
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
 

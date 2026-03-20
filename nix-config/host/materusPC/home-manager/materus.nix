@@ -1,5 +1,8 @@
-{ pkgs, materusArgs, ... }:
+{ pkgs, materusArgs, config, ... }:
 {
+  mkk.neovim.enable = true;
+
+  mkk.dir = config.lib.file.mkOutOfStoreSymlink "/mkk/config";
   programs.git = {
     enable = true;
     lfs.enable = true;

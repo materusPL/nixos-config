@@ -20,7 +20,7 @@
 
   xdg.enable = true;
   xdg.configFile."zsh/cfg".source =
-    config.lib.file.mkOutOfStoreSymlink "/mkk/config/config/shell/zsh";
+    "${config.mkk.dir}/config/shell/zsh";
   xdg.configFile."zsh/data/plugins/powerlevel10k".source =
     "${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k";
   xdg.configFile."zsh/data/plugins/zsh-history-substring-search".source =

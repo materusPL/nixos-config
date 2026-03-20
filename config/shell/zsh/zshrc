@@ -16,7 +16,6 @@ if zmodload zsh/terminfo && (( "$terminfo[colors]" >= "256" )); then
     __MATERUS_ZSH_256COLORS="${__MATERUS_ZSH_256COLORS:-0}"; 
 fi
 
-
 #region Plugins
 # Clone plugins if not exists
 [ -d $ZSH_DATA_DIR/plugins/powerlevel10k ] || git clone https://github.com/romkatv/powerlevel10k $ZSH_DATA_DIR/plugins/powerlevel10k
@@ -104,6 +103,11 @@ speedtest() {
 }
 #endregion
 
+#region Aliases
+if [[ "$TERM" = "xterm-kitty" ]]; then 
+    alias ssh="kitty +kitten ssh"
+fi
+#endregion
 
 if [[ "$__MATERUS_ZSH_256COLORS" = "1" ]] ; then [[ ! -f ${ZSH_CONFIG_DIR}/p10kcfg/fullcolor.zsh ]] || source ${ZSH_CONFIG_DIR}/p10kcfg/fullcolor.zsh;
 else [[ ! -f ${ZSH_CONFIG_DIR}/p10kcfg/compatibility.zsh ]]  || source ${ZSH_CONFIG_DIR}/p10kcfg/compatibility.zsh;

@@ -73,7 +73,7 @@
           };
           modules = [
             ./nix-config/host/${host}
-            ./nix-config/shared
+            (import ./nix-config/shared false)
           ];
 
         });
@@ -109,7 +109,7 @@
             in
             [
               ./nix-config/home/${user}
-              ./nix-config/shared
+              (import ./nix-config/shared true)
             ]
             ++ (if (host != null && builtins.pathExists host-path) then [ host-path ] else [ ]);
           extraSpecialArgs = extraArgs // {
@@ -120,13 +120,17 @@
     in
     rec {
       nixosConfigurations = {
-        materusPC = makeSystem { host = "materusPC"; };
+        materusPC = makeSystem {
+          host = "materusPC";
+          stable = true;
+        };
       };
 
       homeConfigurations = {
         "materus@materusPC" = makeHome {
           user = "materus";
           host = "materusPC";
+          stable = true;
         };
       };
 
