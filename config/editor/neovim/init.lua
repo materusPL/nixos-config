@@ -1,3 +1,6 @@
+vim.wo.number = true
+vim.opt.clipboard:append { 'unnamed', 'unnamedplus' } 
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if vim.fn.executable("git") == 1 then
   if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -36,7 +39,5 @@ if vim.fn.executable("git") == 1 then
   }
 
   require("lazy").setup(plugins, opts)
-
   vim.cmd [[colorscheme dracula]]
-  vim.cmd [[set number]]
 end
