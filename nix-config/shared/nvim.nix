@@ -19,7 +19,6 @@ isHm:
         xdg.configFile."nvim/init.lua".source = "${config.mkk.dir}/config/editor/neovim/init.lua";
         home.packages = [
           pkgs.neovim
-          pkgs.neovide
           pkgs.fd
           pkgs.ripgrep
           pkgs.tree-sitter
@@ -28,10 +27,8 @@ isHm:
     else
       # NixOS
       lib.mkIf config.mkk.neovim.enable {
-
         environment.systemPackages = [
           pkgs.neovim
-          pkgs.neovide
         ];
       };
 }

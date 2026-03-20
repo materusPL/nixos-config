@@ -18,6 +18,7 @@
   };
   home.packages = with pkgs; [
     materusArgs.inputs.nixerus.packages.x86_64-linux.polymc
+    neovide
 
     curl
     wget
