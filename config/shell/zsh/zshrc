@@ -107,6 +107,13 @@ speedtest() {
 if [[ "$TERM" = "xterm-kitty" ]]; then 
     alias ssh="kitty +kitten ssh"
 fi
+if [[ $(whence -p "nvim") ]]; then
+    EDITOR="${EDITOR:-nvim}"
+    alias vim="nvim"
+    alias vi="nvim"
+    alias vimdiff="nvim -d"
+fi
+
 #endregion
 
 if [[ "$__MATERUS_ZSH_256COLORS" = "1" ]] ; then [[ ! -f ${ZSH_CONFIG_DIR}/p10kcfg/fullcolor.zsh ]] || source ${ZSH_CONFIG_DIR}/p10kcfg/fullcolor.zsh;
