@@ -1,4 +1,8 @@
-vim.wo.number = true
+vim.opt.number = true
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 4
+vim.opt.softtabstop = 4
+vim.opt.tabstop = 4
 vim.opt.clipboard:append { 'unnamed', 'unnamedplus' } 
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
