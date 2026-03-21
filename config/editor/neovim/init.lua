@@ -45,6 +45,9 @@ if vim.fn.executable("git") == 1 then
       lazy = false,
       build = ':TSUpdate'
     },
+    {
+      'lambdalisue/vim-suda'
+    },
     --[[
     {
       "kevinhwang91/nvim-ufo",
