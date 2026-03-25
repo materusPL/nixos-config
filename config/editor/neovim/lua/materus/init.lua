@@ -27,14 +27,35 @@ if vim.fn.executable("git") == 1 then
   local opts = {}
   local plugins = {
     {
-      "Mofiqul/dracula.nvim",
+      'stevearc/oil.nvim',
+      ---@module 'oil'
+      ---@type oil.setupopts
+      opts = {},
+      -- optional dependencies
+      dependencies = { { "nvim-mini/mini.icons", opts = {} } },
+      -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+      -- lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+      lazy = false,
+    },
+    {
+      "nvim-neo-tree/neo-tree.nvim",
+      branch = "v3.x",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        "muniftanjim/nui.nvim",
+        "nvim-tree/nvim-web-devicons", 
+      },
+      lazy = false, 
+    },
+    {
+      "mofiqul/dracula.nvim",
       lazy = false,
       priority = 1000,
       opts = {}
     },
     {
       "romgrk/barbar.nvim",
-      init = function() vim.g.barbar_auto_setup = false end,
+      init = function() vim.g.barbar_auto_setup = true end,
       dependencies = { "nvim-tree/nvim-web-devicons", "lewis6991/gitsigns.nvim" }
     },
     {
