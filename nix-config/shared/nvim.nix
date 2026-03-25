@@ -16,9 +16,21 @@ isHm:
     if isHm then
       # Home Manager
       lib.mkIf config.mkk.neovim.enable {
-        xdg.configFile."nvim/init.lua".source = "${config.mkk.dir}/config/editor/neovim/init.lua";
+        xdg.configFile."nvim/lua/materus".source = "${config.mkk.dir}/config/editor/neovim/lua/materus";
+        programs.neovim = {
+          enable = true;
+          plugins = [
+            pkgs.vimPlugins.nvim-treesitter.withAllGrammars
+          ];
+
+          extraLuaConfig = lib.mkAfter ''
+            MATERUS = {
+              NIXOS = 1
+            }
+            require("materus")
+          '';
+        };
         home.packages = [
-          pkgs.neovim
           pkgs.fd
           pkgs.ripgrep
           pkgs.tree-sitter

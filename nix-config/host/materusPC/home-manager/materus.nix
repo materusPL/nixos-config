@@ -27,6 +27,7 @@
     packwiz
     ani-cli
     mpv
+    kitty
 
     libreoffice-qt6-fresh
 
