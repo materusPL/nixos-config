@@ -61,6 +61,7 @@
           sys-nixpkgs = if stable then nixpkgs else nixpkgs-unstable;
           materusArgs = {
             inherit files;
+            inherit arch;
             inputs = inp;
             flake-path = path;
             host-path = path + "/nix-config/host/${host}";
@@ -96,6 +97,7 @@
           };
           materusArgs = {
             inherit files;
+            inherit arch;
             inputs = inp;
             flake-path = path;
             home-path = path + "/nix-config/home/${user}";

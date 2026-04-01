@@ -73,10 +73,13 @@ if vim.fn.executable("git") == 1 then
       lazy = false, 
     },
     {
-      "mofiqul/dracula.nvim",
+      "samharju/synthweave.nvim",
       lazy = false,
       priority = 1000,
-      opts = {}
+      opts = {},
+      config = function()
+        vim.cmd.colorscheme("synthweave")
+      end
     },
     {
       "romgrk/barbar.nvim",
@@ -145,5 +148,4 @@ if vim.fn.executable("git") == 1 then
     }
     require('nvim-treesitter').install { 'lua' }
   end
-  vim.cmd [[colorscheme dracula]]
 end

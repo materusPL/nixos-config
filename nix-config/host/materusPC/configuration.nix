@@ -102,12 +102,6 @@ in
     kdePackages.kcalc
     vim
     nano
-    (vscodium.fhsWithPackages (
-      ps: with ps; [
-        nixfmt-rfc-style
-        nixd
-      ]
-    ))
 
     obsidian
     git-crypt
