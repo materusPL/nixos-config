@@ -79,7 +79,7 @@ in
         kerrickstaley.layered-settings
         mkhl.direnv
         betterthantomorrow.joyride
-        robbowen.synthwave-vscode
+        dracula-theme.theme-dracula
 
         # Jsonnet
         grafana.vscode-jsonnet
@@ -107,7 +107,7 @@ in
 
         "window.dialogStyle" = "custom";
         "window.titleBarStyle" = "custom";
-        "workbench.colorTheme" = "SynthWave '84";
+        "workbench.colorTheme" = "Dracula Theme";
         "editor.fontFamily" = "'Hack Nerd Font', 'monospace', monospace";
 
         "direnv.path.executable" = "${pkgs.direnv}/bin/direnv";

@@ -73,12 +73,12 @@ if vim.fn.executable("git") == 1 then
       lazy = false, 
     },
     {
-      "samharju/synthweave.nvim",
+      "Mofiqul/dracula.nvim",
       lazy = false,
       priority = 1000,
       opts = {},
       config = function()
-        vim.cmd.colorscheme("synthweave")
+        vim.cmd.colorscheme("dracula")
       end
     },
     {
