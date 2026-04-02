@@ -49,44 +49,50 @@ in
     enable = true;
     mutableExtensionsDir = true;
     profiles.default.enableExtensionUpdateCheck = true;
-    profiles.default.extensions =
-      let
-        market = (
-          materusArgs.inputs.nix-vscode-extensions.extensions."${materusArgs.arch}".forVSCodeVersion
-            config.programs.vscode.package.version
-        );
-        marketNv = (materusArgs.inputs.nix-vscode-extensions.extensions."${materusArgs.arch}");
-      in
-      with market.vscode-marketplace;
-      with marketNv.vscode-marketplace;
-      [
-        # Python
-        #ms-python.vscode-pylance
-        ms-python.python
-        ms-python.debugpy
-        ms-python.vscode-python-envs
+    profiles.default.extensions = with pkgs.nix-vscode-extensions.vscode-marketplace; [
+      # VSCode
+      kerrickstaley.layered-settings
+      mkhl.direnv
+      betterthantomorrow.joyride
+      dracula-theme.theme-dracula
+      leonardssh.vscord
+      ms-vscode.hexeditor
+      pkief.material-icon-theme
+      pkief.material-product-icons
 
-        # Git
-        eamodio.gitlens
-        donjayamanne.githistory
-        waderyan.gitblame
-        codezombiech.gitignore
+      # Python
+      #ms-python.vscode-pylance
+      ms-python.python
+      ms-python.debugpy
+      ms-python.vscode-python-envs
 
-        # Lua
-        sumneko.lua
+      # Git
+      eamodio.gitlens
+      donjayamanne.githistory
+      waderyan.gitblame
+      codezombiech.gitignore
 
-        # VSCode
-        kerrickstaley.layered-settings
-        mkhl.direnv
-        betterthantomorrow.joyride
-        dracula-theme.theme-dracula
+      # Lua
+      sumneko.lua
 
-        # Jsonnet
-        grafana.vscode-jsonnet
+      # Jsonnet
+      grafana.vscode-jsonnet
 
-        # Nix
-        jnoortheen.nix-ide
-      ];
+      # Nix
+      jnoortheen.nix-ide
+
+      # C++
+      twxs.cmake
+      llvm-vs-code-extensions.vscode-clangd
+      ms-vscode.cmake-tools
+      cs128.cs128-clang-tidy
+      xaver.clang-format
+
+      # Other
+      redhat.vscode-yaml
+      redhat.vscode-xml
+      webfreak.debug
+    ];
     package = (
       pkgs.vscodium.fhsWithPackages (
         ps: with ps; [
@@ -95,6 +101,8 @@ in
           direnv
           jsonnet
           jsonnet-language-server
+          clang-tools
+          clang
         ]
       )
     );
@@ -104,17 +112,22 @@ in
   home.activation.mutableFileGeneration =
     let
       source = jsonFormat.generate "settings.nix" {
-
+        # VSCode
         "window.dialogStyle" = "custom";
         "window.titleBarStyle" = "custom";
         "workbench.colorTheme" = "Dracula Theme";
+        "workbench.iconTheme" = "material-icon-theme";
         "editor.fontFamily" = "'Hack Nerd Font', 'monospace', monospace";
-
         "direnv.path.executable" = "${pkgs.direnv}/bin/direnv";
+        "vscord.app.name" = "VSCodium";
 
+        # Typescript
         "typescript.tsserver.maxTsServerMemory" = 1024 * 8;
         "typescript.tsserver.nodePath" = "${pkgs.nodejs}/bin/node";
-
+        # Nix
+        "[nix]" = {
+          "editor.defaultFormatter" = "jnoortheen.nix-ide";
+        };
         "nix.enableLanguageServer" = true;
         "nix.formatterPath" = "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
         "nix.serverPath" = "${pkgs.nixd}/bin/nixd";
@@ -131,14 +144,33 @@ in
             };
             "options" = {
               "nixos" = {
-                "expr" = "(builtins.getFlake (builtins.toString \"/mkk/config\" )).nixosConfigurations.materusPC.options";
+                "expr" =
+                  "(builtins.getFlake (builtins.toString \"/mkk/config\" )).nixosConfigurations.materusPC.options";
               };
               "home-manager" = {
-                "expr" = "(builtins.getFlake (builtins.toString \"/mkk/config\")).homeConfigurations.materus.options";
+                "expr" =
+                  "(builtins.getFlake (builtins.toString \"/mkk/config\")).homeConfigurations.materus.options";
               };
             };
           };
         };
+        # C++
+        "C_Cpp.clang_format_path" = "${pkgs.clang-tools}/bin/clang-format";
+        "C_Cpp.clang_format_fallbackStyle" = "Microsoft";
+        "clang-tidy.executable" = "${pkgs.clang-tools}/bin/clang-tidy";
+        "[cpp]" = {
+          "editor.defaultFormatter" = "xaver.clang-format";
+        };
+        "[c]" = {
+          "editor.defaultFormatter" = "xaver.clang-format";
+        };
+        "cmake.showOptionsMovedNotification" = false;
+        "cmake.pinnedCommands" = [
+          "workbench.action.tasks.configureTaskRunner"
+          "workbench.action.tasks.runTask"
+        ];
+        "clang-format.fallbackStyle" = "Microsoft";
+
       };
       target = config.xdg.configFile."VSCodium/User/settings.nix.jsonnet".target;
       command = ''

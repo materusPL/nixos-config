@@ -94,6 +94,9 @@
           pkgs = import home-nixpkgs {
             system = arch;
             config.allowUnfree = true;
+            overlays = [
+              inp.nix-vscode-extensions.overlays.default 
+            ];
           };
           materusArgs = {
             inherit files;
