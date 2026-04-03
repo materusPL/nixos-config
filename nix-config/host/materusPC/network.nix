@@ -46,4 +46,7 @@
       proxy = { };
     };
   };
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="net", NAME=="en*", RUN+="${pkgs.ethtool}/bin/ethtool -s $name wol g"
+  '';
 }

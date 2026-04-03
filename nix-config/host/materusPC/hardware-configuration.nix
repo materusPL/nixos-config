@@ -76,25 +76,6 @@ in
   ]
   ++ video;
 
-  boot.supportedFilesystems = [
-    "ntfs"
-    "btrfs"
-    "vfat"
-    "exfat"
-    "ext4"
-  ];
-  boot.tmp.useTmpfs = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot/efi";
-  boot.loader.grub = {
-    enable = true;
-    efiSupport = true;
-    device = "nodev";
-    gfxmodeEfi = pkgs.lib.mkDefault "1920x1080@240";
-    gfxmodeBios = pkgs.lib.mkDefault "1920x1080@240";
-    useOSProber = true;
-    memtest86.enable = true;
-  };
 
   fileSystems."/" = {
     device = "/dev/disk/by-label/materusPC_ROOT";
@@ -107,9 +88,6 @@ in
       "space_cache=v2"
     ];
   };
-
-  boot.initrd.luks.devices."ROOT_1".device = "/dev/disk/by-label/CRYPT_ROOT_1";
-  boot.initrd.luks.devices."ROOT_2".device = "/dev/disk/by-label/CRYPT_ROOT_2";
 
   fileSystems."/home" = {
     device = "/dev/disk/by-label/materusPC_ROOT";

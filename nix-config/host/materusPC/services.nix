@@ -3,8 +3,12 @@
   imports = [
     #region KDE
     {
-      services.displayManager.sddm.enable = true;
-      services.displayManager.sddm.wayland.enable = true;
+      services.displayManager = {
+        autoLogin.enable = true;
+        autoLogin.user = "materus";
+        sddm.enable = true;
+        sddm.wayland.enable = true;
+      };
 
       services.desktopManager.plasma6.enable = true;
       services.desktopManager.plasma6.enableQt5Integration = true;
@@ -40,7 +44,7 @@
   #endregion
   programs.kdeconnect.enable = true;
   services.libinput.enable = true;
-  
+
   services.dbus.enable = true;
   services.dbus.packages = [ pkgs.gcr ];
 

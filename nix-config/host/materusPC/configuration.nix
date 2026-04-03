@@ -17,14 +17,6 @@ let
   });
 in
 {
-  # Use the systemd-boot EFI boot loader.
-
-  boot.plymouth.enable = true;
-
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
-
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linux_zen;
 
   # Set your time zone.
   time.timeZone = "Europe/Warsaw";

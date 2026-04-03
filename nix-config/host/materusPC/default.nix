@@ -6,6 +6,7 @@
     ./audio.nix
     ./network.nix
     ./services.nix
+    ./boot.nix
 
     ./virtualization/libvirt.nix
     ./virtualization/vfio.nix

@@ -42,6 +42,7 @@
       files = {
         ssh-keys = {
           materus = ./extra-files/ssh/materus.pub;
+          waffentrager = ./extra-files/ssh/waffentrager.pub;
         };
         patches = {
           bwrap = ./extra-files/patches/bubblewrap.patch;
