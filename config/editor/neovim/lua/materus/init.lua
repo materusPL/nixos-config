@@ -130,7 +130,7 @@ if vim.fn.executable("git") == 1 then
     }]]
   }
 
-  require("lazy").setup(plugins, opts)
+  
   if vim.fn.executable("tree-sitter") == 1 and MATERUS.NIXOS ~= 1 then
     table.insert(plugins, {
       'nvim-treesitter/nvim-treesitter',
@@ -138,7 +138,8 @@ if vim.fn.executable("git") == 1 then
       build = ':TSUpdate'
     })
   end
-
+  
+  require("lazy").setup(plugins, opts)
   if vim.fn.executable("tree-sitter") == 1 and MATERUS.NIXOS ~= 1 then
     require('nvim-treesitter').setup {
       -- Directory to install parsers and queries to (prepended to `runtimepath` to have priority)
