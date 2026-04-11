@@ -14,6 +14,7 @@ isHm:
 
   imports = [
     (import ./nvim.nix isHm)
+    ./nix.nix
   ];
   config.mkk.var = import ./private/variables.nix;
   config._module.args.mkk = config.mkk.var;

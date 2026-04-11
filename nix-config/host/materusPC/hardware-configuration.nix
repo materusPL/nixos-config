@@ -155,6 +155,11 @@ in
   };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x1002", ATTR{device}=="0x744c", ATTR{power/control}="on"
+  '';
+
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   hardware.sane.enable = true;

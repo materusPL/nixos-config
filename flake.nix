@@ -63,6 +63,7 @@
           materusArgs = {
             inherit files;
             inherit arch;
+            inherit self;
             inputs = inp;
             flake-path = path;
             host-path = path + "/nix-config/host/${host}";
@@ -102,6 +103,7 @@
           materusArgs = {
             inherit files;
             inherit arch;
+            inherit self;
             inputs = inp;
             flake-path = path;
             home-path = path + "/nix-config/home/${user}";

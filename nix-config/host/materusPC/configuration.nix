@@ -140,8 +140,8 @@ in
     PATH = [ "\${XDG_BIN_HOME}" ];
   };
   environment.shellInit = ''
-    if ! [ -z "$DISPLAY" ]; then xhost +si:localuser:root &> /dev/null; fi;
-    if ! [ -z "$DISPLAY" ]; then xhost +si:localuser:$USER &> /dev/null; fi;
+    if ! [ -z "$DISPLAY" ]; then ${pkgs.xorg.xhost}/bin/xhost +si:localuser:root &> /dev/null; fi;
+    if ! [ -z "$DISPLAY" ]; then ${pkgs.xorg.xhost}/bin/xhost +si:localuser:$USER &> /dev/null; fi;
   '';
   i18n.inputMethod.enabled = "fcitx5";
   i18n.inputMethod.fcitx5.addons = [
@@ -294,5 +294,7 @@ in
     AllowSuspendThenHibernate=no
   '';
   
+
+
   system.stateVersion = "25.11";
 }
