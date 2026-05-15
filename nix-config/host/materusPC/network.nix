@@ -9,7 +9,7 @@
   sops.templates."networkmanager.env".content = ''
     WIREGUARD_PRIVATEKEY="${config.sops.placeholder.wireguard}"
   '';
-
+  networking.nftables.enable = true;
   networking.hostName = "materusPC";
   #networking.wireless.iwd.enable = true;
   networking.networkmanager.enable = true;
