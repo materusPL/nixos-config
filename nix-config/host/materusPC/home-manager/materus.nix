@@ -88,6 +88,9 @@ in
       cs128.cs128-clang-tidy
       xaver.clang-format
 
+      # D
+      webfreak.code-d
+
       # Other
       redhat.vscode-yaml
       redhat.vscode-xml
@@ -103,13 +106,16 @@ in
           jsonnet-language-server
           clang-tools
           clang
+          dmd
+          ldc
         ]
       )
     );
   };
 
   xdg.configFile."VSCodium/User/settings.nix.jsonnet".enable = false;
-  home.activation.mutableFileGeneration =
+  xdg.configFile."VSCodium/User/settings_generated.json".enable = false;
+  home.activation.VSCodiumSetup =
     let
       source = jsonFormat.generate "settings.nix" {
         # VSCode
@@ -174,12 +180,17 @@ in
       };
       target = config.xdg.configFile."VSCodium/User/settings.nix.jsonnet".target;
       command = ''
-        echo "Copying mutable home files for $HOME"
-        $VERBOSE_ECHO "${source} -> ${target}"
-        $DRY_RUN_CMD cp --remove-destination --no-preserve=mode ${source} ${target}
+        echo "Copying mutable VSCodium files"
+        verboseEcho "${source} -> ${target}"
+        run cp --remove-destination --no-preserve=mode ${source} ${target}
+
+        echo "Remove old settings_generated.json"
+        if [ -f '${config.xdg.configFile."VSCodium/User/settings_generated.json".target}' ]; then
+          run rm -f ${config.xdg.configFile."VSCodium/User/settings_generated.json".target}
+        fi
       '';
     in
-    (lib.hm.dag.entryAfter [ "linkGeneration" ] command);
+    (lib.hm.dag.entryAfter [ "linkGeneration" "writeBoundary" ] command);
 
   xdg.dataFile."java-runtimes/graalvm-oracle-17".source = pkgs.graalvmPackages.graalvm-oracle_17;
   xdg.dataFile."java-runtimes/graalvm-oracle-latest".source = pkgs.graalvmPackages.graalvm-oracle;
