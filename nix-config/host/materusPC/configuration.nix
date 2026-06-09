@@ -140,8 +140,8 @@ in
     PATH = [ "\${XDG_BIN_HOME}" ];
   };
   environment.shellInit = ''
-    if ! [ -z "$DISPLAY" ]; then ${pkgs.xorg.xhost}/bin/xhost +si:localuser:root &> /dev/null; fi;
-    if ! [ -z "$DISPLAY" ]; then ${pkgs.xorg.xhost}/bin/xhost +si:localuser:$USER &> /dev/null; fi;
+    if ! [ -z "$DISPLAY" ]; then ${pkgs.xhost}/bin/xhost +si:localuser:root &> /dev/null; fi;
+    if ! [ -z "$DISPLAY" ]; then ${pkgs.xhost}/bin/xhost +si:localuser:$USER &> /dev/null; fi;
   '';
   i18n.inputMethod.enabled = "fcitx5";
   i18n.inputMethod.fcitx5.addons = [
@@ -255,7 +255,6 @@ in
       [
         "nix-command"
         "flakes"
-        "no-url-literals"
       ]
     ];
     auto-optimise-store = true;
@@ -287,12 +286,12 @@ in
     promptInit = '''';
   };
 
-  systemd.sleep.extraConfig = ''
-    AllowSuspend=yes
-    AllowHibernation=no
-    AllowHybridSleep=no
-    AllowSuspendThenHibernate=no
-  '';
+  systemd.sleep.settings.Sleep = {
+    AllowSuspend="yes";
+    AllowHibernation="no";
+    AllowHybridSleep="no";
+    AllowSuspendThenHibernate="no";
+  };
   
 
 

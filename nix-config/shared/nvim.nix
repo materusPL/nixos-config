@@ -19,11 +19,13 @@ isHm:
         xdg.configFile."nvim/lua/materus".source = "${config.mkk.dir}/config/editor/neovim/lua/materus";
         programs.neovim = {
           enable = true;
+          withRuby = true;
+          withPython3 = true;
           plugins = [
             pkgs.vimPlugins.nvim-treesitter.withAllGrammars
           ];
 
-          extraLuaConfig = lib.mkAfter ''
+          initLua = lib.mkAfter ''
             MATERUS = {
               NIXOS = 1
             }

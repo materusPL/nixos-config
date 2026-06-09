@@ -6,7 +6,7 @@
       type = "github";
       owner = "NixOS";
       repo = "nixpkgs";
-      ref = "nixos-25.11";
+      ref = "nixos-26.05";
     };
 
     nixpkgs-unstable = {
@@ -19,7 +19,7 @@
     materus-inputs = {
       url = "path:./nix-config/subflake";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.url = "github:nix-community/home-manager/release-25.11";
+      inputs.home-manager.url = "github:nix-community/home-manager/release-26.05";
     };
     materus-inputs-unstable = {
       url = "path:./nix-config/subflake";

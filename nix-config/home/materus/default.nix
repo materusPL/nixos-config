@@ -41,22 +41,22 @@
   xdg.userDirs.desktop = lib.mkDefault "${config.home.homeDirectory}/Pulpit";
   xdg.userDirs.documents = lib.mkDefault "${config.home.homeDirectory}/Dokumenty";
   xdg.userDirs.download = lib.mkDefault "${config.home.homeDirectory}/Pobrane";
-  xdg.userDirs.music = lib.mkDefault "${config.xdg.userDirs.extraConfig.XDG_AUDIO_DIR}/Muzyka";
+  xdg.userDirs.music = lib.mkDefault "${config.xdg.userDirs.extraConfig.AUDIO}/Muzyka";
   xdg.userDirs.pictures = lib.mkDefault "${config.home.homeDirectory}/Obrazy";
   xdg.userDirs.publicShare = lib.mkDefault "${config.home.homeDirectory}/Publiczny";
   xdg.userDirs.templates = lib.mkDefault "${config.home.homeDirectory}/Szablony";
   xdg.userDirs.videos = lib.mkDefault "${config.home.homeDirectory}/Wideo";
   xdg.userDirs.extraConfig = {
-    XDG_MISC_DIR = lib.mkDefault "${config.home.homeDirectory}/Inne";
-    XDG_PIC_SCREENSHOTS_DIR = lib.mkDefault "${config.xdg.userDirs.pictures}/Zrzuty ekranu";
-    XDG_PIC_MEMES_DIR = lib.mkDefault "${config.xdg.userDirs.pictures}/Memy";
-    XDG_PIC_MISC_DIR = lib.mkDefault "${config.xdg.userDirs.pictures}/Inne";
-    XDG_PIC_PHOTOS_DIR = lib.mkDefault "${config.xdg.userDirs.pictures}/Zdjęcia";
-    XDG_PIC_AVATARS_DIR = "${config.xdg.userDirs.pictures}/Avatar";
-    XDG_AUDIO_DIR = lib.mkDefault "${config.home.homeDirectory}/Audio";
-    XDG_KEYS_DIR = lib.mkDefault "${config.xdg.userDirs.documents}/Klucze";
+    MISC = lib.mkDefault "${config.home.homeDirectory}/Inne";
+    PIC_SCREENSHOTS = lib.mkDefault "${config.xdg.userDirs.pictures}/Zrzuty ekranu";
+    PIC_MEMES = lib.mkDefault "${config.xdg.userDirs.pictures}/Memy";
+    PIC_MISC = lib.mkDefault "${config.xdg.userDirs.pictures}/Inne";
+    PIC_PHOTOS = lib.mkDefault "${config.xdg.userDirs.pictures}/Zdjęcia";
+    PIC_AVATARS = "${config.xdg.userDirs.pictures}/Avatar";
+    AUDIO = lib.mkDefault "${config.home.homeDirectory}/Audio";
+    KEYS = lib.mkDefault "${config.xdg.userDirs.documents}/Klucze";
   };
-
+  xdg.userDirs.setSessionVariables = true;
 
   home.sessionVariables = {
   };

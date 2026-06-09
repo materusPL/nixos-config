@@ -45,7 +45,7 @@ in
     jsonnet-language-server
   ];
 
-  programs.vscode = {
+  programs.vscodium = {
     enable = true;
     mutableExtensionsDir = true;
     profiles.default.enableExtensionUpdateCheck = true;
@@ -88,9 +88,6 @@ in
       cs128.cs128-clang-tidy
       xaver.clang-format
 
-      # D
-      webfreak.code-d
-
       # Other
       redhat.vscode-yaml
       redhat.vscode-xml
@@ -99,15 +96,13 @@ in
     package = (
       pkgs.vscodium.fhsWithPackages (
         ps: with ps; [
-          nixfmt-rfc-style
+          nixfmt
           nixd
           direnv
           jsonnet
           jsonnet-language-server
           clang-tools
           clang
-          dmd
-          ldc
         ]
       )
     );
@@ -135,7 +130,7 @@ in
           "editor.defaultFormatter" = "jnoortheen.nix-ide";
         };
         "nix.enableLanguageServer" = true;
-        "nix.formatterPath" = "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
+        "nix.formatterPath" = "${pkgs.nixfmt}/bin/nixfmt";
         "nix.serverPath" = "${pkgs.nixd}/bin/nixd";
         "nix.serverSettings" = {
 

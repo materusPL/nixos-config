@@ -44,7 +44,6 @@
 
     vital
     odin2
-    surge
     fire
     lsp-plugins
   ];
