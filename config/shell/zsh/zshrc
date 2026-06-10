@@ -16,6 +16,13 @@ if zmodload zsh/terminfo && (( "$terminfo[colors]" >= "256" )); then
     __MATERUS_ZSH_256COLORS="${__MATERUS_ZSH_256COLORS:-0}"; 
 fi
 
+#MSYS
+if [[ "$(uname -s)" =~ ^MSYS_NT.* ]]; then
+    #Use windows symlink instead copy
+    export MSYS=winsymlinks:nativestrict   
+fi
+
+
 #region Plugins
 # Clone plugins if not exists
 [ -d $ZSH_DATA_DIR/plugins/powerlevel10k ] || git clone https://github.com/romkatv/powerlevel10k $ZSH_DATA_DIR/plugins/powerlevel10k
