@@ -140,12 +140,11 @@ function __zsh_compl () {
     # Some functions, like _apt and _dpkg, are very slow. We can use a cache in
     # order to speed things up
     if [[ ${__COMP_CACHING:-yes} == yes ]]; then
-        __COMP_CACHE_DIR=${__COMP_CACHE_DIR:-${ZDOTDIR:-$HOME}/.cache}
-        if [[ ! -d ${__COMP_CACHE_DIR} ]]; then
-            command mkdir -p "${__COMP_CACHE_DIR}"
+        if [[ ! -d ${ZSH_COMPDIR} ]]; then
+            command mkdir -p "${ZSH_COMPDIR}"
         fi
         zstyle ':completion:*' use-cache  yes
-        zstyle ':completion:*:complete:*' cache-path "${__COMP_CACHE_DIR}"
+        zstyle ':completion:*:complete:*' cache-path "${ZSH_COMPDIR}"
     fi
 
     # host completion

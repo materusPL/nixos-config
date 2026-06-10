@@ -1,1 +1,7 @@
+#MSYS
+if [[ "$(uname -s)" =~ ^MSYS_NT.* ]]; then
+    export MSYS=winsymlinks:nativestrict   
+fi
+
+
 __MATERUS_HM_ZSH=1

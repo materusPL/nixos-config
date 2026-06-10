@@ -24,8 +24,6 @@ fi
 [ -d $ZSH_DATA_DIR/plugins/zsh-autosuggestions ] || git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_DATA_DIR/plugins/zsh-autosuggestions
 
 source ${ZSH_DATA_DIR}/plugins/powerlevel10k/powerlevel10k.zsh-theme
-source ${ZSH_CONFIG_DIR}/extra/zinputrc
-source ${ZSH_CONFIG_DIR}/extra/zshcompletion.zsh
 
 source ${ZSH_DATA_DIR}/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ${ZSH_DATA_DIR}/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
@@ -73,6 +71,8 @@ fi
 
 
 #region Bindings
+source ${ZSH_CONFIG_DIR}/extra/zinputrc
+
 bindkey -r "^["
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
@@ -85,8 +85,13 @@ bindkey '^[[3;2~' delete-word
 #endregion
 
 #region Completions
-ZSH_COMPDUMP="${ZSH_COMPDUMP:-${XDG_CACHE_HOME:-${HOME}/.cache}/.zcompdump-${HOST}-${ZSH_VERSION}}"
+ZSH_COMPDIR="${ZSH_COMPDIR:-${XDG_CACHE_HOME:-${HOME}/.cache}/zsh}"
+ZSH_COMPDUMP="${ZSH_COMPDUMP:-${ZSH_COMPDIR}/.zcompdump-${HOST}-${ZSH_VERSION}}"
+if [[ ! -d ${ZSH_COMPDIR} ]]; then
+            command mkdir -p "${ZSH_COMPDIR}"
+fi
 autoload -U compinit && compinit -d $ZSH_COMPDUMP
+source ${ZSH_CONFIG_DIR}/extra/zshcompletion.zsh
 #endregion
 
 #region Functions
