@@ -28,6 +28,8 @@
     keepassxc
     moonlight-qt
     wezterm
+
+    (vivaldi.override {proprietaryCodecs = true;})
   ];
   programs.vscode = {
     enable = true;
