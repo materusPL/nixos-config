@@ -132,12 +132,21 @@
           host = "materusPC";
           stable = true;
         };
+        oldie = makeSystem {
+          host = "oldie";
+          stable = true;
+        };
       };
 
       homeConfigurations = {
         "materus@materusPC" = makeHome {
           user = "materus";
           host = "materusPC";
+          stable = true;
+        };
+        "materus@oldie" = makeHome {
+          user = "materus";
+          host = "oldie";
           stable = true;
         };
       };

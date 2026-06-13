@@ -7,9 +7,9 @@
 }:
 
 {
-  home.username = "materus";
+  home.username = lib.mkDefault "materus";
   home.homeDirectory = lib.mkDefault "/home/materus";
-  home.stateVersion = "25.11";
+
 
 
 

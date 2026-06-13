@@ -9,6 +9,7 @@ let
   jsonFormat = pkgs.formats.json { };
 in
 {
+  home.stateVersion = "25.11";
   mkk.neovim.enable = true;
 
   mkk.dir = config.lib.file.mkOutOfStoreSymlink "/mkk/config";
