@@ -7,6 +7,7 @@
   lib,
   pkgs,
   materusArgs,
+  mkk,
   ...
 }:
 
@@ -324,6 +325,43 @@
 
   hardware.uinput.enable = true;
   hardware.steam-hardware.enable = true;
+
+
+  sops.templates."networkmanager.env".content = ''
+    WIREGUARD_PRIVATEKEY="${config.sops.placeholder.wg-key}"
+  '';
+  networking.networkmanager.ensureProfiles.environmentFiles = [
+    config.sops.templates."networkmanager.env".path
+  ];
+  networking.networkmanager.ensureProfiles.profiles = {
+    wg0 = {
+      connection = {
+        id = "PodKos";
+        type = "wireguard";
+        interface-name = "wg-podkos";
+      };
+      wireguard = {
+        private-key = "$WIREGUARD_PRIVATEKEY";
+      };
+      "wireguard-peer.${mkk.wireguard.peers.valkyrie.pubKey}" = {
+        endpoint = "${mkk.network.valkyrie.ip}:${mkk.wireguard.peers.valkyrie.port}";
+        allowed-ips = "${mkk.wireguard.ip-masks.main};${mkk.wireguard.ip-masks.guest};${mkk.wireguard.ip-masks.asia};${mkk.wireguard.peers.valkyrie.ip}/32;";
+        persistent-keepalive = "20";
+      };
+      ipv4 = {
+        address1 = "${mkk.wireguard.peers.oldie.ip}/32";
+        dns = "${mkk.wireguard.peers.valkyrie.ip};";
+        method = "manual";
+        never-default = "true";
+      };
+      ipv6 = {
+        addr-gen-mode = "stable-privacy";
+        method = "disabled";
+      };
+      proxy = { };
+    };
+  };
+
 
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "26.05"; # Did you read the comment?
