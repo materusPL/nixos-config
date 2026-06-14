@@ -25,6 +25,7 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
+  boot.supportedFilesystems = [ "ntfs" ];
 
   boot.initrd.systemd.enable = true;
   boot.initrd.luks.devices."DECRYPTED_ROOT".device =
@@ -90,6 +91,11 @@
   swapDevices = [
     { device = "/dev/disk/by-uuid/9a5795a9-8ddb-4be0-b8f7-e59270ba8db9"; }
   ];
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;
+    priority = 10;
+  };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

@@ -24,6 +24,8 @@
   boot.loader.grub = {
     enable = true;
     efiSupport = true;
+    gfxmodeEfi = "1920x1080";
+    gfxmodeBios = "1920x1080";
     device = "nodev";
     useOSProber = true;
     memtest86.enable = true;
@@ -31,6 +33,7 @@
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
     modesetting.enable = true;
+    powerManagement.enable = true;
     open = true;
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
@@ -38,6 +41,14 @@
   hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
+      libva-vdpau-driver
+      nvidia-vaapi-driver
+      libvdpau-va-gl
+    ];
+    extraPackages32 = with pkgs; [
+      libva-vdpau-driver
+      nvidia-vaapi-driver
+      libvdpau-va-gl
     ];
   };
   # Use latest kernel.
@@ -59,6 +70,14 @@
   networking.networkmanager.enable = true;
   programs.firefox.enable = true;
   programs.java.enable = true;
+  services.flatpak.enable = true;
+  hardware.bluetooth.enable = true;
+  services.gvfs.enable = true;
+  programs.kdeconnect.enable = true;
+  services.fstrim = {
+    enable = true;
+    interval = "weekly";
+  };
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
@@ -233,6 +252,15 @@
   };
   services.desktopManager.plasma6.enable = true;
   services.desktopManager.plasma6.enableQt5Integration = true;
+  xdg.portal.enable = true;
+  xdg.portal.wlr.enable = true;
+  xdg.portal.xdgOpenUsePortal = true;
+  xdg.portal.extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    kwallet
+    kwalletmanager
+    kwallet-pam
+  ];
 
   programs.ssh.startAgent = true;
 
@@ -252,6 +280,7 @@
   # Enable sound.
   # services.pulseaudio.enable = true;
   # OR
+  security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     audio.enable = true;
@@ -261,6 +290,51 @@
     systemWide = true;
     jack.enable = true;
   };
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+    dockerSocket.enable = true;
+  };
+  virtualisation.libvirtd = {
+    enable = true;
+    onBoot = "ignore";
+    onShutdown = "shutdown";
+    qemu.runAsRoot = true;
+    qemu.swtpm.enable = true;
+    qemu.package = pkgs.qemu_full;
+  };
+  environment.sessionVariables = rec {
+    XDG_CACHE_HOME = "\${HOME}/.cache";
+    XDG_CONFIG_HOME = "\${HOME}/.config";
+    XDG_BIN_HOME = "\${HOME}/.local/bin";
+    XDG_DATA_HOME = "\${HOME}/.local/share";
+
+    #SSH_ASKPASS_REQUIRE = "prefer";
+
+    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+
+    MOZ_USE_XINPUT2 = "1";
+    PATH = [ "\${XDG_BIN_HOME}" ];
+  };
+
+  environment.shellInit = ''
+    if ! [ -z "$DISPLAY" ]; then ${pkgs.xhost}/bin/xhost +si:localuser:root &> /dev/null; fi;
+    if ! [ -z "$DISPLAY" ]; then ${pkgs.xhost}/bin/xhost +si:localuser:$USER &> /dev/null; fi;
+  '';
+  security.sudo = {
+    enable = true;
+    extraConfig = ''
+      Defaults pwfeedback
+    '';
+  };
+  i18n.inputMethod.enable = true;
+  i18n.inputMethod.type = "fcitx5";
+  i18n.inputMethod.fcitx5.addons = [
+    pkgs.qt6Packages.fcitx5-configtool
+    pkgs.fcitx5-lua
+    pkgs.fcitx5-mozc
+    pkgs.kdePackages.fcitx5-qt
+  ];
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
@@ -292,7 +366,6 @@
   # };
 
   # List services that you want to enable:
-
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
@@ -301,6 +374,27 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [
+    24800
+    5900
+    5357
+    4656
+    #region Syncthing
+    22000
+    config.services.syncthing.relay.statusPort
+    config.services.syncthing.relay.port
+    #endregion
+  ];
+  networking.firewall.allowedUDPPorts = [
+    24800
+    5900
+    3702
+    4656
+    #region Syncthing
+    22000
+    21027
+    #endregion
+  ];
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
@@ -325,7 +419,6 @@
 
   hardware.uinput.enable = true;
   hardware.steam-hardware.enable = true;
-
 
   sops.templates."networkmanager.env".content = ''
     WIREGUARD_PRIVATEKEY="${config.sops.placeholder.wg-key}"
@@ -361,7 +454,6 @@
       proxy = { };
     };
   };
-
 
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "26.05"; # Did you read the comment?
