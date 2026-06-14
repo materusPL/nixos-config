@@ -1,12 +1,14 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   home.stateVersion = "26.05";
-  mkk.neovim.enable = true;
+  mkk.dir = config.lib.file.mkOutOfStoreSymlink "/mkk/config";
 
+  mkk.neovim.enable = true;
   home.packages = with pkgs; [
     neovide
     obsidian
     git-crypt
+    tmux
 
     telegram-desktop
     discord
