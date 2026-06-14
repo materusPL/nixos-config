@@ -279,7 +279,7 @@ in
     enable = true;
     enableGlobalCompInit = false;
     interactiveShellInit = ''
-      if [[ ''${__MATERUS_HM_ZSH:-0} == 0 ]]; then
+      if [[ ''${__HOME_ZSHRC_SOURCED:-0} == 0 ]]; then
         source ${pkgs.grml-zsh-config}/etc/zsh/zshrc
       fi
     '';

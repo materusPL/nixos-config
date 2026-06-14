@@ -1,3 +1,5 @@
+__HOME_ZSHRC_SOURCED=1
+
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
@@ -7,8 +9,8 @@ if [ -n "$EAT_SHELL_INTEGRATION_DIR" ]; then
     source "$EAT_SHELL_INTEGRATION_DIR/zsh";
 fi
 
-export ZSH_DATA_DIR="${XDG_CONFIG_HOME:-"$HOME/.config"}/zsh/data"
-export ZSH_CONFIG_DIR="${XDG_CONFIG_HOME:-"$HOME/.config"}/zsh/cfg"
+ZSH_DATA_DIR="${XDG_CONFIG_HOME:-"$HOME/.config"}/zsh/data"
+ZSH_CONFIG_DIR="${XDG_CONFIG_HOME:-"$HOME/.config"}/zsh/cfg"
 
 #Check if terminal is fullcolor
 if zmodload zsh/terminfo && (( "$terminfo[colors]" >= "256" )); then 
@@ -19,7 +21,7 @@ fi
 #MSYS
 if [[ "$(uname -s)" =~ ^MSYS_NT.* ]]; then
     #Use windows symlink instead copy
-    export MSYS=winsymlinks:nativestrict   
+    MSYS=winsymlinks:nativestrict   
 fi
 
 

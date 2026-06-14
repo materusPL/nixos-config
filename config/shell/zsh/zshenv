@@ -1,1 +1,5 @@
-__MATERUS_HM_ZSH=1
+#TODO: Set ZDOTDIR based on MKK_CONFIG_PATH
+
+__HOME_ZSHENV_SOURCED=1
+ZDOTDIR=${XDG_CONFIG_HOME:-"$HOME/.config"}/zsh/cfg
+setopt no_global_rcs

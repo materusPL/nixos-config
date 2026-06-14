@@ -14,7 +14,6 @@
 
 
   home.file = {
-    ".zshrc".source = "${config.xdg.configFile."zsh/cfg".source}/zshrc";
     ".zshenv".source = "${config.xdg.configFile."zsh/cfg".source}/zshenv";
     ".tmux.conf".source = "${config.mkk.dir}/config/tmux/tmux.conf";
   };
