@@ -18,6 +18,9 @@
     mesa-demos
     vulkan-tools
     nixfmt
+    nixd
+
+    eza
 
     curl
     wget

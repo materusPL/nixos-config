@@ -127,6 +127,15 @@ if [[ $(whence -p "nvim") ]]; then
     alias vi="nvim"
     alias vimdiff="nvim -d"
 fi
+if [[ $(whence -p "eza") ]]; then
+    alias l="eza -lahg --color=auto --hyperlink"
+    alias ll="eza -alF --color=auto --hyperlink"
+    alias ls="eza --color=auto"
+else
+    alias l="ls -lah --color=auto --hyperlink"
+    alias ll="ls -alF --color=auto --hyperlink"
+    alias ls="ls --color=auto"
+fi
 
 #endregion
 
