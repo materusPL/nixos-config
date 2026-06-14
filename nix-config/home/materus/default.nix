@@ -19,6 +19,8 @@
   };
 
   xdg.enable = true;
+  xdg.configFile."wezterm".source = "${config.mkk.dir}/config/terminal/wezterm";
+  
   xdg.configFile."zsh/cfg".source =
     "${config.mkk.dir}/config/shell/zsh";
   xdg.configFile."zsh/data/plugins/powerlevel10k".source =
