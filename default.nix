@@ -8,7 +8,14 @@ let
     }
   );
 
-  flake = flake-compatish ./.;
+  flake = flake-compatish {
+    source = ./.;
+    overrides = {
+      self = ./.;
+      materus-inputs = ./nix-config/subflake;
+      materus-inputs-unstable = ./nix-config/subflake;
+    };
+  };
 in
 flake.impure
 

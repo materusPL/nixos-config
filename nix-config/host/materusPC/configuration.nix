@@ -143,7 +143,8 @@ in
     if ! [ -z "$DISPLAY" ]; then ${pkgs.xhost}/bin/xhost +si:localuser:root &> /dev/null; fi;
     if ! [ -z "$DISPLAY" ]; then ${pkgs.xhost}/bin/xhost +si:localuser:$USER &> /dev/null; fi;
   '';
-  i18n.inputMethod.enabled = "fcitx5";
+  i18n.inputMethod.enable = true;
+  i18n.inputMethod.type = "fcitx5";
   i18n.inputMethod.fcitx5.addons = [
     pkgs.kdePackages.fcitx5-configtool
     pkgs.fcitx5-lua
