@@ -6,8 +6,7 @@
       services.displayManager = {
         autoLogin.enable = true;
         autoLogin.user = "materus";
-        sddm.enable = true;
-        sddm.wayland.enable = true;
+        plasma-login-manager.enable = true;
       };
 
       services.desktopManager.plasma6.enable = true;
