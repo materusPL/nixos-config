@@ -90,6 +90,8 @@ in
   programs.dconf.enable = true;
 
   environment.systemPackages = with pkgs; [
+    wezterm
+
     kdePackages.ark
     kdePackages.kcalc
     vim
