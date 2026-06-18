@@ -1,5 +1,10 @@
 isHm:
-{ lib, materusArgs, config, ... }:
+{
+  lib,
+  materusArgs,
+  config,
+  ...
+}:
 {
 
   options.mkk.dir = lib.mkOption {
@@ -8,15 +13,17 @@ isHm:
   };
 
   options.mkk.var = lib.mkOption {
-    default = {};
+    default = { };
     type = lib.types.attrs;
   };
 
   imports = [
-    (import ./nvim.nix isHm)
     ./nix.nix
-  ];
-  config.mkk.var = import ./private/variables.nix;
+  ]
+  ++ lib.optionals isHm [ ./hm ]
+  ++ lib.optionals (!isHm) [ ./os ];
+
+  config.mkk.var = import ./private/variables.nix {};
   config._module.args.mkk = config.mkk.var;
 
 }

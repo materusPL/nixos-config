@@ -38,7 +38,7 @@
     }:
     let
       #region Variables
-      path = builtins.toString ./.;
+      path = toString ./.;
       files = {
         ssh-keys = {
           materus = ./extra-files/ssh/materus.pub;
@@ -97,7 +97,7 @@
             system = arch;
             config.allowUnfree = true;
             overlays = [
-              inp.nix-vscode-extensions.overlays.default 
+              inp.nix-vscode-extensions.overlays.default
             ];
           };
           materusArgs = {

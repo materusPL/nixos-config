@@ -27,6 +27,7 @@ in
     signing.key = "/mkk/config/extra-files/ssh/materus.pub";
   };
   home.packages = with pkgs; [
+    eza
     wezterm
 
     materusArgs.inputs.nixerus.packages.x86_64-linux.polymc

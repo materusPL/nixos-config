@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, materusArgs, ... }:
 {
   imports = [
     #region KDE
@@ -61,6 +61,7 @@
     capSysAdmin = true;
     openFirewall = true;
     autoStart = false;
+    package = materusArgs.inputs.nixerus.packages.x86_64-linux.sunshine;
   };
   #endregion
   #region Syncthing
