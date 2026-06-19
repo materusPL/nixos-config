@@ -91,6 +91,8 @@
   boot.kernelPackages = pkgs.linuxPackagesFor pkgs.linux_zen;
   networking.hostName = "oldie"; # Define your hostname.
   environment.systemPackages = with pkgs; [
+    tmux
+    waypipe
     neovim
     nano
     fastfetch

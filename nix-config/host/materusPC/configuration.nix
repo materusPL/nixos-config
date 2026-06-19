@@ -90,6 +90,8 @@ in
   programs.dconf.enable = true;
 
   environment.systemPackages = with pkgs; [
+    tmux
+    waypipe
     wezterm
 
     kdePackages.ark
