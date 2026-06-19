@@ -21,6 +21,25 @@
         ];
         XCURSOR_THEME = "breeze_cursors";
       };
+      environment.systemPackages = with pkgs.kdePackages; [
+        kolourpaint
+        kcolorchooser
+        kcolorpicker
+        ark
+        bluedevil
+        bluez-qt
+        kcalc
+        kcron
+      ];
+      xdg.portal.enable = true;
+      xdg.portal.wlr.enable = true;
+      xdg.portal.xdgOpenUsePortal = true;
+      xdg.portal.extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
+      environment.plasma6.excludePackages = with pkgs.kdePackages; [
+        kwallet
+        kwalletmanager
+        kwallet-pam
+      ];
     }
     #endregion
   ];

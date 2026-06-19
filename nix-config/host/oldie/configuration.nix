@@ -15,6 +15,42 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+
+    {
+      services.displayManager = {
+        autoLogin.enable = true;
+        autoLogin.user = "materus";
+        plasma-login-manager.enable = true;
+      };
+      services.desktopManager.plasma6.enable = true;
+      services.desktopManager.plasma6.enableQt5Integration = true;
+      xdg.portal.enable = true;
+      xdg.portal.wlr.enable = true;
+      xdg.portal.xdgOpenUsePortal = true;
+      xdg.portal.extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
+      environment.plasma6.excludePackages = with pkgs.kdePackages; [
+        kwallet
+        kwalletmanager
+        kwallet-pam
+      ];
+      environment.variables = {
+        QT_PLUGIN_PATH = [
+          "${pkgs.qt6.qtimageformats}/${pkgs.qt6.qtbase.qtPluginPrefix}"
+          "${pkgs.kdePackages.ffmpegthumbs}/${pkgs.qt6.qtbase.qtPluginPrefix}"
+        ];
+        XCURSOR_THEME = "breeze_cursors";
+      };
+      environment.systemPackages = with pkgs.kdePackages; [
+        kolourpaint
+        kcolorchooser
+        kcolorpicker
+        ark
+        bluedevil
+        bluez-qt
+        kcalc
+        kcron
+      ];
+    }
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -245,22 +281,6 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = false;
-  services.displayManager = {
-    autoLogin.enable = true;
-    autoLogin.user = "materus";
-    plasma-login-manager.enable = true;
-  };
-  services.desktopManager.plasma6.enable = true;
-  services.desktopManager.plasma6.enableQt5Integration = true;
-  xdg.portal.enable = true;
-  xdg.portal.wlr.enable = true;
-  xdg.portal.xdgOpenUsePortal = true;
-  xdg.portal.extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
-  environment.plasma6.excludePackages = with pkgs.kdePackages; [
-    kwallet
-    kwalletmanager
-    kwallet-pam
-  ];
 
   programs.ssh.startAgent = true;
 
