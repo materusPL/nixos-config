@@ -68,6 +68,17 @@
     ];
   };
 
+  fileSystems."/mkk/mnt/data" = {
+    device = "/dev/mapper/DECRYPTED_DATA";
+    fsType = "btrfs";
+    options = [
+      "subvol=@data"
+      "nossd"
+      "compress=zstd"
+      "space_cache=v2"
+    ];
+  };
+
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/535d8814-8541-4ac2-9cfb-ed0bf3852b0c";
     fsType = "ext4";
