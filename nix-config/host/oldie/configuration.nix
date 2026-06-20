@@ -51,6 +51,66 @@
         kcron
       ];
     }
+
+    {
+      services.searx = {
+        enable = false;
+        settings = {
+          server.port = 7080;
+          server.secret_key = mkk.searx-key;
+          ui = {
+            static_use_hash = true;
+            default_locale = "pl";
+            query_in_title = true;
+            infinite_scroll = true;
+            center_alignment = true;
+            default_theme = "simple";
+            theme_args.simple_style = "auto";
+            search_on_category_select = false;
+            #hotkeys = "vim";
+          };
+          enabled_plugins = [
+            "Basic Calculator"
+            "Hash plugin"
+            "Tor check plugin"
+            "Open Access DOI rewrite"
+            "Hostnames plugin"
+            "Unit converter plugin"
+            "Tracker URL remover"
+          ];
+          search = {
+            safe_search = 2;
+            autocomplete_min = 2;
+            autocomplete = "duckduckgo";
+            ban_time_on_fail = 5;
+            max_ban_time_on_fail = 120;
+            favicon_resolver="duckduckgo";
+          };
+
+          outgoing = {
+            request_timeout = 1.0;
+            max_request_timeout = 15.0;
+            pool_connections = 100;
+            pool_maxsize = 15;
+            enable_http2 = true;
+          };
+
+        };
+        faviconsSettings = {
+          favicons = {
+            cfg_schema = 1;
+            cache = {
+              db_url = "/var/cache/searxng/faviconcache.db";
+              HOLD_TIME = 5184000;
+              LIMIT_TOTAL_BYTES = 536870912;
+              BLOB_MAX_BYTES = 40960;
+              MAINTENANCE_MODE = "auto";
+              MAINTENANCE_PERIOD = 600;
+            };
+          };
+        };
+      };
+    }
   ];
 
   # Use the systemd-boot EFI boot loader.
