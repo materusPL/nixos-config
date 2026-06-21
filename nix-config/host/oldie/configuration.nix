@@ -84,7 +84,7 @@
             autocomplete = "duckduckgo";
             ban_time_on_fail = 5;
             max_ban_time_on_fail = 120;
-            favicon_resolver="duckduckgo";
+            favicon_resolver = "duckduckgo";
           };
 
           outgoing = {
@@ -108,6 +108,42 @@
               MAINTENANCE_PERIOD = 600;
             };
           };
+        };
+      };
+    }
+
+    {
+      services.samba-wsdd.enable = true;
+      services.samba-wsdd.openFirewall = true;
+      services.samba = {
+        enable = true;
+        package = pkgs.sambaFull;
+        openFirewall = true;
+        settings = {
+          global = {
+            "workgroup" = "WORKGROUP";
+            "server string" = "smbmaterus";
+            "netbios name " = "smbmaterus";
+            "security" = "user";
+            "hosts allow" = "192.168.0. 192.168.122. 127.0.0.1 localhost";
+            "hosts deny" = "0.0.0.0/0";
+            "guest account" = "nobody";
+            "map to guest" = "bad user";
+            "allow insecure wide links" = "yes";
+          };
+          shared = {
+            "path" = "/mkk/mnt/data/share";
+            "browseable" = "yes";
+            "read only" = "no";
+            "guest ok" = "no";
+            "create mask" = "0644";
+            "directory mask" = "0755";
+            "force user" = "materus";
+            "force group" = "users";
+            "follow symlinks" = "yes";
+            "wide links" = "yes";
+          };
+
         };
       };
     }
