@@ -22,13 +22,6 @@
       fsType = "ext4";
     };
 
-  fileSystems."/etc/nixos" =
-    {
-      device = "/materus/config/nixos-config";
-      fsType = "none";
-      options = [ "bind" ];
-    };
-
   swapDevices = [
     {
       device = "/swapfile";
