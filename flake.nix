@@ -136,6 +136,10 @@
           host = "oldie";
           stable = true;
         };
+        valkyrie = makeSystem {
+          host = "valkyrie";
+          stable = true;
+        };
       };
 
       homeConfigurations = {
@@ -147,6 +151,11 @@
         "materus@oldie" = makeHome {
           user = "materus";
           host = "oldie";
+          stable = true;
+        };
+        "materus@valkyrie" = makeHome {
+          user = "materus";
+          host = "valkyrie";
           stable = true;
         };
       };

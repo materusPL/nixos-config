@@ -24,6 +24,9 @@ isHm:
   ++ lib.optionals (!isHm) [ ./os ];
 
   config.mkk.var = import ./private/variables.nix {};
-  config._module.args.mkk = config.mkk.var;
+  config._module.args.mkk = rec {
+    nixerus.pkgs = materusArgs.inputs.nixerus.packages."${config.nixpkgs.hostPlatform.system}";
+    lib = nixerus.pkgs.lib;
 
+  } // config.mkk.var;
 }

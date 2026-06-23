@@ -30,7 +30,7 @@ in
     eza
     wezterm
 
-    materusArgs.inputs.nixerus.packages.x86_64-linux.polymc
+    mkk.nixerus.pkgs.polymc
     neovide
 
     curl

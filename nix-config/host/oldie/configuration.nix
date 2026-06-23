@@ -225,7 +225,7 @@
       mesa-demos
       libvdpau-va-gl
       nss
-      materusArgs.inputs.nixerus.packages.x86_64-linux.polymc
+      mkk.nixerus.pkgs.polymc
     ];
     extraCompatPackages = [
       pkgs.proton-ge-bin

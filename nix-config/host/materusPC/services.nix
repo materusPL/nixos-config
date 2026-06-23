@@ -1,6 +1,42 @@
-{ pkgs, materusArgs, ... }:
+{ pkgs, mkk, ... }:
 {
   imports = [
+      #region Suspend/sleep
+    {
+      systemd.services.pre-suspend = {
+        description = "Service description here";
+        wantedBy = [ "suspend.target" "sleep.target" ];
+        before = [
+          "suspend.target"
+          "sleep.target"
+        ];
+        script = ''
+          if [ $(systemctl is-active systemd-nspawn@archlinux) = "active" ]; then
+            systemctl stop systemd-nspawn@archlinux; 
+            sleep 1s;
+            while [ $(systemctl is-active systemd-nspawn@archlinux) = "active" ]; do sleep 1s; done;
+          fi
+          if [ $(systemctl is-active windows-share-mount.service) = "active" ]; then
+            systemctl stop windows-share-mount.service
+          fi
+        '';
+        serviceConfig.Type = "oneshot";
+      };
+
+      systemd.services.post-suspend = {
+        description = "Service description here";
+        wantedBy = [ "suspend.target" "sleep.target" ];
+        after = [
+          "suspend.target"
+          "sleep.target"
+        ];
+        script = ''
+           systemctl start windows-share-mount.service
+        '';
+        serviceConfig.Type = "oneshot";
+      };
+    }
+    #endregion
     #region KDE
     {
       services.displayManager = {
@@ -80,7 +116,7 @@
     capSysAdmin = true;
     openFirewall = true;
     autoStart = false;
-    package = materusArgs.inputs.nixerus.packages.x86_64-linux.sunshine;
+    package = mkk.nixerus.pkgs.sunshine;
   };
   #endregion
   #region Syncthing
