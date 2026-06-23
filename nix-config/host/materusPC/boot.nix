@@ -1,7 +1,6 @@
 {
   pkgs,
   lib,
-  materusArgs,
   mkk,
   ...
 }:
@@ -83,7 +82,7 @@
       ssh = {
         enable = true;
         port = 22;
-        authorizedKeyFiles = [ materusArgs.files.ssh-keys.materus ];
+        authorizedKeyFiles = [ mkk.files.ssh-keys.materus ];
         hostKeys = [
           "/mkk/keys/ssh_host_ed25519_key"
           "/mkk/keys/ssh_host_rsa_key"

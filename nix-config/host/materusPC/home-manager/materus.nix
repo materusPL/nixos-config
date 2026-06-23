@@ -1,6 +1,5 @@
 {
   pkgs,
-  materusArgs,
   config,
   lib,
   ...

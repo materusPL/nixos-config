@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running `nixos-help`).
 
-{ lib, pkgs, materusArgs, config, ... }:
+{ lib, pkgs, mkk, materusArgs, config, ... }:
 
 {
   imports =
@@ -70,10 +70,10 @@
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
     packages = [
     ];
-    openssh.authorizedKeys.keyFiles = [ "${materusArgs.files.ssh-keys.materus}" ];
+    openssh.authorizedKeys.keyFiles = [ "${mkk.files.ssh-keys.materus}" ];
     shell = pkgs.zsh;
   };
-  users.users.acme.openssh.authorizedKeys.keyFiles = [ "${materusArgs.files.ssh-keys.waffentrager}" ];
+  users.users.acme.openssh.authorizedKeys.keyFiles = [ "${mkk.files.ssh-keys.waffentrager}" ];
   users.users.acme.shell = pkgs.scponly;
   # List packages installed in system profile. To search, run:
   # $ nix search wget

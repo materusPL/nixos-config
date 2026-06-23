@@ -140,6 +140,11 @@
           host = "valkyrie";
           stable = true;
         };
+        waffentrager = makeSystem {
+          host = "waffentrager";
+          stable = true;
+          arch = "aarch64-linux";
+        };
       };
 
       homeConfigurations = {
@@ -156,6 +161,13 @@
         "materus@valkyrie" = makeHome {
           user = "materus";
           host = "valkyrie";
+          stable = true;
+        };
+
+        "materus@waffentrager" = makeHome {
+          user = "materus";
+          host = "waffentrager";
+          arch = "aarch64-linux";
           stable = true;
         };
       };

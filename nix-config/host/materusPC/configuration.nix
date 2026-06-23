@@ -6,13 +6,13 @@
   config,
   lib,
   pkgs,
-  materusArgs,
+  mkk,
   ...
 }:
 let
   patchedBwrap = pkgs.bubblewrap.overrideAttrs (o: {
     patches = (o.patches or [ ]) ++ [
-      materusArgs.files.patches.bwrap
+      mkk.files.patches.bwrap
     ];
   });
 in
