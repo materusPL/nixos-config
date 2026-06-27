@@ -25,7 +25,7 @@ isHm:
 
   config.mkk.var = import ./private/variables.nix {};
   config._module.args.mkk = rec {
-    nixerus.pkgs = materusArgs.inputs.nixerus.packages."${config.nixpkgs.hostPlatform.system}";
+    nixerus.pkgs = materusArgs.inputs.nixerus.packages."${materusArgs.arch}";
     lib = nixerus.pkgs.lib;
     files = materusArgs.files;
     args = materusArgs;

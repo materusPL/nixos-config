@@ -9,9 +9,6 @@ if [ -n "$EAT_SHELL_INTEGRATION_DIR" ]; then
     source "$EAT_SHELL_INTEGRATION_DIR/zsh";
 fi
 
-ZSH_DATA_DIR="${XDG_CONFIG_HOME:-"$HOME/.config"}/zsh/data"
-ZSH_CONFIG_DIR="${XDG_CONFIG_HOME:-"$HOME/.config"}/zsh/cfg"
-
 #Check if terminal is fullcolor
 if zmodload zsh/terminfo && (( "$terminfo[colors]" >= "256" )); then 
     __MATERUS_ZSH_256COLORS="${__MATERUS_ZSH_256COLORS:-1}"; else
