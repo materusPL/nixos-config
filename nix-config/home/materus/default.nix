@@ -35,6 +35,13 @@
     source ${pkgs.vte}/etc/profile.d/vte.sh
   '';
 
+   xdg.configFile."zsh/data/nix_profile.sh".text = ''
+    [[ -e ~/.nix-profile/etc/profile.d/hm-session-vars.sh ]] && emulate sh -c "source ~/.nix-profile/etc/profile.d/hm-session-vars.sh"  
+    [[ -e ~/.nix-profile/etc/profile.d/command-not-found.sh ]] && emulate sh -c "source ~/.nix-profile/etc/profile.d/command-not-found.sh"  
+    [[ -e ~/.nix-profile/etc/profile.d/wezterm.sh ]] && emulate sh -c "source ~/.nix-profile/etc/profile.d/wezterm.sh"  
+    __HOME_ZPROFILE_NIX_SOURCED=1
+  '';
+
 
   xdg.userDirs.enable = lib.mkDefault true;
   xdg.userDirs.createDirectories = lib.mkDefault config.xdg.userDirs.enable;

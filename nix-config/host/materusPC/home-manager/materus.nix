@@ -2,6 +2,7 @@
   pkgs,
   config,
   lib,
+  mkk,
   ...
 }:
 let
@@ -10,6 +11,8 @@ in
 {
   home.stateVersion = "25.11";
   mkk.neovim.enable = true;
+
+  programs.nix-index.enable = true;
 
   mkk.dir = config.lib.file.mkOutOfStoreSymlink "/mkk/config";
   programs.git = {
@@ -178,10 +181,11 @@ in
       };
       target = config.xdg.configFile."VSCodium/User/settings.nix.jsonnet".target;
       command = ''
+        echo "Kill codium"
+        run ${pkgs.procps}/bin/pkill -9 codium || true
         echo "Copying mutable VSCodium files"
         verboseEcho "${source} -> ${target}"
         run cp --remove-destination --no-preserve=mode ${source} ${target}
-
         echo "Remove old settings_generated.json"
         if [ -f '${config.xdg.configFile."VSCodium/User/settings_generated.json".target}' ]; then
           run rm -f ${config.xdg.configFile."VSCodium/User/settings_generated.json".target}

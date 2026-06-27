@@ -108,6 +108,7 @@
   services.davfs2.enable = true;
 
   programs.ssh.startAgent = true;
+  programs.ssh.forwardX11 = true;
   services.openssh.enable = true;
   services.openssh.openFirewall = true;
   #region Sunshine
