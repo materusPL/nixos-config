@@ -1,4 +1,10 @@
-{ config, lib, pkgs, mkk, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  mkk,
+  ...
+}:
 {
   options.waffentragerService.nextcloud.enable = mkk.lib.mkBoolOpt false "Enable nextcloud";
 
@@ -10,15 +16,21 @@
       waffentragerService.elements.enable = true;
       waffentragerService.postgresql.enable = true;
       waffentragerService.nginx.enable = true;
-      environment.systemPackages = [ pkgs.samba pkgs.exiftool pkgs.ffmpeg-headless ];
+      environment.systemPackages = [
+        pkgs.samba
+        pkgs.exiftool
+        pkgs.ffmpeg-headless
+      ];
       sops.secrets.nextcloud-adminpass.owner = config.users.users.nextcloud.name;
       sops.secrets.nextcloud-adminpass.group = config.users.users.nextcloud.group;
 
       services.postgresql.ensureDatabases = [ "nextcloud" ];
-      services.postgresql.ensureUsers = [{
-        name = "nextcloud";
-        ensureDBOwnership = true;
-      }];
+      services.postgresql.ensureUsers = [
+        {
+          name = "nextcloud";
+          ensureDBOwnership = true;
+        }
+      ];
       services.nextcloud = {
         enable = true;
         package = pkgs.nextcloud33;
@@ -42,7 +54,11 @@
           log_type = "file";
           "profile.enabled" = true;
           default_phone_region = "PL";
-          trusted_proxies = [ mkk.network.valkyrie.ip mkk.wireguard.peers.valkyrie.ip mkk.wireguard.peers.waffentrager.ip ];
+          trusted_proxies = [
+            mkk.network.valkyrie.ip
+            mkk.wireguard.peers.valkyrie.ip
+            mkk.wireguard.peers.waffentrager.ip
+          ];
           mail_smtpmode = "sendmail";
           mail_sendmailmode = "pipe";
           enable_previews = true;
@@ -72,7 +88,7 @@
         phpOptions = {
           "opcache.memory_consumption" = "512";
           "opcache.interned_strings_buffer" = "64";
-          "opcache.max_accelerated_files"="50000";
+          "opcache.max_accelerated_files" = "50000";
           "opcache.jit" = "1255";
           "opcache.jit_buffer_size" = "128M";
           "opcache.validate_timestamps" = "0";
@@ -80,7 +96,13 @@
           "opcache.fast_shutdown" = "1";
           "opcache.save_comments" = "1";
         };
-        phpExtraExtensions = ex: [ ex.zip ex.zlib ex.tidy ex.smbclient ex.sodium ];
+        phpExtraExtensions = ex: [
+          ex.zip
+          ex.zlib
+          ex.tidy
+          ex.smbclient
+          ex.sodium
+        ];
       };
       services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
         forceSSL = true;
