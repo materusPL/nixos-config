@@ -88,7 +88,6 @@ in
       jnoortheen.nix-ide
 
       # C++
-      twxs.cmake
       llvm-vs-code-extensions.vscode-clangd
       ms-vscode.cmake-tools
       cs128.cs128-clang-tidy
@@ -104,11 +103,9 @@ in
         ps: with ps; [
           nixfmt
           nixd
-          direnv
+          nix-direnv
           jsonnet
           jsonnet-language-server
-          clang-tools
-          clang
         ]
       )
     );
@@ -162,9 +159,7 @@ in
           };
         };
         # C++
-        "C_Cpp.clang_format_path" = "${pkgs.clang-tools}/bin/clang-format";
         "C_Cpp.clang_format_fallbackStyle" = "Microsoft";
-        "clang-tidy.executable" = "${pkgs.clang-tools}/bin/clang-tidy";
         "[cpp]" = {
           "editor.defaultFormatter" = "xaver.clang-format";
         };
@@ -197,4 +192,8 @@ in
   xdg.dataFile."java-runtimes/graalvm-oracle-17".source = pkgs.graalvmPackages.graalvm-oracle_17;
   xdg.dataFile."java-runtimes/graalvm-oracle-latest".source = pkgs.graalvmPackages.graalvm-oracle;
   xdg.dataFile."java-runtimes/openjdk21".source = pkgs.jdk21;
+
+
+  programs.direnv.enable = true;
+  programs.direnv.nix-direnv.enable = true;
 }

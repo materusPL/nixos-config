@@ -1,11 +1,14 @@
 { pkgs, mkk, ... }:
 {
   imports = [
-      #region Suspend/sleep
+    #region Suspend/sleep
     {
       systemd.services.pre-suspend = {
         description = "Service description here";
-        wantedBy = [ "suspend.target" "sleep.target" ];
+        wantedBy = [
+          "suspend.target"
+          "sleep.target"
+        ];
         before = [
           "suspend.target"
           "sleep.target"
@@ -25,13 +28,16 @@
 
       systemd.services.post-suspend = {
         description = "Service description here";
-        wantedBy = [ "suspend.target" "sleep.target" ];
+        wantedBy = [
+          "suspend.target"
+          "sleep.target"
+        ];
         after = [
           "suspend.target"
           "sleep.target"
         ];
         script = ''
-           systemctl start windows-share-mount.service
+          systemctl start windows-share-mount.service
         '';
         serviceConfig.Type = "oneshot";
       };
@@ -78,6 +84,41 @@
       ];
     }
     #endregion
+    #region NFS
+    {
+      services.nfs.server = {
+        enable = true;
+        exports = ''
+          /mkk/data/share/nfs       192.168.100.2/24(rw,fsid=0,no_subtree_check) 192.168.102.2/24(rw,fsid=0,no_subtree_check) 192.168.122.1/24(rw,fsid=0,no_subtree_check)
+          /mkk/data/share/nfs/main  192.168.100.2/24(rw,nohide,insecure,no_subtree_check) 192.168.102.2/24(rw,nohide,insecure,no_subtree_check) 192.168.122.1/24(rw,nohide,insecure,no_subtree_check)
+        '';
+        # fixed rpc.statd port; for firewall
+        lockdPort = 4001;
+        mountdPort = 4002;
+        statdPort = 4000;
+        extraNfsdConfig = "";
+      };
+      networking.firewall = {
+        # for NFSv3; view with `rpcinfo -p`
+        allowedTCPPorts = [
+          111
+          2049
+          4000
+          4001
+          4002
+          20048
+        ];
+        allowedUDPPorts = [
+          111
+          2049
+          4000
+          4001
+          4002
+          20048
+        ];
+      };
+    }
+    #endregiuon
   ];
 
   #region Printing
@@ -145,6 +186,7 @@
         "guest account" = "nobody";
         "map to guest" = "bad user";
         "allow insecure wide links" = "yes";
+        "acl allow execute always" = "True";
       };
       windows = {
         "path" = "/mkk/data/share/vm_share/";

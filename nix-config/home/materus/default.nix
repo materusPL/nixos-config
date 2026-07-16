@@ -33,7 +33,9 @@
 
   xdg.configFile."zsh/data/nix.sh".text = ''
     source ${pkgs.vte}/etc/profile.d/vte.sh
-  '';
+  '' + lib.optionalString config.programs.direnv.enable ''
+    eval "$(direnv hook zsh)"
+  ''; 
 
    xdg.configFile."zsh/data/nix_profile.sh".text = ''
     [[ -e ~/.nix-profile/etc/profile.d/hm-session-vars.sh ]] && emulate sh -c "source ~/.nix-profile/etc/profile.d/hm-session-vars.sh"  

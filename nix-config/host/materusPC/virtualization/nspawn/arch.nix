@@ -25,6 +25,43 @@ let
     "bash-completion"
   ];
   scripts = {
+    mknod = pkgs.writeShellScript "arch-mknod" ''
+      ACTION=$1
+      KERNEL=$(basename $2)
+      MAJOR=$3
+      MINOR=$4
+
+
+      if (systemctl is-active --quiet systemd-nspawn@archlinux); then
+          if [[ $ACTION == "add" || "$ACTION" == "change"  ]]; then
+              machinectl shell root@archlinux /bin/bash -c "
+                  if ! [ -f /dev/$KERNEL ]; then
+                    mknod /dev/$KERNEL c $MAJOR $MINOR
+                    chmod 660 /dev/$KERNEL
+                    chown root:input /dev/$KERNEL
+                  fi
+              "
+          elif [[ $ACTION == "remove" ]]; then
+              machinectl shell root@archlinux /bin/rm /dev/$KERNEL
+          fi
+      fi
+
+    '';
+    postStart = pkgs.writeShellScript "arch-post-start" ''
+            delayed(){
+              if (systemctl is-active --quiet systemd-nspawn@archlinux); then
+                machinectl shell root@archlinux /bin/bash -c "
+                  mkdir -p /tmp/.X11-unix
+                  if [ -d /run/host-root/tmp/.X11-unix ]; then
+                      mount --bind /run/host-root/tmp/.X11-unix/ /tmp/.X11-unix/
+                  fi
+                "
+              fi
+              udevadm trigger --action=add --subsystem-match=hidraw
+            }
+            (sleep 5s; delayed) & disown
+            
+    '';
     preStart = pkgs.writeShellScript "arch-pre-start" ''
             if [ ! -d "/var/lib/machines/archlinux" ]; then
               export PATH=''${PATH:+''${PATH}:}${
@@ -120,8 +157,6 @@ in
         "/var/lib/flatpak"
         "/var/lib/containers"
 
-        "/tmp/.X11-unix"
-
         /mkk
 
       ] ++ lib.lists.forEach ttys (x: "/dev/tty${builtins.toString x}");
@@ -133,6 +168,7 @@ in
   systemd.services."systemd-nspawn@archlinux" = {
     enable = true;
     preStart = "${scripts.preStart}";
+    postStart = "${scripts.postStart}";
     overrideStrategy = "asDropin";
     serviceConfig = {
       DeviceAllow = [
@@ -142,5 +178,13 @@ in
 
       ];
     };
+  };
+
+
+   services.udev = let
+  in {
+    extraRules = ''
+      SUBSYSTEM=="hidraw", KERNEL=="hidraw*", RUN+="${scripts.mknod} ''$env{ACTION} ''$env{DEVNAME} ''$env{MAJOR} ''$env{MINOR}"
+    '';
   };
 }

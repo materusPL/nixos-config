@@ -7,6 +7,7 @@
   lib,
   pkgs,
   mkk,
+  materusArgs,
   ...
 }:
 let
@@ -37,6 +38,8 @@ in
     extraPackages = with pkgs; [
     ];
   };
+
+  nixpkgs.overlays = [ materusArgs.inputs.millennium.overlays.default ];
   programs.java.enable = true;
   programs.steam = {
     enable = true;
@@ -56,7 +59,7 @@ in
     extraCompatPackages = [
       pkgs.proton-ge-bin
     ];
-    package = pkgs.steam.override {
+    package = pkgs.millennium-steam.override {
       extraEnv = {
         PRESSURE_VESSEL_FILESYSTEMS_RW="\${XDG_RUNTIME_DIR}/wivrn/comp_ipc";
         #PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES="1";
@@ -253,6 +256,9 @@ in
   ];
 
   fonts.fontDir.enable = lib.mkDefault true;
+  
+  programs.direnv.enable = true;
+  programs.direnv.nix-direnv.enable = true;
 
   nixpkgs.config.allowUnfree = true;
   nix.settings = {
