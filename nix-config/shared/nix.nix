@@ -126,5 +126,21 @@
       flake = materusArgs.inputs.nix-vscode-extensions;
     };
 
+    millennium = {
+      from = {
+        type = "indirect";
+        id = "millennium";
+      };
+      flake = materusArgs.inputs.millennium;
+    };
+
+    sls-steam = {
+      from = {
+        type = "indirect";
+        id = "sls-steam";
+      };
+      flake = materusArgs.inputs.sls-steam;
+    };
+ 
   };
 }
