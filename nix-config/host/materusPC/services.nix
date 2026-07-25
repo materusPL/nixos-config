@@ -127,7 +127,7 @@
     nssmdns4 = true;
     openFirewall = true;
   };
-
+ # services.teamviewer.enable = true;
   services.printing = {
     enable = true;
     drivers = with pkgs; [
@@ -210,4 +210,6 @@
     openFirewall = true;
   };
   #endregion
+
+  hardware.wooting.enable = true;
 }

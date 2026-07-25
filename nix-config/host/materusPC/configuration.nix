@@ -59,7 +59,7 @@ in
     extraCompatPackages = [
       pkgs.proton-ge-bin
     ];
-    package = pkgs.millennium-steam.override {
+    /*package = pkgs.millennium-steam.override {
       extraEnv = {
         PRESSURE_VESSEL_FILESYSTEMS_RW="\${XDG_RUNTIME_DIR}/wivrn/comp_ipc";
         #PRESSURE_VESSEL_IMPORT_OPENXR_1_RUNTIMES="1";
@@ -67,7 +67,7 @@ in
       extraLibraries =
         p: with p; [
         ];
-    };
+    };*/
   };
 
   programs.git = {

@@ -51,15 +51,13 @@ let
             delayed(){
               if (systemctl is-active --quiet systemd-nspawn@archlinux); then
                 machinectl shell root@archlinux /bin/bash -c "
-                  mkdir -p /tmp/.X11-unix
-                  if [ -d /run/host-root/tmp/.X11-unix ]; then
-                      mount --bind /run/host-root/tmp/.X11-unix/ /tmp/.X11-unix/
-                  fi
+
+
                 "
               fi
               udevadm trigger --action=add --subsystem-match=hidraw
             }
-            (sleep 5s; delayed) & disown
+            (sleep 10s; delayed) & disown
             
     '';
     preStart = pkgs.writeShellScript "arch-pre-start" ''
