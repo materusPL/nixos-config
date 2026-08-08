@@ -192,6 +192,7 @@
     nano
     fastfetch
     brave
+    nfs-utils
   ];
   environment.enableAllTerminfo = true;
   environment.pathsToLink = [

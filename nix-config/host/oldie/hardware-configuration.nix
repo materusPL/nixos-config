@@ -25,7 +25,7 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
-  boot.supportedFilesystems = [ "ntfs" ];
+  boot.supportedFilesystems = [ "ntfs" "nfs" ];
 
   boot.initrd.systemd.enable = true;
   boot.initrd.luks.devices."DECRYPTED_ROOT".device =
