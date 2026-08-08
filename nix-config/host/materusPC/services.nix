@@ -91,6 +91,7 @@
         exports = ''
           /mkk/data/share/nfs       192.168.100.2/24(rw,fsid=0,no_subtree_check) 192.168.102.2/24(rw,fsid=0,no_subtree_check) 192.168.122.1/24(rw,fsid=0,no_subtree_check)
           /mkk/data/share/nfs/main  192.168.100.2/24(rw,nohide,insecure,no_subtree_check) 192.168.102.2/24(rw,nohide,insecure,no_subtree_check) 192.168.122.1/24(rw,nohide,insecure,no_subtree_check)
+          /home/materus/Projekty/   10.0.0.0/24(rw,nohide,insecure,no_subtree_check)
         '';
         # fixed rpc.statd port; for firewall
         lockdPort = 4001;

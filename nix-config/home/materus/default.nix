@@ -35,7 +35,10 @@
     source ${pkgs.vte}/etc/profile.d/vte.sh
   '' + lib.optionalString config.programs.direnv.enable ''
     eval "$(direnv hook zsh)"
-  ''; 
+  '' + lib.optionalString config.programs.nix-index.enable
+  ''
+    source ${pkgs.nix-index}/etc/profile.d/command-not-found.sh
+  '';
 
    xdg.configFile."zsh/data/nix_profile.sh".text = ''
     [[ -e ~/.nix-profile/etc/profile.d/hm-session-vars.sh ]] && emulate sh -c "source ~/.nix-profile/etc/profile.d/hm-session-vars.sh"  
