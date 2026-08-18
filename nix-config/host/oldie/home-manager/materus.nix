@@ -1,10 +1,16 @@
-{ pkgs, config, ... }:
+{
+  pkgs,
+  config,
+  materusArgs,
+  ...
+}:
 {
   home.stateVersion = "26.05";
   mkk.dir = config.lib.file.mkOutOfStoreSymlink "/mkk/config";
 
   mkk.neovim.enable = true;
   home.packages = with pkgs; [
+
     neovide
     obsidian
     git-crypt
@@ -33,8 +39,24 @@
     keepassxc
     moonlight-qt
     wezterm
+    (pkgs.writeShellApplication {
+      name = "soundblaster-mic";
+      runtimeInputs = with pkgs; [
+        bash
+        coreutils
+        alsa-utils
+      ];
+      text = "exec bash ${materusArgs.files.scripts.audio.setmic}";
+    })
 
-    (vivaldi.override { proprietaryCodecs = true; })
+    (firefox.override {
+      extraPrefsFiles = [
+        (builtins.fetchurl {
+          url = "https://raw.githubusercontent.com/MrOtherGuy/fx-autoconfig/master/program/config.js";
+          sha256 = "1mx679fbc4d9x4bnqajqx5a95y1lfasvf90pbqkh9sm3ch945p40";
+        })
+      ];
+    })
   ];
   programs.mpv = {
     enable = true;

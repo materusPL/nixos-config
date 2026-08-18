@@ -99,13 +99,25 @@
     depends = [ "/" ];
   };
 
+  fileSystems."/home/materus/.cache/nvidia" = {
+    device = "/mkk/ssd_data/nvidia_cache/default";
+    fsType = "none";
+    options = [ "bind" ];
+    depends = [ "/" ];
+  };
+
+  fileSystems."/home/materus/.cache/shader" = {
+    device = "/mkk/ssd_data/nvidia_cache";
+    fsType = "none";
+    options = [ "bind" ];
+    depends = [ "/" ];
+  };
+
   swapDevices = [
     { device = "/dev/disk/by-uuid/9a5795a9-8ddb-4be0-b8f7-e59270ba8db9"; }
   ];
-  zramSwap = {
+  boot.zswap ={
     enable = true;
-    memoryPercent = 50;
-    priority = 10;
   };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

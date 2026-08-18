@@ -47,6 +47,11 @@
         patches = {
           bwrap = ./extra-files/patches/bubblewrap.patch;
         };
+        scripts = {
+          audio ={
+            setmic = ./extra-files/scripts/audio/setmic.sh;
+          };
+        };
       };
       #endregion
       #region System make helper
