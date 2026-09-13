@@ -48,7 +48,7 @@
       ];
       text = "exec bash ${materusArgs.files.scripts.audio.setmic}";
     })
-
+    floorp-bin
     (firefox.override {
       extraPrefsFiles = [
         (builtins.fetchurl {

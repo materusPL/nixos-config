@@ -147,60 +147,80 @@
       };
     }
 
+    #region libvirt
+    {
+      virtualisation.libvirtd = {
+        enable = true;
+        onBoot = "ignore";
+        onShutdown = "shutdown";
+        qemu.runAsRoot = true;
+        qemu.swtpm.enable = true;
+        qemu.package = pkgs.qemu_full;
+      };
+      virtualisation.spiceUSBRedirection.enable = true;
+
+      environment.systemPackages = with pkgs; [
+        virtiofsd
+        config.virtualisation.libvirtd.qemu.package
+        looking-glass-client
+        virt-manager
+        libguestfs-with-appliance
+      ];
+    }
+    #endregion
+
+    (
+      {
+        config,
+        pkgs,
+        lib,
+        ...
+      }:
+      let
+        mainMirror = "https://ftp.icm.edu.pl/pub/Linux/dist/archlinux";
+        extraMirrors = [ ];
+        getty = [
+          8
+          9
+        ];
+        ttys = [
+          8
+          9
+        ]
+        ++ getty;
+
+        startPkgs = lib.strings.concatStringsSep " " [
+          "base"
+          "base-devel"
+          "dbus"
+          "less"
+          "nano"
+          "bash-completion"
+        ];
+        scripts = {
+          mknod = pkgs.writeShellScript "arch-mknod" ''
+            ACTION=$1
+            KERNEL=$(basename $2)
+            MAJOR=$3
+            MINOR=$4
 
 
+            if (systemctl is-active --quiet systemd-nspawn@archlinux); then
+                if [[ $ACTION == "add" || "$ACTION" == "change"  ]]; then
+                    machinectl shell root@archlinux /bin/bash -c "
+                        if ! [ -f /dev/$KERNEL ]; then
+                          mknod /dev/$KERNEL c $MAJOR $MINOR
+                          chmod 660 /dev/$KERNEL
+                          chown root:input /dev/$KERNEL
+                        fi
+                    "
+                elif [[ $ACTION == "remove" ]]; then
+                    machinectl shell root@archlinux /bin/rm /dev/$KERNEL
+                fi
+            fi
 
-
-    ({
-  config,
-  pkgs,
-  lib,
-  ...
-}:
-let
-  mainMirror = "https://ftp.icm.edu.pl/pub/Linux/dist/archlinux";
-  extraMirrors = [ ];
-  getty = [
-    8
-    9
-  ];
-  ttys = [
-    8
-    9
-  ] ++ getty;
-
-  startPkgs = lib.strings.concatStringsSep " " [
-    "base"
-    "base-devel"
-    "dbus"
-    "less"
-    "nano"
-    "bash-completion"
-  ];
-  scripts = {
-    mknod = pkgs.writeShellScript "arch-mknod" ''
-      ACTION=$1
-      KERNEL=$(basename $2)
-      MAJOR=$3
-      MINOR=$4
-
-
-      if (systemctl is-active --quiet systemd-nspawn@archlinux); then
-          if [[ $ACTION == "add" || "$ACTION" == "change"  ]]; then
-              machinectl shell root@archlinux /bin/bash -c "
-                  if ! [ -f /dev/$KERNEL ]; then
-                    mknod /dev/$KERNEL c $MAJOR $MINOR
-                    chmod 660 /dev/$KERNEL
-                    chown root:input /dev/$KERNEL
-                  fi
-              "
-          elif [[ $ACTION == "remove" ]]; then
-              machinectl shell root@archlinux /bin/rm /dev/$KERNEL
-          fi
-      fi
-
-    '';
-    postStart = pkgs.writeShellScript "arch-post-start" ''
+          '';
+          postStart = pkgs.writeShellScript "arch-post-start" ''
             delayed(){
               if (systemctl is-active --quiet systemd-nspawn@archlinux); then
                 machinectl shell root@archlinux /bin/bash -c "
@@ -211,135 +231,141 @@ let
               udevadm trigger --action=add --subsystem-match=hidraw
             }
             (sleep 10s; delayed) & disown
-            
-    '';
-    preStart = pkgs.writeShellScript "arch-pre-start" ''
-            if [ ! -d "/var/lib/machines/archlinux" ]; then
-              export PATH=''${PATH:+''${PATH}:}${
-                lib.strings.makeBinPath (
-                  with pkgs;
-                  [
-                    wget
-                    coreutils-full
-                    gnutar
-                    zstd
-                  ]
-                )
-              }
 
-              ARCH_IMAGE=$(mktemp)
-              trap 'rm $ARCH_IMAGE' EXIT
+          '';
+          preStart = pkgs.writeShellScript "arch-pre-start" ''
+                  if [ ! -d "/var/lib/machines/archlinux" ]; then
+                    export PATH=''${PATH:+''${PATH}:}${
+                      lib.strings.makeBinPath (
+                        with pkgs;
+                        [
+                          wget
+                          coreutils-full
+                          gnutar
+                          zstd
+                        ]
+                      )
+                    }
 
-              wget "${mainMirror}/iso/latest/archlinux-bootstrap-x86_64.tar.zst" -O $ARCH_IMAGE
-              mkdir -p /var/lib/machines/archlinux
-              trap 'rm -rf /var/lib/machines/archlinux' ERR
+                    ARCH_IMAGE=$(mktemp)
+                    trap 'rm $ARCH_IMAGE' EXIT
 
-              tar -xaf $ARCH_IMAGE -C "/var/lib/machines/archlinux" --strip-components=1 --numeric-owner
-              printf 'Server = %s/$repo/os/$arch\n' "${mainMirror}" > /var/lib/machines/archlinux/etc/pacman.d/mirrorlist
-              rm "/var/lib/machines/archlinux/etc/resolv.conf"
-        
-              [ -f "/var/lib/machines/archlinux/etc/securetty" ] && \
-      	          printf 'pts/%d\n' $(seq 0 10) >>"/var/lib/machines/archlinux/etc/securetty"
+                    wget "${mainMirror}/iso/latest/archlinux-bootstrap-x86_64.tar.zst" -O $ARCH_IMAGE
+                    mkdir -p /var/lib/machines/archlinux
+                    trap 'rm -rf /var/lib/machines/archlinux' ERR
 
-              systemd-machine-id-setup --root="/var/lib/machines/archlinux"
-              systemd-nspawn -q --settings=false --system-call-filter=@sandbox -D "/var/lib/machines/archlinux" /bin/sh -c "
-                export PATH=/bin
-                touch /etc/systemd/do-not-udevadm-trigger-on-update
-                pacman-key --init && pacman-key --populate
-                pacman -Rs --noconfirm arch-install-scripts
-                pacman -Sy --noconfirm --needed ${startPkgs}
-                pacman -Syu --noconfirm
+                    tar -xaf $ARCH_IMAGE -C "/var/lib/machines/archlinux" --strip-components=1 --numeric-owner
+                    printf 'Server = %s/$repo/os/$arch\n' "${mainMirror}" > /var/lib/machines/archlinux/etc/pacman.d/mirrorlist
+                    rm "/var/lib/machines/archlinux/etc/resolv.conf"
+              
+                    [ -f "/var/lib/machines/archlinux/etc/securetty" ] && \
+            	          printf 'pts/%d\n' $(seq 0 10) >>"/var/lib/machines/archlinux/etc/securetty"
 
-                systemctl disable getty@tty1.service
-                ${
-                  lib.strings.concatStringsSep "\n" (
-                    lib.lists.forEach getty (x: "systemctl enable getty@tty${builtins.toString x}.service")
-                  )
-                }
+                    systemd-machine-id-setup --root="/var/lib/machines/archlinux"
+                    systemd-nspawn -q --settings=false --system-call-filter=@sandbox -D "/var/lib/machines/archlinux" /bin/sh -c "
+                      export PATH=/bin
+                      touch /etc/systemd/do-not-udevadm-trigger-on-update
+                      pacman-key --init && pacman-key --populate
+                      pacman -Rs --noconfirm arch-install-scripts
+                      pacman -Sy --noconfirm --needed ${startPkgs}
+                      pacman -Syu --noconfirm
 
-          
-              "
-            fi
-    '';
-  };
-in
-{
-  systemd.nspawn."archlinux" = {
-    enable = true;
-    execConfig = {
-      Boot = true;
-      SystemCallFilter = [ "@known" ];
-      Timezone = "symlink";
-      Capability = "all";
-      PrivateUsers = "no";
-      ResolvConf = "copy-host";
-    };
+                      systemctl disable getty@tty1.service
+                      ${lib.strings.concatStringsSep "\n" (
+                        lib.lists.forEach getty (x: "systemctl enable getty@tty${builtins.toString x}.service")
+                      )}
 
-    filesConfig = {
-      BindReadOnly = [
-        "/nix"
+                
+                    "
+                  fi
+          '';
+        };
+      in
+      {
+        systemd.nspawn."archlinux" = {
+          enable = true;
+          execConfig = {
+            Boot = true;
+            SystemCallFilter = [ "@known" ];
+            Timezone = "symlink";
+            Capability = "all";
+            PrivateUsers = "no";
+            ResolvConf = "copy-host";
+          };
 
-        "/run/current-system"
-        "/run/booted-system"
-        "/run/opengl-driver"
-        "/run/opengl-driver-32"
+          filesConfig = {
+            BindReadOnly = [
+              "/nix"
 
-      ];
-      Bind = [
-        "/:/run/host-root"
+              "/run/current-system"
+              "/run/booted-system"
+              "/run/opengl-driver"
+              "/run/opengl-driver-32"
 
-        "/run/udev"
-        "/run/pipewire"
-        "/run/pulse"
-        
-        "/sys/class"
-        "/sys/devices"
+            ];
+            Bind = [
+              "/:/run/host-root"
 
-        "/dev/fuse"
-        "/dev/snd"
-        "/dev/input"
-        "/dev/uinput"
-        "/dev/shm"
-        "/dev/dri"
-        "/dev/tty"
-        "/dev/tty0"
+              "/run/udev"
+              "/run/pipewire"
+              "/run/pulse"
 
-        "/var/lib/flatpak"
-        "/var/lib/containers"
+              "/sys/class"
+              "/sys/devices"
 
-        /mkk
+              "/dev/fuse"
+              "/dev/snd"
+              "/dev/input"
+              "/dev/uinput"
+              "/dev/shm"
+              "/dev/dri"
+              "/dev/tty"
+              "/dev/tty0"
 
-      ] ++ lib.lists.forEach ttys (x: "/dev/tty${builtins.toString x}");
-    };
-    networkConfig = {
-      VirtualEthernet="no";
-    };
-  };
-  systemd.services."systemd-nspawn@archlinux" = {
-    enable = true;
-    preStart = "${scripts.preStart}";
-    postStart = "${scripts.postStart}";
-    overrideStrategy = "asDropin";
-    serviceConfig = {
-      DeviceAllow = [
-        "char-* rwm"
-        "block-* rwm"
-        "/dev/shm rwm"
+              "/var/lib/flatpak"
+              "/var/lib/containers"
 
-      ];
-    };
-  };
+              /mkk
 
+            ]
+            ++ lib.lists.forEach ttys (x: "/dev/tty${builtins.toString x}");
+          };
+          networkConfig = {
+            VirtualEthernet = "no";
+          };
+        };
+        systemd.services."systemd-nspawn@archlinux" = {
+          enable = true;
+          preStart = "${scripts.preStart}";
+          postStart = "${scripts.postStart}";
+          overrideStrategy = "asDropin";
+          serviceConfig = {
+            DeviceAllow = [
+              "char-* rwm"
+              "block-* rwm"
+              "/dev/shm rwm"
 
-   services.udev = let
-  in {
-    extraRules = ''
-      SUBSYSTEM=="hidraw", KERNEL=="hidraw*", RUN+="${scripts.mknod} ''$env{ACTION} ''$env{DEVNAME} ''$env{MAJOR} ''$env{MINOR}"
-    '';
-  };
-}
-)
+            ];
+          };
+        };
+
+        services.udev =
+          let
+          in
+          {
+            extraRules = ''
+              SUBSYSTEM=="hidraw", KERNEL=="hidraw*", RUN+="${scripts.mknod} ''$env{ACTION} ''$env{DEVNAME} ''$env{MAJOR} ''$env{MINOR}"
+            '';
+          };
+      }
+    )
   ];
+  services.pixiecore = {
+    enable = true;
+    openFirewall = true;
+    dhcpNoBind = true;
+    kernel = "https://boot.netboot.xyz";
+  };
 
   # Use the systemd-boot EFI boot loader.
   boot.tmp.useTmpfs = true;
@@ -367,9 +393,9 @@ in
     powerManagement.enable = true;
     open = true;
     nvidiaSettings = true;
-    package =  config.boot.kernelPackages.nvidiaPackages.latest;
+    package = config.boot.kernelPackages.nvidiaPackages.latest;
   };
-  
+
   hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
@@ -614,21 +640,14 @@ in
     dockerCompat = true;
     dockerSocket.enable = true;
   };
-  virtualisation.libvirtd = {
-    enable = true;
-    onBoot = "ignore";
-    onShutdown = "shutdown";
-    qemu.runAsRoot = true;
-    qemu.swtpm.enable = true;
-    qemu.package = pkgs.qemu_full;
-  };
+
   environment.sessionVariables = rec {
     XDG_CACHE_HOME = "\${HOME}/.cache";
     XDG_CONFIG_HOME = "\${HOME}/.config";
     XDG_BIN_HOME = "\${HOME}/.local/bin";
     XDG_DATA_HOME = "\${HOME}/.local/share";
-    __GL_SHADER_DISK_CACHE_SIZE="10737418240";
-    __GL_SHADER_DISK_CACHE="1";
+    __GL_SHADER_DISK_CACHE_SIZE = "10737418240";
+    __GL_SHADER_DISK_CACHE = "1";
 
     #SSH_ASKPASS_REQUIRE = "prefer";
 
@@ -780,5 +799,3 @@ in
   system.stateVersion = "26.05"; # Did you read the comment?
 
 }
-
-
