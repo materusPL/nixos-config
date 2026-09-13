@@ -7,6 +7,7 @@
   lib,
   pkgs,
   mkk,
+  materusArgs,
   ...
 }:
 
@@ -393,7 +394,7 @@
     powerManagement.enable = true;
     open = true;
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
+    package =  ((import materusArgs.self.inputs.nixpkgs-unstable {system = pkgs.system; config.allowUnfree = true;}).linuxPackagesFor pkgs.linux_zen).nvidiaPackages.latest;
   };
 
   hardware.graphics = {
