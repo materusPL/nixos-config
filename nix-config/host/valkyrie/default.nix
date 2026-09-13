@@ -124,7 +124,7 @@
 
   services.nginx = {
     enable = true;
-    package = pkgs.tengine;
+    package = (pkgs.nginx.override {withSlice=true; withMail=true; withGeoIP=true;});
     recommendedTlsSettings = true;
     recommendedOptimisation = true;
     recommendedGzipSettings = true;
@@ -160,7 +160,7 @@
 
   security.acme.acceptTerms = true;
   security.acme.defaults.email = "materus+acme@podkos.pl";
-  security.acme.defaults.credentialFiles.OVH_FILE = config.sops.secrets.certs.path;
+  security.acme.defaults.environmentFile = config.sops.secrets.certs.path;
   security.acme.defaults.dnsResolver = "9.9.9.9:53";
   security.acme.certs."materus.pl" = {
     domain = "materus.pl";

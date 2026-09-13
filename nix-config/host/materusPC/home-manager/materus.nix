@@ -31,7 +31,7 @@ in
   home.packages = with pkgs; [
     eza
     wezterm
-
+    (emacs-gtk.pkgs.withPackages (epkgs: with epkgs; [ (eaf.withApplications [ eaf-browser eaf-pdf-viewer ]) ]))
     mkk.nixerus.pkgs.polymc
     neovide
 
