@@ -13,7 +13,13 @@
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
+  boot.kernelParams = [
 
+  ];
+
+  boot.plymouth = {
+      enable = true;
+    };
   boot.initrd.availableKernelModules = [
     "xhci_pci"
     "ehci_pci"
@@ -22,10 +28,34 @@
     "usb_storage"
     "sd_mod"
   ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
-  boot.supportedFilesystems = [ "ntfs" "nfs" ];
+  boot.initrd.kernelModules = [ 
+    "nvidia"
+    "nvidia_drm"
+    "nvidia_modeset"
+    "nvidia_uvm"
+  ];
+  boot.kernelModules = [
+    "kvmfr"
+    "kvm-intel"
+    "vfio"
+    "vfio_iommu_type1"
+    "vfio-pci"
+  ];
+  boot.extraModprobeConfig = ''
+    options kvmfr static_size_mb=64
+  '';
+  boot.extraModulePackages = with config.boot.kernelPackages; [
+    kvmfr
+  ];
+
+  boot.supportedFilesystems = [
+    "ntfs"
+    "nfs"
+  ];
+
+  services.udev.extraRules = ''
+    SUBSYSTEM=="kvmfr", OWNER="root", GROUP="kvm", MODE="0660"
+  '';
 
   boot.initrd.systemd.enable = true;
   boot.initrd.luks.devices."DECRYPTED_ROOT".device =
@@ -116,7 +146,7 @@
   swapDevices = [
     { device = "/dev/disk/by-uuid/9a5795a9-8ddb-4be0-b8f7-e59270ba8db9"; }
   ];
-  boot.zswap ={
+  boot.zswap = {
     enable = true;
   };
 
