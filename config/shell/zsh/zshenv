@@ -3,4 +3,5 @@ __HOME_ZSHENV_SOURCED=1
 ZDOTDIR=${XDG_CONFIG_HOME:-"$HOME/.config"}/zsh/cfg
 ZSH_DATA_DIR="${XDG_CONFIG_HOME:-"$HOME/.config"}/zsh/data"
 ZSH_CONFIG_DIR="${XDG_CONFIG_HOME:-"$HOME/.config"}/zsh/cfg"
+zstyle ':completion:*' cache-path $ZSH_DATA_DIR/zcompcache
 setopt no_global_rcs
