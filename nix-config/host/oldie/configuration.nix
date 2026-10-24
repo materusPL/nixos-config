@@ -158,30 +158,40 @@
         qemu.swtpm.enable = true;
         qemu.package = pkgs.qemu_full;
         qemu.vhostUserPackages = [ pkgs.virtiofsd ];
+        qemu.verbatimConfig = ''
+          cgroup_device_acl = [
+            "/dev/null", "/dev/full", "/dev/zero",
+            "/dev/random", "/dev/urandom",
+            "/dev/ptmx", "/dev/kvm", "/dev/kqemu",
+            "/dev/rtc","/dev/hpet", "/dev/vfio/vfio",
+            "/dev/kvmfr0"
+          ]
+        '';
       };
       virtualisation.spiceUSBRedirection.enable = true;
 
       environment.systemPackages = with pkgs; [
         virtiofsd
         config.virtualisation.libvirtd.qemu.package
-        (looking-glass-client.overrideAttrs (finalAttrs: previousAttrs: {
-          patches = [];
-          buildInputs = previousAttrs.buildInputs ++
-          [
-            pkgs.fuse3
-            pkgs.libunwind
-            pkgs.elfutils
-            pkgs.usbredir
-          ];
-          version = "B7-826-236efcb1";
-          src = pkgs.fetchFromGitHub {
-            owner = "gnif";
-            repo = "LookingGlass";
-            rev = "236efcb155f952f5d7d9fcd5891a3060ad254e68";
-            hash = "sha256-NAfV4Z0RZp2IGBzVAFysm53aGMEReT03RIN+45TveUU=";
-            fetchSubmodules = true;
-          };
-        }))
+        (looking-glass-client.overrideAttrs (
+          finalAttrs: previousAttrs: {
+            patches = [ ];
+            buildInputs = previousAttrs.buildInputs ++ [
+              pkgs.fuse3
+              pkgs.libunwind
+              pkgs.elfutils
+              pkgs.usbredir
+            ];
+            version = "B7-826-236efcb1";
+            src = pkgs.fetchFromGitHub {
+              owner = "gnif";
+              repo = "LookingGlass";
+              rev = "236efcb155f952f5d7d9fcd5891a3060ad254e68";
+              hash = "sha256-NAfV4Z0RZp2IGBzVAFysm53aGMEReT03RIN+45TveUU=";
+              fetchSubmodules = true;
+            };
+          }
+        ))
         virt-manager
         libguestfs-with-appliance
       ];
