@@ -76,6 +76,11 @@
   programs.vscode = {
     enable = true;
     mutableExtensionsDir = true;
+    package = pkgs.vscode.fhsWithPackages (ps: with ps; [
+      ldc
+      gtk4
+      dub
+    ]); 
   };
   programs.git = {
     enable = true;

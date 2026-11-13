@@ -156,7 +156,12 @@
         onShutdown = "shutdown";
         qemu.runAsRoot = true;
         qemu.swtpm.enable = true;
-        qemu.package = pkgs.qemu_full;
+        qemu.package = (
+          pkgs.callPackage ./qemu_package/qemu_package.nix {
+            smbdSupport = lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.samba;
+            cephSupport = lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.ceph;
+          }
+        );
         qemu.vhostUserPackages = [ pkgs.virtiofsd ];
         qemu.verbatimConfig = ''
           cgroup_device_acl = [

@@ -1,0 +1,2168 @@
+diff --git a/block/vhdx.c b/block/vhdx.c
+index c16e4a00c8..39d0df5be4 100644
+--- a/block/vhdx.c
++++ b/block/vhdx.c
+@@ -2020,7 +2020,7 @@ vhdx_co_create(BlockdevCreateOptions *opts, Error **errp)
+ 
+     /* The creator field is optional, but may be useful for
+      * debugging / diagnostics */
+-    creator = g_utf8_to_utf16("QEMU v" QEMU_VERSION, -1, NULL,
++    creator = g_utf8_to_utf16("DELL v" QEMU_VERSION, -1, NULL,
+                               &creator_items, NULL);
+     signature = cpu_to_le64(VHDX_FILE_SIGNATURE);
+     ret = blk_co_pwrite(blk, VHDX_FILE_ID_OFFSET, sizeof(signature), &signature,
+diff --git a/block/vvfat.c b/block/vvfat.c
+index e334b9febb..4059b48c19 100644
+--- a/block/vvfat.c
++++ b/block/vvfat.c
+@@ -1176,7 +1176,7 @@ static int vvfat_open(BlockDriverState *bs, QDict *options, int flags,
+         }
+         memcpy(s->volume_label, label, label_length);
+     } else {
+-        memcpy(s->volume_label, "QEMU VVFAT", 10);
++        memcpy(s->volume_label, "DELL VVFAT", 10);
+     }
+ 
+     if (floppy) {
+diff --git a/chardev/msmouse.c b/chardev/msmouse.c
+index d72a16a283..08afc9e238 100644
+--- a/chardev/msmouse.c
++++ b/chardev/msmouse.c
+@@ -168,7 +168,7 @@ static int msmouse_chr_write(struct Chardev *s, const uint8_t *buf, int len)
+ }
+ 
+ static const QemuInputHandler msmouse_handler = {
+-    .name  = "QEMU Microsoft Mouse",
++    .name  = "DELL Microsoft Mouse",
+     .mask  = INPUT_EVENT_MASK_BTN | INPUT_EVENT_MASK_REL,
+     .event = msmouse_input_event,
+     .sync  = msmouse_input_sync,
+diff --git a/chardev/wctablet.c b/chardev/wctablet.c
+index 3ad24cce17..e75aef05a3 100644
+--- a/chardev/wctablet.c
++++ b/chardev/wctablet.c
+@@ -175,7 +175,7 @@ static void wctablet_input_sync(DeviceState *dev)
+ }
+ 
+ static const QemuInputHandler wctablet_handler = {
+-    .name  = "QEMU Wacom Pen Tablet",
++    .name  = "DELL Wacom Pen Tablet",
+     .mask  = INPUT_EVENT_MASK_BTN | INPUT_EVENT_MASK_ABS,
+     .event = wctablet_input_event,
+     .sync  = wctablet_input_sync,
+diff --git a/contrib/vhost-user-gpu/vhost-user-gpu.c b/contrib/vhost-user-gpu/vhost-user-gpu.c
+index 7864881509..2d5bb265a2 100644
+--- a/contrib/vhost-user-gpu/vhost-user-gpu.c
++++ b/contrib/vhost-user-gpu/vhost-user-gpu.c
+@@ -1263,7 +1263,7 @@ main(int argc, char *argv[])
+     QTAILQ_INIT(&g.reslist);
+     QTAILQ_INIT(&g.fenceq);
+ 
+-    context = g_option_context_new("QEMU vhost-user-gpu");
++    context = g_option_context_new("DELL vhost-user-gpu");
+     g_option_context_add_main_entries(context, entries, NULL);
+     if (!g_option_context_parse(context, &argc, &argv, &error)) {
+         g_printerr("Option parsing failed: %s\n", error->message);
+diff --git a/hw/acpi/aml-build.c b/hw/acpi/aml-build.c
+index 990abc64cd..8a55ae86d7 100644
+--- a/hw/acpi/aml-build.c
++++ b/hw/acpi/aml-build.c
+@@ -1754,11 +1754,11 @@ void acpi_table_begin(AcpiTable *desc, GArray *array)
+     build_append_int_noprefix(array, 0, 4); /* Length */
+     build_append_int_noprefix(array, desc->rev, 1); /* Revision */
+     build_append_int_noprefix(array, 0, 1); /* Checksum */
+-    build_append_padded_str(array, desc->oem_id, 6, '\0'); /* OEMID */
++    build_append_padded_str(array, ACPI_BUILD_APPNAME6, 6, '\0'); /* OEMID */
+     /* OEM Table ID */
+-    build_append_padded_str(array, desc->oem_table_id, 8, '\0');
++    build_append_padded_str(array, "PTL ", 8, '\0');
+     build_append_int_noprefix(array, 1, 4); /* OEM Revision */
+-    g_array_append_vals(array, ACPI_BUILD_APPNAME8, 4); /* Creator ID */
++    g_array_append_vals(array, "PTL ", 4); /* Creator ID */
+     build_append_int_noprefix(array, 1, 4); /* Creator Revision */
+ }
+ 
+@@ -2571,7 +2571,9 @@ void build_fadt(GArray *tbl, BIOSLinker *linker, const AcpiFadtData *f,
+     build_append_gas_from_struct(tbl, &f->gpe0_blk); /* X_GPE0_BLK */
+     build_append_gas(tbl, AML_AS_SYSTEM_MEMORY, 0 , 0, 0, 0); /* X_GPE1_BLK */
+ 
+-    if (f->rev <= 4) {
++    if (f->rev <= 6) {
++		build_append_gas_from_struct(tbl, &f->sleep_ctl);
++		build_append_gas_from_struct(tbl, &f->sleep_sts);
+         goto done;
+     }
+ 
+@@ -2585,7 +2587,7 @@ void build_fadt(GArray *tbl, BIOSLinker *linker, const AcpiFadtData *f,
+     }
+ 
+     /* Hypervisor Vendor Identity */
+-    build_append_padded_str(tbl, "QEMU", 8, '\0');
++    build_append_padded_str(tbl, "Intel", 8, '\0');
+ 
+     /* TODO: extra fields need to be added to support revisions above rev6 */
+     assert(f->rev == 6);
+diff --git a/hw/acpi/core.c b/hw/acpi/core.c
+index a6a62a742d..5c5268f38b 100644
+--- a/hw/acpi/core.c
++++ b/hw/acpi/core.c
+@@ -57,9 +57,9 @@ struct acpi_table_header {
+ #define ACPI_TABLE_PFX_SIZE sizeof(uint16_t)  /* size of the extra prefix */
+ 
+ static const char unsigned dfl_hdr[ACPI_TABLE_HDR_SIZE - ACPI_TABLE_PFX_SIZE] =
+-    "QEMU\0\0\0\0\1\0"       /* sig (4), len(4), revno (1), csum (1) */
+-    "QEMUQEQEMUQEMU\1\0\0\0" /* OEM id (6), table (8), revno (4) */
+-    "QEMU\1\0\0\0"           /* ASL compiler ID (4), version (4) */
++    "DELL\0\0\0\0\1\0"       /* sig (4), len(4), revno (1), csum (1) */
++    "ASUSASASUSASUS\1\0\0\0" /* OEM id (6), table (8), revno (4) */
++    "DELL\1\0\0\0"           /* ASL compiler ID (4), version (4) */
+     ;
+ 
+ char unsigned *acpi_tables;
+diff --git a/hw/acpi/vmgenid.c b/hw/acpi/vmgenid.c
+index 27cc0128d1..168b4fafb5 100644
+--- a/hw/acpi/vmgenid.c
++++ b/hw/acpi/vmgenid.c
+@@ -27,6 +27,8 @@
+ void vmgenid_build_acpi(VmGenIdState *vms, GArray *table_data, GArray *guid,
+                         BIOSLinker *linker, const char *oem_id)
+ {
++       //FUCK YOU~~~
++       return;//do this once
+     Aml *ssdt, *dev, *scope, *method, *addr, *if_ctx;
+     uint32_t vgia_offset;
+     QemuUUID guid_le;
+diff --git a/hw/arm/sbsa-ref.c b/hw/arm/sbsa-ref.c
+index 484b90053e..70d57ed8e0 100644
+--- a/hw/arm/sbsa-ref.c
++++ b/hw/arm/sbsa-ref.c
+@@ -917,7 +917,7 @@ static void sbsa_ref_class_init(ObjectClass *oc, const void *data)
+     };
+ 
+     mc->init = sbsa_ref_init;
+-    mc->desc = "QEMU 'SBSA Reference' ARM Virtual Machine";
++    mc->desc = "DELL 'SBSA Reference' ARM Real Machine";
+     mc->default_cpu_type = ARM_CPU_TYPE_NAME("neoverse-n2");
+     mc->valid_cpu_types = valid_cpu_types;
+     mc->max_cpus = 512;
+diff --git a/hw/audio/hda-codec.c b/hw/audio/hda-codec.c
+index 173fe56bea..c7216cc5d1 100644
+--- a/hw/audio/hda-codec.c
++++ b/hw/audio/hda-codec.c
+@@ -118,7 +118,7 @@ static void hda_codec_parse_fmt(uint32_t format, struct audsettings *as)
+ 
+ /* some defines */
+ 
+-#define QEMU_HDA_ID_VENDOR  0x1af4
++#define QEMU_HDA_ID_VENDOR  0x8086
+ #define QEMU_HDA_PCM_FORMATS (AC_SUPPCM_BITS_16 |       \
+                               0x1fc /* 16 -> 96 kHz */)
+ #define QEMU_HDA_AMP_NONE    (0)
+diff --git a/hw/char/escc.c b/hw/char/escc.c
+index 7aae627fb4..8f5826e2fb 100644
+--- a/hw/char/escc.c
++++ b/hw/char/escc.c
+@@ -1032,7 +1032,7 @@ static void sunmouse_sync(DeviceState *dev)
+ }
+ 
+ static const QemuInputHandler sunmouse_handler = {
+-    .name  = "QEMU Sun Mouse",
++    .name  = "DELL Sun Mouse",
+     .mask  = INPUT_EVENT_MASK_BTN | INPUT_EVENT_MASK_REL,
+     .event = sunmouse_handle_event,
+     .sync  = sunmouse_sync,
+diff --git a/hw/display/edid-generate.c b/hw/display/edid-generate.c
+index 2cb819675e..37bdb5cf89 100644
+--- a/hw/display/edid-generate.c
++++ b/hw/display/edid-generate.c
+@@ -394,10 +394,10 @@ void qemu_edid_generate(uint8_t *edid, size_t size,
+     /* =============== set defaults  =============== */
+ 
+     if (!info->vendor || strlen(info->vendor) != 3) {
+-        info->vendor = "RHT";
++        info->vendor = "DEL";
+     }
+     if (!info->name) {
+-        info->name = "QEMU Monitor";
++        info->name = "DELL Monitor";
+     }
+     if (!info->prefx) {
+         info->prefx = 1280;
+@@ -449,7 +449,7 @@ void qemu_edid_generate(uint8_t *edid, size_t size,
+     uint16_t vendor_id = ((((info->vendor[0] - '@') & 0x1f) << 10) |
+                           (((info->vendor[1] - '@') & 0x1f) <<  5) |
+                           (((info->vendor[2] - '@') & 0x1f) <<  0));
+-    uint16_t model_nr = 0x1234;
++    uint16_t model_nr = 0xA05F;
+     uint32_t serial_nr = info->serial ? atoi(info->serial) : 0;
+     stw_be_p(edid +  8, vendor_id);
+     stw_le_p(edid + 10, model_nr);
+diff --git a/hw/i2c/smbus_eeprom.c b/hw/i2c/smbus_eeprom.c
+index 693d476220..72cd994918 100644
+--- a/hw/i2c/smbus_eeprom.c
++++ b/hw/i2c/smbus_eeprom.c
+@@ -183,7 +183,83 @@ void smbus_eeprom_init(I2CBus *smbus, int nb_eeprom,
+         memcpy(eeprom_buf, eeprom_spd, eeprom_spd_size);
+     }
+ 
+-    for (i = 0; i < nb_eeprom; i++) {
++    eeprom_buf[0]=0x92;
++eeprom_buf[1]=0x10;
++eeprom_buf[2]=0x0B;
++eeprom_buf[3]=0x03;
++eeprom_buf[4]=0x06;
++eeprom_buf[5]=0x21;
++eeprom_buf[6]=0x02;
++eeprom_buf[7]=0x09;
++eeprom_buf[8]=0x03;
++eeprom_buf[9]=0x52;
++eeprom_buf[0x0a]=0x01;
++eeprom_buf[0x0b]=0x08;
++eeprom_buf[0x0c]=0x0A;
++eeprom_buf[0x0d]=0x00;
++eeprom_buf[0x0e]=0xFE;
++eeprom_buf[0x0f]=0x00;
++eeprom_buf[0x10]=0x5A;
++eeprom_buf[0x11]=0x78;
++eeprom_buf[0x12]=0x5A;
++eeprom_buf[0x13]=0x30;
++eeprom_buf[0x14]=0x5A;
++eeprom_buf[0x15]=0x11;
++eeprom_buf[0x16]=0x0E;
++eeprom_buf[0x17]=0x81;
++eeprom_buf[0x18]=0x20;
++eeprom_buf[0x19]=0x08;
++eeprom_buf[0x1a]=0x3C;
++eeprom_buf[0x1b]=0x3C;
++eeprom_buf[0x1c]=0x00;
++eeprom_buf[0x1d]=0xF0;
++eeprom_buf[0x1e]=0x83;
++eeprom_buf[0x1f]=0x81;
++eeprom_buf[0x3c]=0x0F;
++eeprom_buf[0x3d]=0x11;
++eeprom_buf[0x3e]=0x65;
++eeprom_buf[0x3f]=0x00;
++eeprom_buf[0x70]=0x00;
++eeprom_buf[0x71]=0x00;
++eeprom_buf[0x72]=0x00;
++eeprom_buf[0x73]=0x00;
++eeprom_buf[0x74]=0x00;
++eeprom_buf[0x75]=0x01;
++eeprom_buf[0x76]=0x98;
++eeprom_buf[0x77]=0x07;
++eeprom_buf[0x78]=0x25;
++eeprom_buf[0x79]=0x18;
++eeprom_buf[0x7a]=0x00;
++eeprom_buf[0x7b]=0x00;
++eeprom_buf[0x7c]=0x00;
++eeprom_buf[0x7d]=0x00;
++eeprom_buf[0x7e]=0x3D;
++eeprom_buf[0x7f]=0xA7;
++eeprom_buf[0x80]=0x4B;
++eeprom_buf[0x81]=0x48;
++eeprom_buf[0x82]=0x58;
++eeprom_buf[0x83]=0x31;
++eeprom_buf[0x84]=0x36;
++eeprom_buf[0x85]=0x30;
++eeprom_buf[0x86]=0x30;
++eeprom_buf[0x87]=0x43;
++eeprom_buf[0x88]=0x39;
++eeprom_buf[0x89]=0x53;
++eeprom_buf[0x8a]=0x33;
++eeprom_buf[0x8b]=0x4C;
++eeprom_buf[0x8c]=0x2F;
++eeprom_buf[0x8d]=0x33;
++eeprom_buf[0x8e]=0x32;
++eeprom_buf[0x8f]=0x47;
++eeprom_buf[0x90]=0x20;
++eeprom_buf[0x91]=0x20;
++eeprom_buf[0x92]=0x00;
++eeprom_buf[0x93]=0x00;
++eeprom_buf[0x94]=0x00;
++eeprom_buf[0x95]=0x00;
++eeprom_buf[0xfe]=0x00;
++eeprom_buf[0xff]=0x5A;
++for (i = 0; i < nb_eeprom; i++) {
+         smbus_eeprom_init_one(smbus, 0x50 + i,
+                               eeprom_buf + (i * SMBUS_EEPROM_SIZE));
+     }
+diff --git a/hw/i386/acpi-build.c b/hw/i386/acpi-build.c
+index 8837b69687..db66c55e5a 100644
+--- a/hw/i386/acpi-build.c
++++ b/hw/i386/acpi-build.c
+@@ -150,7 +150,7 @@ static void init_common_fadt_data(MachineState *ms, Object *o,
+     uint32_t io = object_property_get_uint(o, ACPI_PM_PROP_PM_IO_BASE, NULL);
+     AmlAddressSpace as = AML_AS_SYSTEM_IO;
+     AcpiFadtData fadt = {
+-        .rev = 3,
++        .rev = 4,
+         .flags =
+             (1 << ACPI_FADT_F_WBINVD) |
+             (1 << ACPI_FADT_F_PROC_C1) |
+@@ -165,8 +165,8 @@ static void init_common_fadt_data(MachineState *ms, Object *o,
+                         (1 << ACPI_FADT_F_FORCE_APIC_CLUSTER_MODEL) : 0),
+         .int_model = 1 /* Multiple APIC */,
+         .rtc_century = RTC_CENTURY,
+-        .plvl2_lat = 0xfff /* C2 state not supported */,
+-        .plvl3_lat = 0xfff /* C3 state not supported */,
++        .plvl2_lat = 0x1fff /* C2 state not supported */,
++        .plvl3_lat = 0x1fff /* C3 state not supported */,
+         .smi_cmd = smm_enabled ? ACPI_PORT_SMI_CMD : 0,
+         .sci_int = object_property_get_uint(o, ACPI_PM_PROP_SCI_INT, NULL),
+         .acpi_enable_cmd =
+@@ -213,7 +213,7 @@ static void acpi_get_pm_info(MachineState *machine, AcpiPmInfo *pm)
+     init_common_fadt_data(machine, obj, &pm->fadt);
+     if (piix) {
+         /* w2k requires FADT(rev1) or it won't boot, keep PC compatible */
+-        pm->fadt.rev = 1;
++        pm->fadt.rev = 4;
+         pm->cpu_hp_io_base = PIIX4_CPU_HOTPLUG_IO_BASE;
+     }
+     if (lpc) {
+@@ -477,6 +477,7 @@ static Aml *build_vmbus_device_aml(VMBusBridge *vmbus_bridge)
+ 
+ static void build_dbg_aml(Aml *table)
+ {
++     return;//do this once
+     Aml *field;
+     Aml *method;
+     Aml *while_ctx;
+@@ -877,7 +878,7 @@ build_dsdt(GArray *table_data, BIOSLinker *linker,
+     bool cxl_present = false;
+     int i;
+     VMBusBridge *vmbus_bridge = vmbus_bridge_find();
+-    AcpiTable table = { .sig = "DSDT", .rev = 1, .oem_id = x86ms->oem_id,
++    AcpiTable table = { .sig = "DSDT", .rev = 3, .oem_id = x86ms->oem_id,
+                         .oem_table_id = x86ms->oem_table_id };
+ 
+     assert(!!i440fx != !!q35);
+@@ -888,7 +889,16 @@ build_dsdt(GArray *table_data, BIOSLinker *linker,
+     build_dbg_aml(dsdt);
+     if (i440fx) {
+         sb_scope = aml_scope("_SB");
+-        dev = aml_device("PCI0");
++        aml_append(sb_scope, aml_name_decl("OSYS", aml_int(0x03E8)));
++	Aml *osi = aml_if(aml_equal(aml_call1("_OSI", aml_string("Windows 2012")), aml_int(1)));
++	aml_append(osi, aml_store(aml_int(0x07DC), aml_name("OSYS")));
++	aml_append(sb_scope, osi);
++	osi = aml_if(aml_equal(aml_call1("_OSI",aml_string("Windows 2013")), aml_int(1)));
++	aml_append(osi, aml_store(aml_int(0x07DD), aml_name("OSYS")));
++	aml_append(sb_scope, osi);
++	aml_append(sb_scope, aml_name_decl("_TZ", aml_int(0x03E8)));
++	aml_append(sb_scope, aml_name_decl("_PTS", aml_int(0x03E8)));
++	dev = aml_device("PCI0");
+         aml_append(dev, aml_name_decl("_HID", aml_eisaid("PNP0A03")));
+         aml_append(dev, aml_name_decl("_UID", aml_int(pcmc->pci_root_uid)));
+         aml_append(dev, build_pci_bridge_edsm());
+@@ -901,7 +911,16 @@ build_dsdt(GArray *table_data, BIOSLinker *linker,
+         build_piix4_pci0_int(dsdt);
+     } else if (q35) {
+         sb_scope = aml_scope("_SB");
+-        dev = aml_device("PCI0");
++        aml_append(sb_scope, aml_name_decl("OSYS", aml_int(0x03E8)));
++	Aml *osi = aml_if(aml_equal(aml_call1("_OSI", aml_string("Windows 2012")), aml_int(1)));
++	aml_append(osi, aml_store(aml_int(0x07DC), aml_name("OSYS")));
++	aml_append(sb_scope, osi);
++	osi = aml_if(aml_equal(aml_call1("_OSI",aml_string("Windows 2013")), aml_int(1)));
++	aml_append(osi, aml_store(aml_int(0x07DD), aml_name("OSYS")));
++	aml_append(sb_scope, osi);
++	aml_append(sb_scope, aml_name_decl("_TZ", aml_int(0x03E8)));
++	aml_append(sb_scope, aml_name_decl("_PTS", aml_int(0x03E8)));
++	dev = aml_device("PCI0");
+         aml_append(dev, aml_name_decl("_HID", aml_eisaid("PNP0A08")));
+         aml_append(dev, aml_name_decl("_CID", aml_eisaid("PNP0A03")));
+         aml_append(dev, aml_name_decl("_UID", aml_int(pcmc->pci_root_uid)));
+@@ -1189,11 +1208,11 @@ build_dsdt(GArray *table_data, BIOSLinker *linker,
+     aml_append(dsdt, scope);
+ 
+     /* create fw_cfg node, unconditionally */
+-    {
++    /*{
+         scope = aml_scope("\\_SB.PCI0");
+         fw_cfg_add_acpi_dsdt(scope, x86ms->fw_cfg);
+         aml_append(dsdt, scope);
+-    }
++    }*/
+ 
+     sb_scope = aml_scope("\\_SB");
+     {
+@@ -1295,7 +1314,7 @@ static void
+ build_hpet(GArray *table_data, BIOSLinker *linker, const char *oem_id,
+            const char *oem_table_id)
+ {
+-    AcpiTable table = { .sig = "HPET", .rev = 1,
++    AcpiTable table = { .sig = "HPET", .rev = 3,
+                         .oem_id = oem_id, .oem_table_id = oem_table_id };
+ 
+     acpi_table_begin(&table, table_data);
+@@ -1460,7 +1479,7 @@ build_srat(GArray *table_data, BIOSLinker *linker, MachineState *machine)
+     const CPUArchIdList *apic_ids = mc->possible_cpu_arch_ids(machine);
+     int nb_numa_nodes = machine->numa_state->num_nodes;
+     NodeInfo *numa_info = machine->numa_state->nodes;
+-    AcpiTable table = { .sig = "SRAT", .rev = 1, .oem_id = x86ms->oem_id,
++    AcpiTable table = { .sig = "SRAT", .rev = 3, .oem_id = x86ms->oem_id,
+                         .oem_table_id = x86ms->oem_table_id };
+ 
+     acpi_table_begin(&table, table_data);
+@@ -1651,7 +1670,7 @@ build_dmar_q35(GArray *table_data, BIOSLinker *linker, const char *oem_id,
+     IntelIOMMUState *intel_iommu = INTEL_IOMMU_DEVICE(iommu);
+     GArray *scope_blob = g_array_new(false, true, 1);
+ 
+-    AcpiTable table = { .sig = "DMAR", .rev = 1, .oem_id = oem_id,
++    AcpiTable table = { .sig = "DMAR", .rev = 3, .oem_id = oem_id,
+                         .oem_table_id = oem_table_id };
+ 
+     /*
+@@ -1726,7 +1745,7 @@ static void
+ build_waet(GArray *table_data, BIOSLinker *linker, const char *oem_id,
+            const char *oem_table_id)
+ {
+-    AcpiTable table = { .sig = "WAET", .rev = 1, .oem_id = oem_id,
++    AcpiTable table = { .sig = "WWWT", .rev = 3, .oem_id = oem_id,
+                         .oem_table_id = oem_table_id };
+ 
+     acpi_table_begin(&table, table_data);
+@@ -1845,7 +1864,7 @@ build_amd_iommu(GArray *table_data, BIOSLinker *linker, const char *oem_id,
+ {
+     AMDVIState *s = AMD_IOMMU_DEVICE(x86_iommu_get_default());
+     GArray *ivhd_blob = g_array_new(false, true, 1);
+-    AcpiTable table = { .sig = "IVRS", .rev = 1, .oem_id = oem_id,
++    AcpiTable table = { .sig = "IVRS", .rev = 3, .oem_id = oem_id,
+                         .oem_table_id = oem_table_id };
+     uint64_t feature_report;
+ 
+diff --git a/hw/i386/fw_cfg.c b/hw/i386/fw_cfg.c
+index 5903994a7c..a9b72c6813 100644
+--- a/hw/i386/fw_cfg.c
++++ b/hw/i386/fw_cfg.c
+@@ -77,7 +77,7 @@ void fw_cfg_build_smbios(PCMachineState *pcms, FWCfgState *fw_cfg,
+ 
+     if (pcmc->smbios_defaults) {
+         /* These values are guest ABI, do not change */
+-        smbios_set_defaults("QEMU", mc->desc, mc->name);
++        smbios_set_defaults("DELL", mc->desc, mc->name);
+     }
+ 
+     /* tell smbios about cpuid version and features */
+@@ -236,7 +236,7 @@ void fw_cfg_add_acpi_dsdt(Aml *scope, FWCfgState *fw_cfg)
+     assert(fw_cfg_dma_enabled(fw_cfg));
+     io_size = ROUND_UP(FW_CFG_CTL_SIZE, 4) + sizeof(dma_addr_t);
+ 
+-    aml_append(dev, aml_name_decl("_HID", aml_string("QEMU0002")));
++    aml_append(dev, aml_name_decl("_HID", aml_string("DELL0002")));
+ 
+     /* device present, functioning, decoding, not shown in UI */
+     aml_append(dev, aml_name_decl("_STA", aml_int(0xB)));
+diff --git a/hw/i386/pc_piix.c b/hw/i386/pc_piix.c
+index 0a911ce59e..ae649aa5c8 100644
+--- a/hw/i386/pc_piix.c
++++ b/hw/i386/pc_piix.c
+@@ -408,7 +408,7 @@ static void pc_i440fx_machine_options(MachineClass *m)
+     pcmc->default_cpu_version = 1;
+ 
+     m->family = "pc_piix";
+-    m->desc = "Standard PC (i440FX + PIIX, 1996)";
++    m->desc = "DELL M4A88TD-Mi440fx";
+     m->default_machine_opts = "firmware=bios-256k.bin";
+     m->default_display = "std";
+     m->default_nic = "e1000";
+diff --git a/hw/i386/pc_q35.c b/hw/i386/pc_q35.c
+index 6c1e4eff5f..6f5cd2cadf 100644
+--- a/hw/i386/pc_q35.c
++++ b/hw/i386/pc_q35.c
+@@ -360,7 +360,7 @@ static void pc_q35_machine_options(MachineClass *m)
+     pcmc->default_cpu_version = 1;
+ 
+     m->family = "pc_q35";
+-    m->desc = "Standard PC (Q35 + ICH9, 2009)";
++    m->desc = "DELL M4A88TD-Mq35";
+     m->units_per_default_bus = 1;
+     m->default_machine_opts = "firmware=bios-256k.bin";
+     m->default_display = "std";
+diff --git a/hw/ide/atapi.c b/hw/ide/atapi.c
+index 0ea149ad8c..976d209abf 100644
+--- a/hw/ide/atapi.c
++++ b/hw/ide/atapi.c
+@@ -786,8 +786,8 @@ static void cmd_inquiry(IDEState *s, uint8_t *buf)
+         buf[5] = 0;    /* reserved */
+         buf[6] = 0;    /* reserved */
+         buf[7] = 0;    /* reserved */
+-        padstr8(buf + 8, 8, "QEMU");
+-        padstr8(buf + 16, 16, "QEMU DVD-ROM");
++        padstr8(buf + 8, 8, "DELL");
++        padstr8(buf + 16, 16, "DELL DVD-ROM");
+         padstr8(buf + 32, 4, s->version);
+         idx = 36;
+     }
+diff --git a/hw/ide/core.c b/hw/ide/core.c
+index fb9bf11b45..38163a8f5c 100644
+--- a/hw/ide/core.c
++++ b/hw/ide/core.c
+@@ -43,6 +43,7 @@
+ #include "system/runstate.h"
+ #include "ide-internal.h"
+ #include "trace.h"
++#include <stdio.h>
+ 
+ /* These values were based on a Seagate ST3500418AS but have been modified
+    to make more sense in QEMU */
+@@ -57,9 +58,9 @@ static const int smart_attributes[][12] = {
+     /* remapped sectors */
+     { 0x05, 0x03, 0x00, 0x64, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24},
+     /* power on hours */
+-    { 0x09, 0x03, 0x00, 0x64, 0x64, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
++    { 0x09, 0x03, 0x00, 0x64, 0x64, 0x9a, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00},
+     /* power cycle count */
+-    { 0x0c, 0x03, 0x00, 0x64, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
++    { 0x0c, 0x03, 0x00, 0x64, 0x64, 0x9a, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00},
+     /* airflow-temperature-celsius */
+     { 190,  0x03, 0x00, 0x45, 0x45, 0x1f, 0x00, 0x1f, 0x1f, 0x00, 0x00, 0x32},
+ };
+@@ -2637,24 +2638,25 @@ int ide_init_drive(IDEState *s, IDEDevice *dev, IDEDriveKind kind, Error **errp)
+         }
+         blk_set_dev_ops(s->blk, &ide_hd_block_ops, s);
+     }
+-    if (dev->serial) {
++    srand(time(NULL));
++	if (dev->serial) {
+         pstrcpy(s->drive_serial_str, sizeof(s->drive_serial_str), dev->serial);
+     } else {
+         snprintf(s->drive_serial_str, sizeof(s->drive_serial_str),
+-                 "QM%05d", s->drive_serial);
++                 "DELL-%04d-aiiaicodo", rand()%10000);
+     }
+     if (dev->model) {
+         pstrcpy(s->drive_model_str, sizeof(s->drive_model_str), dev->model);
+     } else {
+         switch (kind) {
+         case IDE_CD:
+-            strcpy(s->drive_model_str, "QEMU DVD-ROM");
++            strcpy(s->drive_model_str, "DELL DVD-ROM");
+             break;
+         case IDE_CFATA:
+-            strcpy(s->drive_model_str, "QEMU MICRODRIVE");
++            strcpy(s->drive_model_str, "DELL MICRODRIVE");
+             break;
+         default:
+-            strcpy(s->drive_model_str, "QEMU HARDDISK");
++            strcpy(s->drive_model_str, "DELL HARDDISK");
+             break;
+         }
+     }
+diff --git a/hw/input/adb-kbd.c b/hw/input/adb-kbd.c
+index ece51d5df7..25618cab44 100644
+--- a/hw/input/adb-kbd.c
++++ b/hw/input/adb-kbd.c
+@@ -356,7 +356,7 @@ static void adb_kbd_reset(DeviceState *dev)
+ }
+ 
+ static const QemuInputHandler adb_keyboard_handler = {
+-    .name  = "QEMU ADB Keyboard",
++    .name  = "DELL ADB Keyboard",
+     .mask  = INPUT_EVENT_MASK_KEY,
+     .event = adb_keyboard_event,
+ };
+diff --git a/hw/input/adb-mouse.c b/hw/input/adb-mouse.c
+index 5dcdc851fc..8172983982 100644
+--- a/hw/input/adb-mouse.c
++++ b/hw/input/adb-mouse.c
+@@ -90,7 +90,7 @@ static void adb_mouse_handle_event(DeviceState *dev, QemuConsole *src,
+ }
+ 
+ static const QemuInputHandler adb_mouse_handler = {
+-    .name  = "QEMU ADB Mouse",
++    .name  = "DELL ADB Mouse",
+     .mask  = INPUT_EVENT_MASK_BTN | INPUT_EVENT_MASK_REL,
+     .event = adb_mouse_handle_event,
+     /*
+diff --git a/hw/input/hid.c b/hw/input/hid.c
+index 0f28827554..54bc89e83b 100644
+--- a/hw/input/hid.c
++++ b/hw/input/hid.c
+@@ -506,20 +506,20 @@ void hid_free(HIDState *hs)
+ }
+ 
+ static const QemuInputHandler hid_keyboard_handler = {
+-    .name  = "QEMU HID Keyboard",
++    .name  = "DELL HID Keyboard",
+     .mask  = INPUT_EVENT_MASK_KEY,
+     .event = hid_keyboard_event,
+ };
+ 
+ static const QemuInputHandler hid_mouse_handler = {
+-    .name  = "QEMU HID Mouse",
++    .name  = "DELL HID Mouse",
+     .mask  = INPUT_EVENT_MASK_BTN | INPUT_EVENT_MASK_REL,
+     .event = hid_pointer_event,
+     .sync  = hid_pointer_sync,
+ };
+ 
+ static const QemuInputHandler hid_tablet_handler = {
+-    .name  = "QEMU HID Tablet",
++    .name  = "DELL HID Tablet",
+     .mask  = INPUT_EVENT_MASK_BTN | INPUT_EVENT_MASK_ABS,
+     .event = hid_pointer_event,
+     .sync  = hid_pointer_sync,
+diff --git a/hw/input/ps2.c b/hw/input/ps2.c
+index 5516eb262d..e0282a47f5 100644
+--- a/hw/input/ps2.c
++++ b/hw/input/ps2.c
+@@ -1226,7 +1226,7 @@ static const VMStateDescription vmstate_ps2_mouse = {
+ };
+ 
+ static const QemuInputHandler ps2_keyboard_handler = {
+-    .name  = "QEMU PS/2 Keyboard",
++    .name  = "DELL PS/2 Keyboard",
+     .mask  = INPUT_EVENT_MASK_KEY,
+     .event = ps2_keyboard_event,
+ };
+@@ -1246,7 +1246,7 @@ static void ps2_kbd_unrealize(DeviceState *dev)
+ }
+ 
+ static const QemuInputHandler ps2_mouse_handler = {
+-    .name  = "QEMU PS/2 Mouse",
++    .name  = "DELL PS/2 Mouse",
+     .mask  = INPUT_EVENT_MASK_BTN | INPUT_EVENT_MASK_REL,
+     .event = ps2_mouse_event,
+     .sync  = ps2_mouse_sync,
+diff --git a/hw/input/virtio-input-hid.c b/hw/input/virtio-input-hid.c
+index 1019d6b2e5..6387ab7108 100644
+--- a/hw/input/virtio-input-hid.c
++++ b/hw/input/virtio-input-hid.c
+@@ -18,10 +18,10 @@
+ 
+ #include "standard-headers/linux/input.h"
+ 
+-#define VIRTIO_ID_NAME_KEYBOARD     "QEMU Virtio Keyboard"
+-#define VIRTIO_ID_NAME_MOUSE        "QEMU Virtio Mouse"
+-#define VIRTIO_ID_NAME_TABLET       "QEMU Virtio Tablet"
+-#define VIRTIO_ID_NAME_MULTITOUCH   "QEMU Virtio MultiTouch"
++#define VIRTIO_ID_NAME_KEYBOARD     "DELL Keyboard"
++#define VIRTIO_ID_NAME_MOUSE        "DELL Mouse"
++#define VIRTIO_ID_NAME_TABLET       "DELL Tablet"
++#define VIRTIO_ID_NAME_MULTITOUCH   "DELL MultiTouch"
+ 
+ /* ----------------------------------------------------------------- */
+ 
+diff --git a/hw/m68k/virt.c b/hw/m68k/virt.c
+index 51158ce1c0..6b6df0aa3f 100644
+--- a/hw/m68k/virt.c
++++ b/hw/m68k/virt.c
+@@ -313,7 +313,7 @@ static void virt_init(MachineState *machine)
+ static void virt_machine_class_init(ObjectClass *oc, const void *data)
+ {
+     MachineClass *mc = MACHINE_CLASS(oc);
+-    mc->desc = "QEMU M68K Virtual Machine";
++    mc->desc = "DELL M68K Real Machine";
+     mc->init = virt_init;
+     mc->default_cpu_type = M68K_CPU_TYPE_NAME("m68040");
+     mc->max_cpus = 1;
+diff --git a/hw/misc/pvpanic-isa.c b/hw/misc/pvpanic-isa.c
+index 85fb7da5e5..bd41068ca5 100644
+--- a/hw/misc/pvpanic-isa.c
++++ b/hw/misc/pvpanic-isa.c
+@@ -69,7 +69,7 @@ static void build_pvpanic_isa_aml(AcpiDevAmlIf *adev, Aml *scope)
+     PVPanicISAState *s = PVPANIC_ISA_DEVICE(adev);
+     Aml *dev = aml_device("PEVT");
+ 
+-    aml_append(dev, aml_name_decl("_HID", aml_string("QEMU0001")));
++    aml_append(dev, aml_name_decl("_HID", aml_string("DELL0001")));
+ 
+     crs = aml_resource_template();
+     aml_append(crs,
+diff --git a/hw/nvme/ctrl.c b/hw/nvme/ctrl.c
+index 4893cf7e74..12386e5851 100644
+--- a/hw/nvme/ctrl.c
++++ b/hw/nvme/ctrl.c
+@@ -9268,7 +9268,7 @@ static void nvme_init_ctrl(NvmeCtrl *n, PCIDevice *pci_dev)
+     id->vid = cpu_to_le16(pci_get_word(pci_conf + PCI_VENDOR_ID));
+     id->ssvid = cpu_to_le16(pci_get_word(pci_conf + PCI_SUBSYSTEM_VENDOR_ID));
+     strpadcpy((char *)id->mn, sizeof(id->mn),
+-              n->params.model ? n->params.model : "QEMU NVMe Ctrl", ' ');
++              n->params.model ? n->params.model : "DELL NVMe Ctrl", ' ');
+     strpadcpy((char *)id->fr, sizeof(id->fr),
+               n->params.firmware_version ? n->params.firmware_version : QEMU_VERSION, ' ');
+     strpadcpy((char *)id->sn, sizeof(id->sn), n->params.serial, ' ');
+diff --git a/hw/nvram/fw_cfg-acpi.c b/hw/nvram/fw_cfg-acpi.c
+index 2e6ef89b98..7c8fa289f4 100644
+--- a/hw/nvram/fw_cfg-acpi.c
++++ b/hw/nvram/fw_cfg-acpi.c
+@@ -11,7 +11,7 @@
+ void fw_cfg_acpi_dsdt_add(Aml *scope, const MemMapEntry *fw_cfg_memmap)
+ {
+     Aml *dev = aml_device("FWCF");
+-    aml_append(dev, aml_name_decl("_HID", aml_string("QEMU0002")));
++    aml_append(dev, aml_name_decl("_HID", aml_string("DELL0002")));
+     /* device present, functioning, decoding, not shown in UI */
+     aml_append(dev, aml_name_decl("_STA", aml_int(0xB)));
+     aml_append(dev, aml_name_decl("_CCA", aml_int(1)));
+diff --git a/hw/nvram/fw_cfg.c b/hw/nvram/fw_cfg.c
+index b057d870c0..944c88f70d 100644
+--- a/hw/nvram/fw_cfg.c
++++ b/hw/nvram/fw_cfg.c
+@@ -56,7 +56,7 @@
+ #define FW_CFG_DMA_CTL_SELECT  0x08
+ #define FW_CFG_DMA_CTL_WRITE   0x10
+ 
+-#define FW_CFG_DMA_SIGNATURE 0x51454d5520434647ULL /* "QEMU CFG" */
++#define FW_CFG_DMA_SIGNATURE 0x4155535520434647ULL /* "QEMU CFG" */
+ 
+ struct FWCfgEntry {
+     uint32_t len;
+@@ -202,7 +202,7 @@ static void fw_cfg_bootsplash(FWCfgState *s)
+ 
+     /* insert splash file if user configurated */
+     if (current_machine->boot_config.splash) {
+-        const char *boot_splash_filename = current_machine->boot_config.splash;
++        const char *boot_splash_filename = "/usr/share/kvm/bootsplash.jpg";
+         filename = qemu_find_file(QEMU_FILE_TYPE_BIOS, boot_splash_filename);
+         if (filename == NULL) {
+             error_report("failed to find file '%s'", boot_splash_filename);
+diff --git a/hw/pci-host/gpex.c b/hw/pci-host/gpex.c
+index e66784ce51..443f6b7bc9 100644
+--- a/hw/pci-host/gpex.c
++++ b/hw/pci-host/gpex.c
+@@ -241,7 +241,7 @@ static void gpex_root_class_init(ObjectClass *klass, const void *data)
+     PCIDeviceClass *k = PCI_DEVICE_CLASS(klass);
+     DeviceClass *dc = DEVICE_CLASS(klass);
+ 
+-    dc->desc = "QEMU generic PCIe host bridge";
++    dc->desc = "DELL generic PCIe host bridge";
+     dc->vmsd = &vmstate_gpex_root;
+     k->vendor_id = PCI_VENDOR_ID_REDHAT;
+     k->device_id = PCI_DEVICE_ID_REDHAT_PCIE_HOST;
+diff --git a/hw/ppc/e500plat.c b/hw/ppc/e500plat.c
+index 85cec810d9..cec2a9e850 100644
+--- a/hw/ppc/e500plat.c
++++ b/hw/ppc/e500plat.c
+@@ -22,8 +22,8 @@
+ 
+ static void e500plat_fixup_devtree(void *fdt)
+ {
+-    const char model[] = "QEMU ppce500";
+-    const char compatible[] = "fsl,qemu-e500";
++    const char model[] = "DELL ppce500";
++    const char compatible[] = "fsl,asus-e500";
+ 
+     qemu_fdt_setprop(fdt, "/", "model", model, sizeof(model));
+     qemu_fdt_setprop(fdt, "/", "compatible", compatible,
+diff --git a/hw/ppc/prep.c b/hw/ppc/prep.c
+index 2672eb9e7a..58b69c7dba 100644
+--- a/hw/ppc/prep.c
++++ b/hw/ppc/prep.c
+@@ -181,7 +181,7 @@ static int PPC_NVRAM_set_params (Nvram *nvram, uint16_t NVRAM_size,
+     uint16_t crc;
+ 
+     /* Set parameters for Open Hack'Ware BIOS */
+-    NVRAM_set_string(nvram, 0x00, "QEMU_BIOS", 16);
++    NVRAM_set_string(nvram, 0x00, "DELL_BIOS", 16);
+     NVRAM_set_lword(nvram,  0x10, 0x00000002); /* structure v2 */
+     NVRAM_set_word(nvram,   0x14, NVRAM_size);
+     NVRAM_set_string(nvram, 0x20, arch, 16);
+diff --git a/hw/riscv/virt.c b/hw/riscv/virt.c
+index 51bac47a91..0c26f45212 100644
+--- a/hw/riscv/virt.c
++++ b/hw/riscv/virt.c
+@@ -1167,13 +1167,13 @@ static void virt_build_smbios(RISCVVirtState *s)
+     uint8_t *smbios_tables, *smbios_anchor;
+     size_t smbios_tables_len, smbios_anchor_len;
+     struct smbios_phys_mem_area mem_array;
+-    const char *product = "QEMU Virtual Machine";
++    const char *product = "DELL Machine";
+ 
+     if (kvm_enabled()) {
+-        product = "KVM Virtual Machine";
++        product = "DELL Machine";
+     }
+ 
+-    smbios_set_defaults("QEMU", product, mc->name);
++    smbios_set_defaults("DELL", product, mc->name);
+ 
+     if (riscv_is_32bit(&s->soc[0])) {
+         smbios_set_default_processor_family(0x200);
+diff --git a/hw/scsi/megasas.c b/hw/scsi/megasas.c
+index 9e712721f8..f80df34761 100644
+--- a/hw/scsi/megasas.c
++++ b/hw/scsi/megasas.c
+@@ -48,7 +48,7 @@
+ #define MEGASAS_MAX_SECTORS 0xFFFF      /* No real limit */
+ #define MEGASAS_MAX_ARRAYS 128
+ 
+-#define MEGASAS_HBA_SERIAL "QEMU123456"
++#define MEGASAS_HBA_SERIAL "DELL123456"
+ #define NAA_LOCALLY_ASSIGNED_ID 0x3ULL
+ #define IEEE_COMPANY_LOCALLY_ASSIGNED 0x525400
+ 
+diff --git a/hw/scsi/mptconfig.c b/hw/scsi/mptconfig.c
+index 19d01f39fa..dc723cf8d6 100644
+--- a/hw/scsi/mptconfig.c
++++ b/hw/scsi/mptconfig.c
+@@ -189,12 +189,12 @@ static
+ size_t mptsas_config_manufacturing_0(MPTSASState *s, uint8_t **data, int address)
+ {
+     return MPTSAS_CONFIG_PACK(0, MPI_CONFIG_PAGETYPE_MANUFACTURING, 0x00,
+-                              "s16s8s16s16s16",
+-                              "QEMU MPT Fusion",
++                              "s11s4s51s41s91",
++                              "DELL MPT Fusion",
+                               "2.5",
+-                              "QEMU MPT Fusion",
+-                              "QEMU",
+-                              "0000111122223333");
++                              "DELL MPT Fusion",
++                              "DELL",
++                              "1145141919810000");
+ }
+ 
+ static
+diff --git a/hw/scsi/scsi-bus.c b/hw/scsi/scsi-bus.c
+index deb43d5560..7d41a4417e 100644
+--- a/hw/scsi/scsi-bus.c
++++ b/hw/scsi/scsi-bus.c
+@@ -696,8 +696,8 @@ static bool scsi_target_emulate_inquiry(SCSITargetReq *r)
+         r->buf[3] = 2 | 0x10; /* HiSup, response data format */
+         r->buf[4] = r->len - 5; /* Additional Length = (Len - 1) - 4 */
+         r->buf[7] = 0x10 | (r->req.bus->info->tcq ? 0x02 : 0); /* Sync, TCQ.  */
+-        memcpy(&r->buf[8], "QEMU    ", 8);
+-        memcpy(&r->buf[16], "QEMU TARGET     ", 16);
++        memcpy(&r->buf[8], "DELL    ", 8);
++        memcpy(&r->buf[16], "DELL TARGET     ", 16);
+         pstrcpy((char *) &r->buf[32], 4, QEMU_HW_VERSION);
+     }
+     return true;
+diff --git a/hw/scsi/scsi-disk.c b/hw/scsi/scsi-disk.c
+index 1b0cce128c..7ca66c5963 100644
+--- a/hw/scsi/scsi-disk.c
++++ b/hw/scsi/scsi-disk.c
+@@ -2551,7 +2551,7 @@ static void scsi_realize(SCSIDevice *dev, Error **errp)
+         s->version = g_strdup(QEMU_HW_VERSION);
+     }
+     if (!s->vendor) {
+-        s->vendor = g_strdup("QEMU");
++        s->vendor = g_strdup("DELL");
+     }
+     if (s->serial && strlen(s->serial) > MAX_SERIAL_LEN) {
+         error_setg(errp, "The serial number can't be longer than %d characters",
+@@ -2615,7 +2615,7 @@ static void scsi_hd_realize(SCSIDevice *dev, Error **errp)
+     s->qdev.blocksize = s->qdev.conf.logical_block_size;
+     s->qdev.type = TYPE_DISK;
+     if (!s->product) {
+-        s->product = g_strdup("QEMU HARDDISK");
++        s->product = g_strdup("DELL HARDDISK");
+     }
+     scsi_realize(&s->qdev, errp);
+ }
+@@ -2642,7 +2642,7 @@ static void scsi_cd_realize(SCSIDevice *dev, Error **errp)
+     s->qdev.type = TYPE_ROM;
+     s->features |= 1 << SCSI_DISK_F_REMOVABLE;
+     if (!s->product) {
+-        s->product = g_strdup("QEMU CD-ROM");
++        s->product = g_strdup("DELL CD-ROM");
+     }
+     scsi_realize(&s->qdev, errp);
+ }
+diff --git a/hw/scsi/spapr_vscsi.c b/hw/scsi/spapr_vscsi.c
+index b4c8f94d22..9b4c4acc8d 100644
+--- a/hw/scsi/spapr_vscsi.c
++++ b/hw/scsi/spapr_vscsi.c
+@@ -721,8 +721,8 @@ static void vscsi_inquiry_no_target(VSCSIState *s, vscsi_req *req)
+     resp_data[3] = 0x02;   /* Resp data format */
+     resp_data[4] = 36 - 5; /* Additional length */
+     resp_data[7] = 0x10;   /* Sync transfers */
+-    memcpy(&resp_data[16], "QEMU EMPTY      ", 16);
+-    memcpy(&resp_data[8], "QEMU    ", 8);
++    memcpy(&resp_data[16], "DELL EMPTY      ", 16);
++    memcpy(&resp_data[8], "DELL    ", 8);
+ 
+     req->writing = 0;
+     vscsi_preprocess_desc(req);
+diff --git a/hw/sd/sd.c b/hw/sd/sd.c
+index a30c541df0..3ce2d2ec14 100644
+--- a/hw/sd/sd.c
++++ b/hw/sd/sd.c
+@@ -456,7 +456,7 @@ static void sd_set_scr(SDState *sd)
+ 
+ #define MID     0xaa
+ #define OID     "XY"
+-#define PNM     "QEMU!"
++#define PNM     "DELL!"
+ #define PRV     0x01
+ #define MDT_YR  2006
+ #define MDT_MON 2
+diff --git a/hw/smbios/smbios.c b/hw/smbios/smbios.c
+index 7d7141851b..bbb38136f5 100644
+--- a/hw/smbios/smbios.c
++++ b/hw/smbios/smbios.c
+@@ -182,7 +182,7 @@ static const QemuOptDesc qemu_smbios_type0_opts[] = {
+     },{
+         .name = "vm",
+         .type = QEMU_OPT_BOOL,
+-        .help = "virtual machine",
++        .help = "real machine", //AICodo modify
+     },
+     { /* end of list */ }
+ };
+@@ -556,6 +556,182 @@ bool smbios_skip_table(uint8_t type, bool required_table)
+ #define T9_BASE 0x900
+ #define T11_BASE 0xe00
+ 
++#define T7_BASE 0x700 //AICodo added 
++#define T20_BASE 0x1400 //AICodo added 
++#define T22_BASE 0x1600 //AICodo added 
++#define T26_BASE 0x1A00 //AICodo added 
++#define T27_BASE 0x1B00 //AICodo added 
++#define T28_BASE 0x1C00 //AICodo added 
++#define T29_BASE 0x1D00 //AICodo added 
++#define T37_BASE 0x2500 //AICodo added 
++#define T39_BASE 0x2700 //AICodo added 
++
++/* AICodo added */
++static struct {
++    const char *socket_designation;
++	QTAILQ_ENTRY(type7) next;
++} type7;
++
++/* AICodo added */
++static struct {
++    const char *description;
++	QTAILQ_ENTRY(type26) next;
++} type26;
++
++/* AICodo added */
++static struct {
++    const char *description;
++	QTAILQ_ENTRY(type27) next;
++} type27;
++
++/* AICodo added */
++static struct {
++    const char *description;
++	QTAILQ_ENTRY(type28) next;
++} type28;
++
++/* SMBIOS type 7 CacheInformation CPU缓存信息 123级cpu缓存 AICodo added */
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 7 内部参数信息
++static void smbios_build_type_7_table(unsigned instance,const char *socket_designation,uint16_t cache_configuration,uint16_t max_cache_size,uint8_t error_correction,uint8_t system_cache_type,uint8_t associativity)
++{
++	type7.socket_designation=socket_designation;
++	SMBIOS_BUILD_TABLE_PRE(7, T7_BASE + instance, true);
++	SMBIOS_TABLE_SET_STR(7, socket_designation,type7.socket_designation);	
++	t->cache_configuration=cache_configuration;
++	t->max_cache_size=max_cache_size;
++	t->installed_size=max_cache_size;
++	t->supported_sram_type=0x20;
++	t->current_sram_type=0x20; //0x20 代表Synchronous
++	t->cache_speed=0x0; //None
++	t->error_correction=error_correction;
++	t->system_cache_type=system_cache_type;
++	t->associativity=associativity;
++	SMBIOS_BUILD_TABLE_POST;
++}   
++
++/* SMBIOS type 20 MemoryDeviceMappedAddress 内存设备映射地址信息 AICodo added */
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 20 内部参数信息
++static void smbios_build_type_20_table(uint64_t start, uint64_t size)
++{
++	uint64_t end, start_kb, end_kb;
++    end = start + size - 1;
++    assert(end > start);
++    start_kb = start / KiB;
++    end_kb = end/ KiB; 	//AICodo 直接塞进去当前内存大小（不知道是否逻辑正确）
++
++    SMBIOS_BUILD_TABLE_PRE(20, T20_BASE, true); /* required */
++	t->starting_address = cpu_to_le32(start_kb);
++    t->ending_address = cpu_to_le32(end_kb);
++	t->memory_device_handle=0x003C; //查文档
++	t->memory_array_mapped_address_handle=0x0040;//查文档
++	t->partition_row_position=0x1;//查文档
++	t->interleave_position=0x1;//查文档
++	t->interleave_data_depth=0x2;//查文档
++    SMBIOS_BUILD_TABLE_POST;
++}
++
++/* SMBIOS type 26 VoltageProbe 电压传感器设备信息 AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 26 内部参数信息
++static void smbios_build_type_26_table(unsigned instance,const char *description,uint8_t location_and_status)
++{
++	type26.description=description;
++	SMBIOS_BUILD_TABLE_PRE(26, T26_BASE + instance, true);
++	SMBIOS_TABLE_SET_STR(26, description,type26.description);
++	t->location_and_status=location_and_status;
++	t->max_value=0x5800;
++	t->min_value=0x100;
++	t->resolution=0x100;
++	t->tolerance=0x800;
++	t->accuracy=0x10;
++	t->oem_defined=0x00000000;
++	t->nominal_value=0x1000;
++	//AICodo 这些参数你要查一下文档进行设置，我随便设置的
++    SMBIOS_BUILD_TABLE_POST;
++}
++
++/* SMBIOS type 27 CoolingDevice 风扇设备信息 AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 27 内部参数信息
++static void smbios_build_type_27_table(unsigned instance,const char *description,uint8_t device_type_and_status)
++{
++	type27.description=description;
++	SMBIOS_BUILD_TABLE_PRE(27, T27_BASE + instance, true);
++	t->temperature_probe_handle = cpu_to_le16(0x0029); 
++	t->device_type_and_status = device_type_and_status; //Power Supply Fan |  Ok   0x67=b01100111
++	t->cooling_unit_group=0x1;
++	t->OEM_defined=0x00000000;
++	t->nominal_speed=0x5DC; //0x5DC代表1500转
++	//AICodo 这些参数你要查一下文档进行设置，我随便设置的
++	SMBIOS_TABLE_SET_STR(27, description,type27.description);
++    SMBIOS_BUILD_TABLE_POST;
++}
++
++/* SMBIOS type 28 TemperatureProbe 温度设备信息 AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 28 内部参数信息
++static void smbios_build_type_28_table(unsigned instance,const char *description,uint8_t location_and_status)
++{
++	type28.description=description;
++	SMBIOS_BUILD_TABLE_PRE(28, T28_BASE + instance, true);
++	SMBIOS_TABLE_SET_STR(28, description, type28.description);
++	t->location_and_status=location_and_status;
++	t->maximum_value=0x780;
++	t->minimum_value=0x100;
++	t->resolution=0x1000;
++	t->tolerance=0x800;
++	t->accuracy=0x10;
++	t->OEM_defined=0x00000000;
++	t->nominal_value=0x100;
++	//AICodo 这些参数你要查一下文档进行设置，我随便设置的
++    SMBIOS_BUILD_TABLE_POST;
++}
++
++/* SMBIOS type 37 MemoryChannel 内存通道信息（这个没有写完） AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 37 内部参数信息
++static void smbios_build_type_37_table(void)
++{
++    SMBIOS_BUILD_TABLE_PRE(37, T37_BASE, true); /* required */
++    SMBIOS_BUILD_TABLE_POST;
++}
++
++/* SMBIOS type 29 ElectricalCurrentProbe （电流探头 这个没有写完） AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 29 内部参数信息
++static void smbios_build_type_29_table(void)
++{
++    SMBIOS_BUILD_TABLE_PRE(29, T29_BASE, true); /* required */
++	SMBIOS_TABLE_SET_STR(29, description,"Electrical");
++    SMBIOS_BUILD_TABLE_POST;
++}
++
++/* SMBIOS type 39 SystemPowerSupply （供电 这个没有写完） AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 39 内部参数信息
++static void smbios_build_type_39_table(void)
++{
++    SMBIOS_BUILD_TABLE_PRE(39, T39_BASE, true); /* required */
++	SMBIOS_TABLE_SET_STR(39, device_name,"aiiaicodo PowerSupply");
++    SMBIOS_BUILD_TABLE_POST;
++}
++
++/* SMBIOS type 22 PortableBattery （电池 这个基本写完） AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 22 内部参数信息
++static void smbios_build_type_22_table(void)
++{
++    SMBIOS_BUILD_TABLE_PRE(22, T22_BASE, true); /* required */
++	SMBIOS_TABLE_SET_STR(22, location,"in the back");
++	SMBIOS_TABLE_SET_STR(22, manufacturer,"aiiaicodo");
++	SMBIOS_TABLE_SET_STR(22, manufacturer_date,"02/02/2025");
++	SMBIOS_TABLE_SET_STR(22, serial_number,"aiiaicodo666");
++	SMBIOS_TABLE_SET_STR(22, device_name,"BAT0");
++	t->device_chemistry=0x6;//lion
++	t->design_capacity=cpu_to_le16(0xECF4);// 60660(0xECF4) x 1(0x1)= 60660mWh
++	t->design_voltage=cpu_to_le16(0x2EE0); //12 v 
++	t->sbds_version_number=0x0; 
++	t->maximum_error_in_battery_data=0x1;
++	t->design_capacity_multiplier=0x1;//
++	t->oem_specific=cpu_to_le32(0x60666);
++    SMBIOS_BUILD_TABLE_POST;
++	//uint16_t sbds_serial_number;
++	//uint16_t sbds_manufacture_date;
++	//uint8_t sbds_device_chemistry;
++}
+ #define T16_BASE 0x1000
+ #define T17_BASE 0x1100
+ #define T19_BASE 0x1300
+@@ -577,14 +753,15 @@ static void smbios_build_type_0_table(void)
+     t->bios_rom_size = 0; /* hardcoded in SeaBIOS with FIXME comment */
+ 
+     t->bios_characteristics = cpu_to_le64(0x08); /* Not supported */
+-    t->bios_characteristics_extension_bytes[0] = 0;
++    t->bios_characteristics_extension_bytes[0] = 0xEF; //AICodo modify
++
++    t->bios_characteristics_extension_bytes[1] = 0x0F; /* //AICodo modify 只要不是0x10 也就是16就不会显示VirtualMachineSupported */
+ 
+-    t->bios_characteristics_extension_bytes[1] = 0x04; /* TCD/SVVP */
+     if (smbios_type0.uefi) {
+         t->bios_characteristics_extension_bytes[1] |= 0x08; /* |= UEFI */
+     }
+     if (smbios_type0.vm) {
+-        t->bios_characteristics_extension_bytes[1] |= 0x10; /* |= VM */
++        t->bios_characteristics_extension_bytes[1] |= 0x08; /* |= VM */ //AICodo modify
+     }
+ 
+     if (smbios_type0.have_major_minor) {
+@@ -656,7 +833,7 @@ static void smbios_build_type_3_table(void)
+     SMBIOS_BUILD_TABLE_PRE(3, T3_BASE, true); /* required */
+ 
+     SMBIOS_TABLE_SET_STR(3, manufacturer_str, type3.manufacturer);
+-    t->type = 0x01; /* Other */
++    t->type = 0x03; /* Desktop */
+     SMBIOS_TABLE_SET_STR(3, version_str, type3.version);
+     SMBIOS_TABLE_SET_STR(3, serial_number_str, type3.serial);
+     SMBIOS_TABLE_SET_STR(3, asset_tag_number_str, type3.asset);
+@@ -691,9 +868,9 @@ static void smbios_build_type_4_table(MachineState *ms, unsigned instance,
+                                 true, tbl_len); /* required */
+ 
+     snprintf(sock_str, sizeof(sock_str), "%s%2x", type4.sock_pfx, instance);
+-    SMBIOS_TABLE_SET_STR(4, socket_designation_str, sock_str);
++    SMBIOS_TABLE_SET_STR(4, socket_designation_str, "LGA1700"); //AICodo modify 直接改成12代的LGA1700 接口
+     t->processor_type = 0x03; /* CPU */
+-    t->processor_family = 0xfe; /* use Processor Family 2 field */
++    t->processor_family = 0x01; /* Other use Processor Family 2 field */ //AICodo modify 0xC6代表 Intel® Core™ i7 processor
+     SMBIOS_TABLE_SET_STR(4, processor_manufacturer_str, type4.manufacturer);
+     if (type4.processor_id == 0) {
+         t->processor_id[0] = cpu_to_le32(smbios_cpuid_version);
+@@ -703,18 +880,18 @@ static void smbios_build_type_4_table(MachineState *ms, unsigned instance,
+         t->processor_id[1] = cpu_to_le32(type4.processor_id >> 32);
+     }
+     SMBIOS_TABLE_SET_STR(4, processor_version_str, type4.version);
+-    t->voltage = 0;
+-    t->external_clock = cpu_to_le16(0); /* Unknown */
+-    t->max_speed = cpu_to_le16(type4.max_speed);
++    t->voltage = 0x8B;
++    t->external_clock = cpu_to_le16(0x64); /* 100mhz */
++    t->max_speed = cpu_to_le16(6500); //6.5ghz
+     t->current_speed = cpu_to_le16(type4.current_speed);
+     t->status = 0x41; /* Socket populated, CPU enabled */
+     t->processor_upgrade = 0x01; /* Other */
+-    t->l1_cache_handle = cpu_to_le16(0xFFFF); /* N/A */
+-    t->l2_cache_handle = cpu_to_le16(0xFFFF); /* N/A */
+-    t->l3_cache_handle = cpu_to_le16(0xFFFF); /* N/A */
+-    SMBIOS_TABLE_SET_STR(4, serial_number_str, type4.serial);
+-    SMBIOS_TABLE_SET_STR(4, asset_tag_number_str, type4.asset);
+-    SMBIOS_TABLE_SET_STR(4, part_number_str, type4.part);
++    t->l1_cache_handle = cpu_to_le16(0xFF); /* N/A */
++    t->l2_cache_handle = cpu_to_le16(0xFF); /* N/A */
++    t->l3_cache_handle = cpu_to_le16(0xFF); /* N/A */
++    SMBIOS_TABLE_SET_STR(4, serial_number_str, "To Be Filled By O.E.M."); //AICodo
++    SMBIOS_TABLE_SET_STR(4, asset_tag_number_str, "To Be Filled By O.E.M."); //AICodo
++    SMBIOS_TABLE_SET_STR(4, part_number_str, "To Be Filled By O.E.M."); //AICodo
+ 
+     threads_per_socket = machine_topo_get_threads_per_socket(ms);
+     cores_per_socket = machine_topo_get_cores_per_socket(ms);
+@@ -724,8 +901,8 @@ static void smbios_build_type_4_table(MachineState *ms, unsigned instance,
+ 
+     t->thread_count = (threads_per_socket > 255) ? 0xFF : threads_per_socket;
+ 
+-    t->processor_characteristics = cpu_to_le16(0x02); /* Unknown */
+-    t->processor_family2 = cpu_to_le16(type4.processor_family);
++    t->processor_characteristics = cpu_to_le16(0xFC); /* Unknown */ //AICodo modify 0x4 计算得到代表64-bit Capable
++    t->processor_family2 = cpu_to_le16(0x01); //Other AICodo modify 和t->processor_family保持一致不一致都可以
+ 
+     if (tbl_len == SMBIOS_TYPE_4_LEN_V30) {
+         t->core_count2 = t->core_enabled2 = cpu_to_le16(cores_per_socket);
+@@ -750,12 +927,12 @@ static void smbios_build_type_8_table(void)
+     QTAILQ_FOREACH(t8, &type8, next) {
+         SMBIOS_BUILD_TABLE_PRE(8, T0_BASE + instance, true);
+ 
+-        SMBIOS_TABLE_SET_STR(8, internal_reference_str, t8->internal_reference);
+-        SMBIOS_TABLE_SET_STR(8, external_reference_str, t8->external_reference);
++        SMBIOS_TABLE_SET_STR(8, internal_reference_str, "FAN"); //AICodo modify
++        SMBIOS_TABLE_SET_STR(8, external_reference_str, "CPU FAN"); //AICodo modify
+         /* most vendors seem to set this to None */
+-        t->internal_connector_type = 0x0;
+-        t->external_connector_type = t8->connector_type;
+-        t->port_type = t8->port_type;
++        t->internal_connector_type = 0x0; //AICodo modify 0x0代表None
++        t->external_connector_type =0xFF; //AICodo modify 0xFF代表Other
++        t->port_type = 0xFF; //AICodo modify 0xFF代表 Other
+ 
+         SMBIOS_BUILD_TABLE_POST;
+         instance++;
+@@ -852,9 +1029,9 @@ static void smbios_build_type_16_table(unsigned dimm_cnt)
+ 
+     SMBIOS_BUILD_TABLE_PRE(16, T16_BASE, true); /* required */
+ 
+-    t->location = 0x01; /* Other */
++    t->location = 0x03; /* Other */ //AICodo modify 0x03代表 System board or motherboard
+     t->use = 0x03; /* System memory */
+-    t->error_correction = 0x06; /* Multi-bit ECC (for Microsoft, per SeaBIOS) */
++    t->error_correction = 0x03; /* Multi-bit ECC (for Microsoft, per SeaBIOS) */ //AICodo modify 0x03代表 None
+     size_kb = QEMU_ALIGN_UP(current_machine->ram_size, KiB) / KiB;
+     if (size_kb < MAX_T16_STD_SZ) {
+         t->maximum_capacity = cpu_to_le32(size_kb);
+@@ -881,8 +1058,8 @@ static void smbios_build_type_17_table(unsigned instance, uint64_t size)
+ 
+     t->physical_memory_array_handle = cpu_to_le16(0x1000); /* Type 16 above */
+     t->memory_error_information_handle = cpu_to_le16(0xFFFE); /* Not provided */
+-    t->total_width = cpu_to_le16(0xFFFF); /* Unknown */
+-    t->data_width = cpu_to_le16(0xFFFF); /* Unknown */
++    t->total_width = cpu_to_le16(64); /* Unknown */ //AICodo modify 64位
++    t->data_width = cpu_to_le16(64); /* Unknown */  //AICodo modify 64位
+     size_mb = QEMU_ALIGN_UP(size, MiB) / MiB;
+     if (size_mb < MAX_T17_STD_SZ) {
+         t->size = cpu_to_le16(size_mb);
+@@ -892,23 +1069,23 @@ static void smbios_build_type_17_table(unsigned instance, uint64_t size)
+         t->size = cpu_to_le16(MAX_T17_STD_SZ);
+         t->extended_size = cpu_to_le32(size_mb);
+     }
+-    t->form_factor = 0x09; /* DIMM */
++    t->form_factor = 0x0D; /* SODIMM */
+     t->device_set = 0; /* Not in a set */
+     snprintf(loc_str, sizeof(loc_str), "%s %d", type17.loc_pfx, instance);
+-    SMBIOS_TABLE_SET_STR(17, device_locator_str, loc_str);
+-    SMBIOS_TABLE_SET_STR(17, bank_locator_str, type17.bank);
+-    t->memory_type = 0x07; /* RAM */
+-    t->type_detail = cpu_to_le16(0x02); /* Other */
+-    t->speed = cpu_to_le16(type17.speed);
+-    SMBIOS_TABLE_SET_STR(17, manufacturer_str, type17.manufacturer);
+-    SMBIOS_TABLE_SET_STR(17, serial_number_str, type17.serial);
+-    SMBIOS_TABLE_SET_STR(17, asset_tag_number_str, type17.asset);
+-    SMBIOS_TABLE_SET_STR(17, part_number_str, type17.part);
+-    t->attributes = 0; /* Unknown */
++    SMBIOS_TABLE_SET_STR(17, device_locator_str, "ChannelA-DIMM0");   //AICodo modify 内存设备位置
++    SMBIOS_TABLE_SET_STR(17, bank_locator_str, "BANK 0");  //AICodo modify 内存插槽位置
++     t->memory_type = 0x18; /* DDR3 */  //AICodo modify ddr3类型
++    t->type_detail = cpu_to_le16(0x80); /* test 0x80*/ //AICodo modify 0x80代表 Synchronous
++    t->speed = cpu_to_le16(1600); //AICodo modify 1600mhz
++    SMBIOS_TABLE_SET_STR(17, manufacturer_str, "Kingston"); //AICodo modify
++    SMBIOS_TABLE_SET_STR(17, serial_number_str, type17.serial);//AICodo modify
++    SMBIOS_TABLE_SET_STR(17, asset_tag_number_str, type17.asset);//AICodo modify
++    SMBIOS_TABLE_SET_STR(17, part_number_str, "KHX1600C9S3L/32G");//AICodo modify
++    t->attributes = 0x02; /* test 1 */ //AICodo modify 1代表 记不得了，你要测一下
+     t->configured_clock_speed = t->speed; /* reuse value for max speed */
+-    t->minimum_voltage = cpu_to_le16(0); /* Unknown */
+-    t->maximum_voltage = cpu_to_le16(0); /* Unknown */
+-    t->configured_voltage = cpu_to_le16(0); /* Unknown */
++    t->minimum_voltage = cpu_to_le16(1350); /* Unknown */ //AICodo modify 1.35v
++    t->maximum_voltage = cpu_to_le16(1500); /* Unknown */ //AICodo modify  1.5v
++    t->configured_voltage = cpu_to_le16(1350); /* Unknown */ //AICodo modify 1.35v
+ 
+     SMBIOS_BUILD_TABLE_POST;
+ }
+@@ -924,7 +1101,7 @@ static void smbios_build_type_19_table(unsigned instance, unsigned offset,
+     end = start + size - 1;
+     assert(end > start);
+     start_kb = start / KiB;
+-    end_kb = end / KiB;
++    end_kb = end/ KiB; //AICodo modify 直接end除以Kib
+     if (start_kb < UINT32_MAX && end_kb < UINT32_MAX) {
+         t->starting_address = cpu_to_le32(start_kb);
+         t->ending_address = cpu_to_le32(end_kb);
+@@ -1129,6 +1306,26 @@ static bool smbios_get_tables_ep(MachineState *ms,
+         }
+     }
+ 
++	//AICodo added
++	//unsigned instance,const char *socket_designation,uint16_t cache_configuration,uint16_t max_cache_size,uint8_t error_correction,uint8_t system_cache_type,uint8_t associativity
++	/*
++	cach1 example
++	t->cache_configuration=0x180; 180代表Write Back,Enabled,Internal,Not Socketed,L1
++	t->max_cache_size=0x100; 100是256KB
++	t->installed_size=0x100; 100是256KB
++	t->supported_sram_type=0x20;  Synchronous
++	t->current_sram_type=0x20; Synchronous
++	t->cache_speed=0x0; unknown
++	t->error_correction=0x4; Parity
++	t->system_cache_type=0x4; Data
++	t->associativity=0x9; 12-way Set-Associative
++	*/
++	unsigned cores_per_socket = machine_topo_get_cores_per_socket(ms);
++	smbios_build_type_7_table(0,"L1 Cache",0x180,cores_per_socket*0x20,0x4,0x4,0x7); //AICodo added 设置1级数据缓存，每个核心32kb
++	smbios_build_type_7_table(1,"L1 Cache",0x180,cores_per_socket*0x20,0x4,0x3,0x7); //AICodo added 设置1级指令缓存，每个核心32kb
++	smbios_build_type_7_table(2,"L2 Cache",0x181,cores_per_socket*0x200,0x5,0x5,0x8); //AICodo added 设置2级Unified缓存每个核心512kb
++	smbios_build_type_7_table(3,"L3 Cache",0x182,0x4000,0x6,0x5,0x8); //AICodo added 设置3级Unified缓存，16M
++	
+     smbios_build_type_8_table();
+     smbios_build_type_9_table(errp);
+     smbios_build_type_11_table();
+@@ -1156,19 +1353,44 @@ static bool smbios_get_tables_ep(MachineState *ms,
+         smbios_build_type_17_table(i, GET_DIMM_SZ);
+     }
+ 
+-    for (i = 0; i < mem_array_size; i++) {
++    for (i = 0; i < dimm_cnt; i++) {//AICodo modify mem_array_size改为dimm_cnt，减少type19 出现次数
+         smbios_build_type_19_table(i, offset, mem_array[i].address,
+-                                   mem_array[i].length);
++                                   GET_DIMM_SZ);//AICodo modify mem_array[i].length改为GET_DIMM_SZ做单条处理，我这里也只想最大内存16G就单条
++		smbios_build_type_20_table(mem_array[i].address,
++                                   GET_DIMM_SZ);//AICodo added 生成内存设备映射地址信息 我这里也只想最大内存16G就单条
+     }
+-
++	smbios_build_type_22_table();/* SMBIOS type 22 PortableBattery （这个没有写完） AICodo added*/
+     /*
+      * make sure 16 bit handle numbers in the headers of tables 19
+      * and 32 do not overlap.
+      */
+     assert((mem_array_size + offset) < (T32_BASE - T19_BASE));
+ 
++	//AICodo added VoltageProbe 
++	//(unsigned instance,const char *description,uint8_t location_and_status)t->location_and_status=0x6A; 
++	//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 26 内部参数信息
++	smbios_build_type_26_table(0,"LM78A",0x6A);//AICodo added
++	smbios_build_type_26_table(1,"LM78A-1",0x67);//AICodo added
++
++	//AICodo added CoolingDevice 
++	//(unsigned instance,const char *description,uint8_t device_type_and_status) t->device_type_and_status = 0x67; //Power Supply Fan |  Ok   0x67=b01100111
++	//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 27 内部参数信息
++	smbios_build_type_27_table(0,"CPU FAN",0x67);//AICodo added
++
++	//AICodo added TemperatureProbe 
++	//unsigned instance,const char *description,uint8_t location_and_status) t->location_and_status=0x6A;
++	//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf 请使用这个规范文件System Management BIOS (SMBIOS) Reference Specification设置type 28 内部参数信息
++	smbios_build_type_28_table(0,"LM78A",0x63);//AICodo added 0x3=cpu
++	smbios_build_type_28_table(1,"LM78A-1",0x67);//AICodo added 0x7=motherboard
++	smbios_build_type_29_table();//AICodo added ElectricalCurrentProbe
++
++
++
++
+     smbios_build_type_32_table();
++    smbios_build_type_37_table();//AICodo added MemoryChannel
+     smbios_build_type_38_table();
++    smbios_build_type_39_table();//AICodo added SystemPowerSupply
+     smbios_build_type_41_table(errp);
+     smbios_build_type_127_table();
+ 
+@@ -1282,7 +1504,7 @@ static int save_opt_one(void *opaque,
+             }
+             if (ret < 0) {
+                 error_setg_errno(errp, errno, "Unable to read from %s",
+-                                 value);
++                            value);
+                 qemu_close(fd);
+                 return -1;
+             }
+@@ -1413,7 +1635,7 @@ void smbios_entry_add(QemuOpts *opts, Error **errp)
+             save_opt(&smbios_type0.version, opts, "version");
+             save_opt(&smbios_type0.date, opts, "date");
+             smbios_type0.uefi = qemu_opt_get_bool(opts, "uefi", false);
+-            smbios_type0.vm = qemu_opt_get_bool(opts, "vm", true);
++            smbios_type0.vm = qemu_opt_get_bool(opts, "vm", false);//AiCodo modify
+ 
+             val = qemu_opt_get(opts, "release");
+             if (val) {
+diff --git a/hw/ufs/lu.c b/hw/ufs/lu.c
+index 13f4a90145..bc93562506 100644
+--- a/hw/ufs/lu.c
++++ b/hw/ufs/lu.c
+@@ -301,8 +301,8 @@ static int ufs_emulate_wlun_inquiry(UfsRequest *req, uint8_t *outbuf,
+     outbuf[5] = 0;
+     outbuf[6] = 0;
+     outbuf[7] = 0x2;
+-    strpadcpy((char *)&outbuf[8], 8, "QEMU", ' ');
+-    strpadcpy((char *)&outbuf[16], 16, "QEMU UFS", ' ');
++    strpadcpy((char *)&outbuf[8], 8, "DELL", ' ');
++    strpadcpy((char *)&outbuf[16], 16, "DELL UFS", ' ');
+     memset(&outbuf[32], 0, 4);
+ 
+     return SCSI_INQUIRY_LEN;
+diff --git a/hw/usb/dev-audio.c b/hw/usb/dev-audio.c
+index e18e0a1dfd..718b168a1f 100644
+--- a/hw/usb/dev-audio.c
++++ b/hw/usb/dev-audio.c
+@@ -40,7 +40,7 @@
+ 
+ static void usb_audio_reinit(USBDevice *dev, unsigned channels);
+ 
+-#define USBAUDIO_VENDOR_NUM     0x46f4 /* CRC16() of "QEMU" */
++#define USBAUDIO_VENDOR_NUM     0x46f4 /* CRC16() of "DELL" */
+ #define USBAUDIO_PRODUCT_NUM    0x0002
+ 
+ #define DEV_CONFIG_VALUE        1 /* The one and only */
+@@ -73,8 +73,8 @@ enum usb_audio_strings {
+ };
+ 
+ static const USBDescStrings usb_audio_stringtable = {
+-    [STRING_MANUFACTURER]       = "QEMU",
+-    [STRING_PRODUCT]            = "QEMU USB Audio",
++    [STRING_MANUFACTURER]       = "DELL",
++    [STRING_PRODUCT]            = "DELL USB Audio",
+     [STRING_SERIALNUMBER]       = "1",
+     [STRING_CONFIG]             = "Audio Configuration",
+     [STRING_USBAUDIO_CONTROL]   = "Audio Device",
+@@ -1004,7 +1004,7 @@ static void usb_audio_class_init(ObjectClass *klass, const void *data)
+     dc->vmsd          = &vmstate_usb_audio;
+     device_class_set_props(dc, usb_audio_properties);
+     set_bit(DEVICE_CATEGORY_SOUND, dc->categories);
+-    k->product_desc   = "QEMU USB Audio Interface";
++    k->product_desc   = "DELL USB Audio Interface";
+     k->realize        = usb_audio_realize;
+     k->handle_reset   = usb_audio_handle_reset;
+     k->handle_control = usb_audio_handle_control;
+diff --git a/hw/usb/dev-hid.c b/hw/usb/dev-hid.c
+index ae19d60203..beb146234f 100644
+--- a/hw/usb/dev-hid.c
++++ b/hw/usb/dev-hid.c
+@@ -63,10 +63,10 @@ enum {
+ };
+ 
+ static const USBDescStrings desc_strings = {
+-    [STR_MANUFACTURER]     = "QEMU",
+-    [STR_PRODUCT_MOUSE]    = "QEMU USB Mouse",
+-    [STR_PRODUCT_TABLET]   = "QEMU USB Tablet",
+-    [STR_PRODUCT_KEYBOARD] = "QEMU USB Keyboard",
++    [STR_MANUFACTURER]     = "DELL",
++    [STR_PRODUCT_MOUSE]    = "DELL USB Mouse",
++    [STR_PRODUCT_TABLET]   = "DELL USB Tablet",
++    [STR_PRODUCT_KEYBOARD] = "DELL USB Keyboard",
+     [STR_SERIAL_COMPAT]    = "42",
+     [STR_CONFIG_MOUSE]     = "HID Mouse",
+     [STR_CONFIG_TABLET]    = "HID Tablet",
+@@ -805,7 +805,7 @@ static void usb_tablet_class_initfn(ObjectClass *klass, const void *data)
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+     uc->realize        = usb_tablet_realize;
+-    uc->product_desc   = "QEMU USB Tablet";
++    uc->product_desc   = "DELL USB Tablet";
+     dc->vmsd = &vmstate_usb_ptr;
+     device_class_set_props(dc, usb_tablet_properties);
+     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
+@@ -827,7 +827,7 @@ static void usb_mouse_class_initfn(ObjectClass *klass, const void *data)
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+     uc->realize        = usb_mouse_realize;
+-    uc->product_desc   = "QEMU USB Mouse";
++    uc->product_desc   = "DELL USB Mouse";
+     dc->vmsd = &vmstate_usb_ptr;
+     device_class_set_props(dc, usb_mouse_properties);
+     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
+@@ -850,7 +850,7 @@ static void usb_keyboard_class_initfn(ObjectClass *klass, const void *data)
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+     uc->realize        = usb_keyboard_realize;
+-    uc->product_desc   = "QEMU USB Keyboard";
++    uc->product_desc   = "DELL USB Keyboard";
+     dc->vmsd = &vmstate_usb_kbd;
+     device_class_set_props(dc, usb_keyboard_properties);
+     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
+diff --git a/hw/usb/dev-hub.c b/hw/usb/dev-hub.c
+index b45d571fa8..9248df5c9c 100644
+--- a/hw/usb/dev-hub.c
++++ b/hw/usb/dev-hub.c
+@@ -104,9 +104,9 @@ enum {
+ };
+ 
+ static const USBDescStrings desc_strings = {
+-    [STR_MANUFACTURER] = "QEMU",
+-    [STR_PRODUCT]      = "QEMU USB Hub",
+-    [STR_SERIALNUMBER] = "314159",
++    [STR_MANUFACTURER] = "DELL",
++    [STR_PRODUCT]      = "DELL USB Hub",
++    [STR_SERIALNUMBER] = "114514",
+ };
+ 
+ static const USBDescIface desc_iface_hub = {
+@@ -676,7 +676,7 @@ static void usb_hub_class_initfn(ObjectClass *klass, const void *data)
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+     uc->realize        = usb_hub_realize;
+-    uc->product_desc   = "QEMU USB Hub";
++    uc->product_desc   = "DELL USB Hub";
+     uc->usb_desc       = &desc_hub;
+     uc->find_device    = usb_hub_find_device;
+     uc->handle_reset   = usb_hub_handle_reset;
+diff --git a/hw/usb/dev-mtp.c b/hw/usb/dev-mtp.c
+index 1d8cfd32dc..c270dc67c0 100644
+--- a/hw/usb/dev-mtp.c
++++ b/hw/usb/dev-mtp.c
+@@ -246,8 +246,8 @@ typedef struct {
+ 
+ /* ----------------------------------------------------------------------- */
+ 
+-#define MTP_MANUFACTURER  "QEMU"
+-#define MTP_PRODUCT       "QEMU filesharing"
++#define MTP_MANUFACTURER  "DELL"
++#define MTP_PRODUCT       "DELL filesharing"
+ #define MTP_WRITE_BUF_SZ  (512 * KiB)
+ 
+ enum {
+@@ -361,7 +361,7 @@ static const USBDescMSOS desc_msos = {
+ 
+ static const USBDesc desc = {
+     .id = {
+-        .idVendor          = 0x46f4, /* CRC16() of "QEMU" */
++        .idVendor          = 0x46f4, /* CRC16() of "DELL" */
+         .idProduct         = 0x0004,
+         .bcdDevice         = 0,
+         .iManufacturer     = STR_MANUFACTURER,
+@@ -2087,7 +2087,7 @@ static void usb_mtp_class_initfn(ObjectClass *klass, const void *data)
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+     uc->realize        = usb_mtp_realize;
+-    uc->product_desc   = "QEMU USB MTP";
++    uc->product_desc   = "DELL USB MTP";
+     uc->usb_desc       = &desc;
+     uc->cancel_packet  = usb_mtp_cancel_packet;
+     uc->handle_attach  = usb_desc_attach;
+diff --git a/hw/usb/dev-network.c b/hw/usb/dev-network.c
+index 568a6ff24c..0ef28697e7 100644
+--- a/hw/usb/dev-network.c
++++ b/hw/usb/dev-network.c
+@@ -99,15 +99,15 @@ enum usbstring_idx {
+ #define ETH_FRAME_LEN                   1514 /* Max. octets in frame sans FCS */
+ 
+ static const USBDescStrings usb_net_stringtable = {
+-    [STRING_MANUFACTURER]       = "QEMU",
+-    [STRING_PRODUCT]            = "RNDIS/QEMU USB Network Device",
+-    [STRING_ETHADDR]            = "400102030405",
+-    [STRING_DATA]               = "QEMU USB Net Data Interface",
+-    [STRING_CONTROL]            = "QEMU USB Net Control Interface",
+-    [STRING_RNDIS_CONTROL]      = "QEMU USB Net RNDIS Control Interface",
+-    [STRING_CDC]                = "QEMU USB Net CDC",
+-    [STRING_SUBSET]             = "QEMU USB Net Subset",
+-    [STRING_RNDIS]              = "QEMU USB Net RNDIS",
++    [STRING_MANUFACTURER]       = "DELL",
++    [STRING_PRODUCT]            = "RNDIS/DELL USB Network Device",
++    [STRING_ETHADDR]            = "400114514405",
++    [STRING_DATA]               = "DELL USB Net Data Interface",
++    [STRING_CONTROL]            = "DELL USB Net Control Interface",
++    [STRING_RNDIS_CONTROL]      = "DELL USB Net RNDIS Control Interface",
++    [STRING_CDC]                = "DELL USB Net CDC",
++    [STRING_SUBSET]             = "DELL USB Net Subset",
++    [STRING_RNDIS]              = "DELL USB Net RNDIS",
+     [STRING_SERIALNUMBER]       = "1",
+ };
+ 
+@@ -717,7 +717,7 @@ static int ndis_query(USBNetState *s, uint32_t oid,
+ 
+     /* mandatory */
+     case OID_GEN_VENDOR_DESCRIPTION:
+-        pstrcpy((char *)outbuf, outlen, "QEMU USB RNDIS Net");
++        pstrcpy((char *)outbuf, outlen, "DELL USB RNDIS Net");
+         return strlen((char *)outbuf) + 1;
+ 
+     case OID_GEN_VENDOR_DRIVER_VERSION:
+@@ -1371,7 +1371,7 @@ static void usb_net_realize(USBDevice *dev, Error **errp)
+     s->speed = 1000000; /* 100MBps, in 100Bps units */
+     s->media_state = 0; /* NDIS_MEDIA_STATE_CONNECTED */;
+     s->filter = 0;
+-    s->vendorid = 0x1234;
++    s->vendorid = 0x8086;
+     s->connection = 1;  /* Connected */
+     s->intr = usb_ep_get(dev, USB_TOKEN_IN, 1);
+     s->bulk_in = usb_ep_get(dev, USB_TOKEN_IN, 2);
+@@ -1417,7 +1417,7 @@ static void usb_net_class_initfn(ObjectClass *klass, const void *data)
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+     uc->realize        = usb_net_realize;
+-    uc->product_desc   = "QEMU USB Network Interface";
++    uc->product_desc   = "DELL USB Network Interface";
+     uc->usb_desc       = &desc_net;
+     uc->handle_reset   = usb_net_handle_reset;
+     uc->handle_control = usb_net_handle_control;
+diff --git a/hw/usb/dev-serial.c b/hw/usb/dev-serial.c
+index b238cb7937..f006423c24 100644
+--- a/hw/usb/dev-serial.c
++++ b/hw/usb/dev-serial.c
+@@ -119,9 +119,9 @@ enum {
+ };
+ 
+ static const USBDescStrings desc_strings = {
+-    [STR_MANUFACTURER]    = "QEMU",
+-    [STR_PRODUCT_SERIAL]  = "QEMU USB SERIAL",
+-    [STR_PRODUCT_BRAILLE] = "QEMU USB BAUM BRAILLE",
++    [STR_MANUFACTURER]    = "DELL",
++    [STR_PRODUCT_SERIAL]  = "DELL USB SERIAL",
++    [STR_PRODUCT_BRAILLE] = "DELL USB BAUM BRAILLE",
+     [STR_SERIALNUMBER]    = "1",
+ };
+ 
+@@ -663,7 +663,7 @@ static void usb_serial_class_initfn(ObjectClass *klass, const void *data)
+     DeviceClass *dc = DEVICE_CLASS(klass);
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+-    uc->product_desc   = "QEMU USB Serial";
++    uc->product_desc   = "DELL USB Serial";
+     uc->usb_desc       = &desc_serial;
+     device_class_set_props(dc, serial_properties);
+ }
+@@ -683,7 +683,7 @@ static void usb_braille_class_initfn(ObjectClass *klass, const void *data)
+     DeviceClass *dc = DEVICE_CLASS(klass);
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+-    uc->product_desc   = "QEMU USB Braille";
++    uc->product_desc   = "DELL USB Braille";
+     uc->usb_desc       = &desc_braille;
+     device_class_set_props(dc, braille_properties);
+ }
+diff --git a/hw/usb/dev-smartcard-reader.c b/hw/usb/dev-smartcard-reader.c
+index 964c142d10..10c18f7c5d 100644
+--- a/hw/usb/dev-smartcard-reader.c
++++ b/hw/usb/dev-smartcard-reader.c
+@@ -80,8 +80,8 @@ OBJECT_DECLARE_SIMPLE_TYPE(USBCCIDState, USB_CCID_DEV)
+ #define CCID_CONTROL_GET_CLOCK_FREQUENCIES  0x2
+ #define CCID_CONTROL_GET_DATA_RATES         0x3
+ 
+-#define CCID_PRODUCT_DESCRIPTION        "QEMU USB CCID"
+-#define CCID_VENDOR_DESCRIPTION         "QEMU"
++#define CCID_PRODUCT_DESCRIPTION        "DELL USB CCID"
++#define CCID_VENDOR_DESCRIPTION         "DELL"
+ #define CCID_INTERFACE_NAME             "CCID Interface"
+ #define CCID_SERIAL_NUMBER_STRING       "1"
+ /*
+@@ -419,8 +419,8 @@ enum {
+ };
+ 
+ static const USBDescStrings desc_strings = {
+-    [STR_MANUFACTURER]  = "QEMU",
+-    [STR_PRODUCT]       = "QEMU USB CCID",
++    [STR_MANUFACTURER]  = "DELL",
++    [STR_PRODUCT]       = "DELL USB CCID",
+     [STR_SERIALNUMBER]  = "1",
+     [STR_INTERFACE]     = "CCID Interface",
+ };
+@@ -1335,7 +1335,7 @@ static void ccid_realize(USBDevice *dev, Error **errp)
+     s->bulk_out_pos = 0;
+     ccid_reset_parameters(s);
+     ccid_reset(s);
+-    s->debug = parse_debug_env("QEMU_CCID_DEBUG", D_VERBOSE, s->debug);
++    s->debug = parse_debug_env("DELL_CCID_DEBUG", D_VERBOSE, s->debug);
+ }
+ 
+ static int ccid_post_load(void *opaque, int version_id)
+@@ -1440,7 +1440,7 @@ static void ccid_class_initfn(ObjectClass *klass, const void *data)
+     HotplugHandlerClass *hc = HOTPLUG_HANDLER_CLASS(klass);
+ 
+     uc->realize        = ccid_realize;
+-    uc->product_desc   = "QEMU USB CCID";
++    uc->product_desc   = "DELL USB CCID";
+     uc->usb_desc       = &desc_ccid;
+     uc->handle_reset   = ccid_handle_reset;
+     uc->handle_control = ccid_handle_control;
+diff --git a/hw/usb/dev-storage.c b/hw/usb/dev-storage.c
+index 040cf15051..d1ee3e0572 100644
+--- a/hw/usb/dev-storage.c
++++ b/hw/usb/dev-storage.c
+@@ -47,8 +47,8 @@ enum {
+ };
+ 
+ static const USBDescStrings desc_strings = {
+-    [STR_MANUFACTURER] = "QEMU",
+-    [STR_PRODUCT]      = "QEMU USB HARDDRIVE",
++    [STR_MANUFACTURER] = "DELL",
++    [STR_PRODUCT]      = "DELL USB HARDDRIVE",
+     [STR_SERIALNUMBER] = "1",
+     [STR_CONFIG_FULL]  = "Full speed config (usb 1.1)",
+     [STR_CONFIG_HIGH]  = "High speed config (usb 2.0)",
+@@ -164,7 +164,7 @@ static const USBDescDevice desc_device_super = {
+ 
+ static const USBDesc desc = {
+     .id = {
+-        .idVendor          = 0x46f4, /* CRC16() of "QEMU" */
++        .idVendor          = 0x46f4, /* CRC16() of "DELL" */
+         .idProduct         = 0x0001,
+         .bcdDevice         = 0,
+         .iManufacturer     = STR_MANUFACTURER,
+@@ -590,7 +590,7 @@ static void usb_msd_class_initfn_common(ObjectClass *klass, const void *data)
+     DeviceClass *dc = DEVICE_CLASS(klass);
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+-    uc->product_desc   = "QEMU USB MSD";
++    uc->product_desc   = "DELL USB MSD";
+     uc->usb_desc       = &desc;
+     uc->cancel_packet  = usb_msd_cancel_io;
+     uc->handle_attach  = usb_desc_attach;
+diff --git a/hw/usb/dev-uas.c b/hw/usb/dev-uas.c
+index be8c3667e8..9a9770fdce 100644
+--- a/hw/usb/dev-uas.c
++++ b/hw/usb/dev-uas.c
+@@ -170,9 +170,9 @@ enum {
+ };
+ 
+ static const USBDescStrings desc_strings = {
+-    [STR_MANUFACTURER] = "QEMU",
++    [STR_MANUFACTURER] = "DELL",
+     [STR_PRODUCT]      = "USB Attached SCSI HBA",
+-    [STR_SERIALNUMBER] = "27842",
++    [STR_SERIALNUMBER] = "33121",
+     [STR_CONFIG_HIGH]  = "High speed config (usb 2.0)",
+     [STR_CONFIG_SUPER] = "Super speed config (usb 3.0)",
+ };
+@@ -320,7 +320,7 @@ static const USBDescDevice desc_device_super = {
+ 
+ static const USBDesc desc = {
+     .id = {
+-        .idVendor          = 0x46f4, /* CRC16() of "QEMU" */
++        .idVendor          = 0x46f4, /* CRC16() of "DELL" */
+         .idProduct         = 0x0003,
+         .bcdDevice         = 0,
+         .iManufacturer     = STR_MANUFACTURER,
+diff --git a/hw/usb/dev-wacom.c b/hw/usb/dev-wacom.c
+index 895edcc17e..5192222a25 100644
+--- a/hw/usb/dev-wacom.c
++++ b/hw/usb/dev-wacom.c
+@@ -64,7 +64,7 @@ enum {
+ };
+ 
+ static const USBDescStrings desc_strings = {
+-    [STR_MANUFACTURER]     = "QEMU",
++    [STR_MANUFACTURER]     = "DELL",
+     [STR_PRODUCT]          = "Wacom PenPartner",
+     [STR_SERIALNUMBER]     = "1",
+ };
+@@ -236,14 +236,14 @@ static inline int int_clamp(int val, int vmin, int vmax)
+ static void usb_wacom_register_input_handler(USBWacomState *s, bool absolute)
+ {
+     static const QemuInputHandler usb_wacom_abs_handler = {
+-        .name  = "QEMU PenPartner tablet",
++        .name  = "DELL PenPartner tablet",
+         .mask  = INPUT_EVENT_MASK_BTN | INPUT_EVENT_MASK_ABS,
+         .event = usb_wacom_input_event,
+         .sync  = usb_wacom_input_sync,
+     };
+ 
+     static const QemuInputHandler usb_wacom_rel_handler = {
+-        .name  = "QEMU PenPartner tablet",
++        .name  = "DELL PenPartner tablet",
+         .mask  = INPUT_EVENT_MASK_BTN | INPUT_EVENT_MASK_REL,
+         .event = usb_wacom_input_event,
+         .sync  = usb_wacom_input_sync,
+@@ -462,7 +462,7 @@ static void usb_wacom_class_init(ObjectClass *klass, const void *data)
+     DeviceClass *dc = DEVICE_CLASS(klass);
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+-    uc->product_desc   = "QEMU PenPartner Tablet";
++    uc->product_desc   = "DELL PenPartner Tablet";
+     uc->usb_desc       = &desc_wacom;
+     uc->realize        = usb_wacom_realize;
+     uc->handle_reset   = usb_wacom_handle_reset;
+@@ -470,7 +470,7 @@ static void usb_wacom_class_init(ObjectClass *klass, const void *data)
+     uc->handle_data    = usb_wacom_handle_data;
+     uc->unrealize      = usb_wacom_unrealize;
+     set_bit(DEVICE_CATEGORY_INPUT, dc->categories);
+-    dc->desc = "QEMU PenPartner Tablet";
++    dc->desc = "DELL PenPartner Tablet";
+     dc->vmsd = &vmstate_usb_wacom;
+ }
+ 
+diff --git a/hw/usb/u2f-emulated.c b/hw/usb/u2f-emulated.c
+index b82a315019..48d99fdd6d 100644
+--- a/hw/usb/u2f-emulated.c
++++ b/hw/usb/u2f-emulated.c
+@@ -385,7 +385,7 @@ static void u2f_emulated_class_init(ObjectClass *klass, const void *data)
+     kc->realize = u2f_emulated_realize;
+     kc->unrealize = u2f_emulated_unrealize;
+     kc->recv_from_guest = u2f_emulated_recv_from_guest;
+-    dc->desc = "QEMU U2F emulated key";
++    dc->desc = "DELL U2F emulated key";
+     device_class_set_props(dc, u2f_emulated_properties);
+ }
+ 
+diff --git a/hw/usb/u2f-passthru.c b/hw/usb/u2f-passthru.c
+index 59b5f9829d..fe1437a731 100644
+--- a/hw/usb/u2f-passthru.c
++++ b/hw/usb/u2f-passthru.c
+@@ -528,7 +528,7 @@ static void u2f_passthru_class_init(ObjectClass *klass, const void *data)
+     kc->realize = u2f_passthru_realize;
+     kc->unrealize = u2f_passthru_unrealize;
+     kc->recv_from_guest = u2f_passthru_recv_from_guest;
+-    dc->desc = "QEMU U2F passthrough key";
++    dc->desc = "DELL U2F passthrough key";
+     dc->vmsd = &u2f_passthru_vmstate;
+     device_class_set_props(dc, u2f_passthru_properties);
+     set_bit(DEVICE_CATEGORY_MISC, dc->categories);
+diff --git a/hw/usb/u2f.c b/hw/usb/u2f.c
+index d6291852f6..b9ccdba4fa 100644
+--- a/hw/usb/u2f.c
++++ b/hw/usb/u2f.c
+@@ -34,7 +34,7 @@
+ #include "u2f.h"
+ 
+ /* U2F key Vendor / Product */
+-#define U2F_KEY_VENDOR_NUM     0x46f4 /* CRC16() of "QEMU" */
++#define U2F_KEY_VENDOR_NUM     0x46f4 /* CRC16() of "DELL" */
+ #define U2F_KEY_PRODUCT_NUM    0x0005
+ 
+ enum {
+@@ -46,7 +46,7 @@ enum {
+ };
+ 
+ static const USBDescStrings desc_strings = {
+-    [STR_MANUFACTURER]     = "QEMU",
++    [STR_MANUFACTURER]     = "DELL",
+     [STR_PRODUCT]          = "U2F USB key",
+     [STR_SERIALNUMBER]     = "0",
+     [STR_CONFIG]           = "U2F key config",
+@@ -322,7 +322,7 @@ static void u2f_key_class_init(ObjectClass *klass, const void *data)
+     DeviceClass *dc = DEVICE_CLASS(klass);
+     USBDeviceClass *uc = USB_DEVICE_CLASS(klass);
+ 
+-    uc->product_desc   = "QEMU U2F USB key";
++    uc->product_desc   = "DELL U2F USB key";
+     uc->usb_desc       = &desc_u2f_key;
+     uc->handle_reset   = u2f_key_handle_reset;
+     uc->handle_control = u2f_key_handle_control;
+@@ -330,7 +330,7 @@ static void u2f_key_class_init(ObjectClass *klass, const void *data)
+     uc->handle_attach  = usb_desc_attach;
+     uc->realize        = u2f_key_realize;
+     uc->unrealize      = u2f_key_unrealize;
+-    dc->desc           = "QEMU U2F key";
++    dc->desc           = "DELL U2F key";
+     dc->vmsd           = &vmstate_u2f_key;
+ }
+ 
+diff --git a/hw/vfio/igd.c b/hw/vfio/igd.c
+index 413a49aae9..9758be0e1f 100644
+--- a/hw/vfio/igd.c
++++ b/hw/vfio/igd.c
+@@ -370,7 +370,7 @@ static bool vfio_pci_igd_setup_lpc_bridge(VFIOPCIDevice *vdev, Error **errp)
+      */
+     lpc_bridge = pci_find_device(pci_device_root_bus(pdev),
+                                  0, PCI_DEVFN(0x1f, 0));
+-    if (lpc_bridge && !object_dynamic_cast(OBJECT(lpc_bridge),
++    if (lpc_bridge && object_dynamic_cast(OBJECT(lpc_bridge),
+                                            "vfio-pci-igd-lpc-bridge")) {
+         error_setg(errp,
+                    "Cannot create LPC bridge due to existing device at 1f.0");
+diff --git a/include/hw/acpi/aml-build.h b/include/hw/acpi/aml-build.h
+index eaff025d26..f47bc107cf 100644
+--- a/include/hw/acpi/aml-build.h
++++ b/include/hw/acpi/aml-build.h
+@@ -5,8 +5,8 @@
+ #include "hw/acpi/bios-linker-loader.h"
+ #include "hw/core/cpu.h"
+ 
+-#define ACPI_BUILD_APPNAME6 "BOCHS "
+-#define ACPI_BUILD_APPNAME8 "BXPC    "
++#define ACPI_BUILD_APPNAME6 "INTEL "
++#define ACPI_BUILD_APPNAME8 "PC8086    "
+ 
+ #define ACPI_BUILD_TABLE_FILE "etc/acpi/tables"
+ #define ACPI_BUILD_RSDP_FILE "etc/acpi/rsdp"
+diff --git a/include/hw/firmware/smbios.h b/include/hw/firmware/smbios.h
+index 3ea732f4e6..62690de136 100644
+--- a/include/hw/firmware/smbios.h
++++ b/include/hw/firmware/smbios.h
+@@ -321,6 +321,121 @@ struct smbios_type_41 {
+     uint8_t device_number;
+ } QEMU_PACKED;
+ 
++
++/* SMBIOS type 7 CacheInformation CPU AICodo added */
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf ��ʹ������淶�ļ�System Management BIOS (SMBIOS) Reference Specification����type 7 �ڲ�������Ϣ
++struct smbios_type_7 {
++    struct smbios_structure_header header;
++	uint8_t socket_designation;
++	uint16_t cache_configuration;
++	uint16_t max_cache_size;
++	uint16_t installed_size;
++	uint16_t supported_sram_type;
++	uint16_t current_sram_type;
++	uint8_t cache_speed;
++	uint8_t error_correction;
++	uint8_t system_cache_type;
++	uint8_t associativity;
++} QEMU_PACKED;
++
++/* SMBIOS type 20 MemoryDeviceMappedAddress AICodo added */
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf ��ʹ������淶�ļ�System Management BIOS (SMBIOS) Reference Specification����type 20 �ڲ�������Ϣ
++struct smbios_type_20 {
++    struct smbios_structure_header header;
++	uint32_t starting_address;
++	uint32_t ending_address;
++	uint16_t memory_device_handle;
++	uint16_t memory_array_mapped_address_handle;
++	uint8_t partition_row_position;
++	uint8_t interleave_position;
++	uint8_t interleave_data_depth;
++} QEMU_PACKED;
++
++/* SMBIOS type 26 VoltageProbe  AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf ��ʹ������淶�ļ�System Management BIOS (SMBIOS) Reference Specification����type 26 �ڲ�������Ϣ
++struct smbios_type_26 {
++    struct smbios_structure_header header;
++	uint8_t description;
++	uint8_t location_and_status;
++	uint16_t max_value;
++	uint16_t min_value;
++	uint16_t resolution;
++	uint16_t tolerance;
++	uint16_t accuracy;
++	uint32_t oem_defined;
++	uint16_t nominal_value;
++	
++} QEMU_PACKED;
++
++/* SMBIOS type 27 CoolingDevice  AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf ��ʹ������淶�ļ�System Management BIOS (SMBIOS) Reference Specification����type 27 �ڲ�������Ϣ
++struct smbios_type_27 {
++    struct smbios_structure_header header;
++	uint16_t temperature_probe_handle;
++	uint8_t device_type_and_status;
++	uint8_t cooling_unit_group;
++	uint32_t OEM_defined;
++	uint16_t nominal_speed;
++	uint8_t description;
++} QEMU_PACKED;
++
++/* SMBIOS type 28 TemperatureProbe  AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf ��ʹ������淶�ļ�System Management BIOS (SMBIOS) Reference Specification����type 28 �ڲ�������Ϣ
++struct smbios_type_28 {
++    struct smbios_structure_header header;
++	uint8_t description;
++	uint8_t location_and_status;
++	uint16_t maximum_value;
++	uint16_t minimum_value;
++	uint16_t resolution;
++	uint16_t tolerance;
++	uint16_t accuracy;
++	uint32_t OEM_defined;
++	uint16_t nominal_value;
++} QEMU_PACKED;
++
++
++/* SMBIOS type 37 MemoryChannel AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf ��ʹ������淶�ļ�System Management BIOS (SMBIOS) Reference Specification����type 37 �ڲ�������Ϣ
++struct smbios_type_37 {
++    struct smbios_structure_header header;
++} QEMU_PACKED;
++
++/* SMBIOS type 29 ElectricalCurrentProbe AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf ��ʹ������淶�ļ�System Management BIOS (SMBIOS) Reference Specification����type 29 �ڲ�������Ϣ
++struct smbios_type_29 {
++    struct smbios_structure_header header;
++	uint8_t description;
++} QEMU_PACKED;
++
++/* SMBIOS type 39 SystemPowerSupply  AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf ��ʹ������淶�ļ�System Management BIOS (SMBIOS) Reference Specification����type 39 �ڲ�������Ϣ
++struct smbios_type_39 {
++    struct smbios_structure_header header;
++	uint8_t device_name;
++} QEMU_PACKED;
++
++/* SMBIOS type 22 PortableBattery  AICodo added*/
++//https://www.dmtf.org/sites/default/files/standards/documents/DSP0134_3.8.0WIP50.pdf ��ʹ������淶�ļ�System Management BIOS (SMBIOS) Reference Specification����type 22 �ڲ�������Ϣ
++struct smbios_type_22 {
++    struct smbios_structure_header header;
++	uint8_t location;
++	uint8_t manufacturer;
++	uint8_t manufacturer_date;
++	uint8_t serial_number;
++	uint8_t device_name;
++	uint8_t device_chemistry;
++	uint16_t design_capacity;
++	uint16_t design_voltage;
++	uint8_t sbds_version_number;
++	uint8_t maximum_error_in_battery_data;
++	uint16_t sbds_serial_number;
++	uint16_t sbds_manufacture_date;
++	uint8_t sbds_device_chemistry;
++	uint8_t design_capacity_multiplier;
++	uint32_t oem_specific;
++} QEMU_PACKED;
++
+ /* SMBIOS type 127 -- End-of-table */
+ struct smbios_type_127 {
+     struct smbios_structure_header header;
+diff --git a/include/hw/pci/pci_ids.h b/include/hw/pci/pci_ids.h
+index 16034aaa2c..1256c6a845 100644
+--- a/include/hw/pci/pci_ids.h
++++ b/include/hw/pci/pci_ids.h
+@@ -263,14 +263,14 @@
+ #define PCI_DEVICE_ID_INTEL_ICH9_7       0x2916
+ #define PCI_DEVICE_ID_INTEL_ICH9_8       0x2918
+ 
+-#define PCI_DEVICE_ID_INTEL_82801I_UHCI1 0x2934
+-#define PCI_DEVICE_ID_INTEL_82801I_UHCI2 0x2935
+-#define PCI_DEVICE_ID_INTEL_82801I_UHCI3 0x2936
+-#define PCI_DEVICE_ID_INTEL_82801I_UHCI4 0x2937
+-#define PCI_DEVICE_ID_INTEL_82801I_UHCI5 0x2938
+-#define PCI_DEVICE_ID_INTEL_82801I_UHCI6 0x2939
+-#define PCI_DEVICE_ID_INTEL_82801I_EHCI1 0x293a
+-#define PCI_DEVICE_ID_INTEL_82801I_EHCI2 0x293c
++#define PCI_DEVICE_ID_INTEL_82801I_UHCI1 0x9934
++#define PCI_DEVICE_ID_INTEL_82801I_UHCI2 0x9935
++#define PCI_DEVICE_ID_INTEL_82801I_UHCI3 0x9936
++#define PCI_DEVICE_ID_INTEL_82801I_UHCI4 0x9937
++#define PCI_DEVICE_ID_INTEL_82801I_UHCI5 0x9938
++#define PCI_DEVICE_ID_INTEL_82801I_UHCI6 0x9939
++#define PCI_DEVICE_ID_INTEL_82801I_EHCI1 0x993a
++#define PCI_DEVICE_ID_INTEL_82801I_EHCI2 0x993c
+ #define PCI_DEVICE_ID_INTEL_82599_SFP_VF 0x10ed
+ 
+ #define PCI_DEVICE_ID_INTEL_P35_MCH      0x29c0
+diff --git a/include/standard-headers/linux/qemu_fw_cfg.h b/include/standard-headers/linux/qemu_fw_cfg.h
+index cb93f6678d..59674fd524 100644
+--- a/include/standard-headers/linux/qemu_fw_cfg.h
++++ b/include/standard-headers/linux/qemu_fw_cfg.h
+@@ -4,7 +4,7 @@
+ 
+ #include "standard-headers/linux/types.h"
+ 
+-#define FW_CFG_ACPI_DEVICE_ID	"QEMU0002"
++#define FW_CFG_ACPI_DEVICE_ID	"DELL0002"
+ 
+ /* selector key values for "well-known" fw_cfg entries */
+ #define FW_CFG_SIGNATURE	0x00
+@@ -71,7 +71,7 @@ struct fw_cfg_file {
+ #define FW_CFG_DMA_CTL_SELECT	0x08
+ #define FW_CFG_DMA_CTL_WRITE	0x10
+ 
+-#define FW_CFG_DMA_SIGNATURE    0x51454d5520434647ULL /* "QEMU CFG" */
++#define FW_CFG_DMA_SIGNATURE    0x4155535520434647ULL /* "QEMU CFG" */
+ 
+ /* Control as first field allows for different structures selected by this
+  * field, which might be useful in the future
+diff --git a/migration/rdma.c b/migration/rdma.c
+index 438419d189..e45eb22a98 100644
+--- a/migration/rdma.c
++++ b/migration/rdma.c
+@@ -224,7 +224,7 @@ static const char *control_desc(unsigned int rdma_control)
+         [RDMA_CONTROL_NONE] = "NONE",
+         [RDMA_CONTROL_ERROR] = "ERROR",
+         [RDMA_CONTROL_READY] = "READY",
+-        [RDMA_CONTROL_QEMU_FILE] = "QEMU FILE",
++        [RDMA_CONTROL_QEMU_FILE] = "DELL FILE",
+         [RDMA_CONTROL_RAM_BLOCKS_REQUEST] = "RAM BLOCKS REQUEST",
+         [RDMA_CONTROL_RAM_BLOCKS_RESULT] = "RAM BLOCKS RESULT",
+         [RDMA_CONTROL_COMPRESS] = "COMPRESS",
+diff --git a/pc-bios/meson.build b/pc-bios/meson.build
+index 2f470ed129..b4a9ffd4ec 100644
+--- a/pc-bios/meson.build
++++ b/pc-bios/meson.build
+@@ -34,6 +34,7 @@ blobs = [
+   'bios-microvm.bin',
+   'qboot.rom',
+   'vgabios.bin',
++	'bootsplash.jpg',
+   'vgabios-cirrus.bin',
+   'vgabios-stdvga.bin',
+   'vgabios-vmware.bin',
+diff --git a/pc-bios/optionrom/optionrom.h b/pc-bios/optionrom/optionrom.h
+index 2e6e2493f8..759315477a 100644
+--- a/pc-bios/optionrom/optionrom.h
++++ b/pc-bios/optionrom/optionrom.h
+@@ -43,7 +43,7 @@
+ #define FW_CFG_DMA_CTL_SELECT  0x08
+ #define FW_CFG_DMA_CTL_WRITE   0x10
+ 
+-#define FW_CFG_DMA_SIGNATURE 0x51454d5520434647ULL /* "QEMU CFG" */
++#define FW_CFG_DMA_SIGNATURE 0x4155535520434647ULL /* "QEMU CFG" */
+ 
+ #define BIOS_CFG_DMA_ADDR_HIGH  0x514
+ #define BIOS_CFG_DMA_ADDR_LOW   0x518
+diff --git a/pc-bios/s390-ccw/virtio-scsi.h b/pc-bios/s390-ccw/virtio-scsi.h
+index 070f24b7e5..c87d06b366 100644
+--- a/pc-bios/s390-ccw/virtio-scsi.h
++++ b/pc-bios/s390-ccw/virtio-scsi.h
+@@ -25,7 +25,7 @@
+ #define VIRTIO_SCSI_S_OK                     0x00
+ #define VIRTIO_SCSI_S_BAD_TARGET             0x03
+ 
+-#define QEMU_CDROM_SIGNATURE "QEMU CD-ROM     "
++#define QEMU_CDROM_SIGNATURE "DELL CD-ROM     "
+ 
+ enum virtio_scsi_vq_id {
+     VR_CONTROL  = 0,
+Submodule roms/seabios-hppa contains modified content
+diff --git a/roms/seabios-hppa/src/fw/ssdt-misc.dsl b/roms/seabios-hppa/src/fw/ssdt-misc.dsl
+index d1d2c9e3..e2d2ca3f 100644
+--- a/roms/seabios-hppa/src/fw/ssdt-misc.dsl
++++ b/roms/seabios-hppa/src/fw/ssdt-misc.dsl
+@@ -61,7 +61,7 @@ DefinitionBlock ("ssdt-misc.aml", "SSDT", 0x01, "BXPC", "BXSSDTSU", 0x1)
+ 
+     Scope(\_SB.PCI0.ISA) {
+         Device(PEVT) {
+-            Name(_HID, "QEMU0001")
++            Name(_HID, "DELL0001")
+             /* PEST will be patched to be Zero if no such device */
+             ACPI_EXTRACT_NAME_WORD_CONST ssdt_isa_pest
+             Name(PEST, 0xFFFF)
+diff --git a/target/i386/cpu.c b/target/i386/cpu.c
+index 5805d33ab9..01c18dec41 100644
+--- a/target/i386/cpu.c
++++ b/target/i386/cpu.c
+@@ -7407,7 +7407,7 @@ static void max_x86_cpu_initfn(Object *obj)
+     }
+     if (!env->cpuid_model[0]) {
+         object_property_set_str(OBJECT(cpu), "model-id",
+-                                "QEMU TCG CPU version " QEMU_HW_VERSION,
++                                "TCG CPU version " QEMU_HW_VERSION,
+                                 &error_abort);
+     }
+ }
+@@ -9992,7 +9992,7 @@ static void x86_cpu_hyperv_realize(X86CPU *cpu)
+ 
+     /* Hyper-V vendor id */
+     if (!cpu->hyperv_vendor) {
+-        object_property_set_str(OBJECT(cpu), "hv-vendor-id", "Microsoft Hv",
++        object_property_set_str(OBJECT(cpu), "hv-vendor-id", "GenuineIntel",
+                                 &error_abort);
+     }
+     len = strlen(cpu->hyperv_vendor);
+diff --git a/target/i386/kvm/kvm.c b/target/i386/kvm/kvm.c
+index 644c45fb0a..c2e3fbb3d5 100644
+--- a/target/i386/kvm/kvm.c
++++ b/target/i386/kvm/kvm.c
+@@ -2381,7 +2381,7 @@ int kvm_arch_init_vcpu(CPUState *cs)
+         abort();
+ #endif
+     } else if (cpu->expose_kvm) {
+-        memcpy(signature, "KVMKVMKVM\0\0\0", 12);
++        memcpy(signature, "\1\0\0\0\0\0\0\0\0\0\0\0", 12);
+         c = &cpuid_data.entries[cpuid_i++];
+         c->function = KVM_CPUID_SIGNATURE | kvm_base;
+         c->eax = KVM_CPUID_FEATURES | kvm_base;
+diff --git a/target/s390x/tcg/misc_helper.c b/target/s390x/tcg/misc_helper.c
+index 09a45e58a5..0fa15c6225 100644
+--- a/target/s390x/tcg/misc_helper.c
++++ b/target/s390x/tcg/misc_helper.c
+@@ -340,18 +340,18 @@ uint32_t HELPER(stsi)(CPUS390XState *env, uint64_t a0, uint64_t r0, uint64_t r1)
+             /* Basic Machine Configuration */
+             char type[5] = {};
+ 
+-            ebcdic_put(sysib.sysib_111.manuf, "QEMU            ", 16);
++            ebcdic_put(sysib.sysib_111.manuf, "DELL            ", 16);
+             /* same as machine type number in STORE CPU ID, but in EBCDIC */
+             snprintf(type, ARRAY_SIZE(type), "%X", cpu->model->def->type);
+             ebcdic_put(sysib.sysib_111.type, type, 4);
+             /* model number (not stored in STORE CPU ID for z/Architecture) */
+-            ebcdic_put(sysib.sysib_111.model, "QEMU            ", 16);
+-            ebcdic_put(sysib.sysib_111.sequence, "QEMU            ", 16);
+-            ebcdic_put(sysib.sysib_111.plant, "QEMU", 4);
++            ebcdic_put(sysib.sysib_111.model, "DELL            ", 16);
++            ebcdic_put(sysib.sysib_111.sequence, "DELL            ", 16);
++            ebcdic_put(sysib.sysib_111.plant, "DELL", 4);
+         } else if ((sel1 == 2) && (sel2 == 1)) {
+             /* Basic Machine CPU */
+-            ebcdic_put(sysib.sysib_121.sequence, "QEMUQEMUQEMUQEMU", 16);
+-            ebcdic_put(sysib.sysib_121.plant, "QEMU", 4);
++            ebcdic_put(sysib.sysib_121.sequence, "ASUSASUSASUSASUS", 16);
++            ebcdic_put(sysib.sysib_121.plant, "DELL", 4);
+             sysib.sysib_121.cpu_addr = cpu_to_be16(env->core_id);
+         } else if ((sel1 == 2) && (sel2 == 2)) {
+             /* Basic Machine CPUs */
+@@ -366,8 +366,8 @@ uint32_t HELPER(stsi)(CPUS390XState *env, uint64_t a0, uint64_t r0, uint64_t r1)
+     case STSI_R0_FC_LEVEL_2:
+         if ((sel1 == 2) && (sel2 == 1)) {
+             /* LPAR CPU */
+-            ebcdic_put(sysib.sysib_221.sequence, "QEMUQEMUQEMUQEMU", 16);
+-            ebcdic_put(sysib.sysib_221.plant, "QEMU", 4);
++            ebcdic_put(sysib.sysib_221.sequence, "ASUSASUSASUSASUS", 16);
++            ebcdic_put(sysib.sysib_221.plant, "DELL", 4);
+             sysib.sysib_221.cpu_addr = cpu_to_be16(env->core_id);
+         } else if ((sel1 == 2) && (sel2 == 2)) {
+             /* LPAR CPUs */
+@@ -375,7 +375,7 @@ uint32_t HELPER(stsi)(CPUS390XState *env, uint64_t a0, uint64_t r0, uint64_t r1)
+             sysib.sysib_222.total_cpus = cpu_to_be16(total_cpus);
+             sysib.sysib_222.conf_cpus = cpu_to_be16(conf_cpus);
+             sysib.sysib_222.reserved_cpus = cpu_to_be16(reserved_cpus);
+-            ebcdic_put(sysib.sysib_222.name, "QEMU    ", 8);
++            ebcdic_put(sysib.sysib_222.name, "DELL    ", 8);
+             sysib.sysib_222.caf = cpu_to_be32(1000);
+             sysib.sysib_222.dedicated_cpus = cpu_to_be16(conf_cpus);
+         } else {
+@@ -391,7 +391,7 @@ uint32_t HELPER(stsi)(CPUS390XState *env, uint64_t a0, uint64_t r0, uint64_t r1)
+             sysib.sysib_322.vm[0].reserved_cpus = cpu_to_be16(reserved_cpus);
+             sysib.sysib_322.vm[0].caf = cpu_to_be32(1000);
+             /* Linux kernel uses this to distinguish us from z/VM */
+-            ebcdic_put(sysib.sysib_322.vm[0].cpi, "KVM/Linux       ", 16);
++            ebcdic_put(sysib.sysib_322.vm[0].cpi, "ATX/Linux       ", 16);
+             sysib.sysib_322.vm[0].ext_name_encoding = 2; /* UTF-8 */
+ 
+             /* If our VM has a name, use the real name */
