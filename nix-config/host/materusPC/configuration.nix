@@ -54,6 +54,11 @@ in
       mesa-demos
       libvdpau-va-gl
       nss
+      yad
+      unzip
+      xwininfo
+      xprop
+      xdotool
       mkk.nixerus.pkgs.polymc
     ];
     extraCompatPackages = [
@@ -93,6 +98,12 @@ in
   programs.dconf.enable = true;
 
   environment.systemPackages = with pkgs; [
+      yad
+      unzip
+      xwininfo
+      xprop
+      xdotool
+
     tmux
     waypipe
     wezterm

@@ -29,6 +29,7 @@ in
     signing.key = "/mkk/config/extra-files/ssh/materus.pub";
   };
   home.packages = with pkgs; [
+    unrar
     eza
     wezterm
     (emacs-gtk.pkgs.withPackages (epkgs: with epkgs; [ (eaf.withApplications [ eaf-browser eaf-pdf-viewer ]) ]))

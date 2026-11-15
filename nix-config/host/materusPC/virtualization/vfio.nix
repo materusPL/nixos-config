@@ -7,10 +7,11 @@ let
 
   allCores = "0-31";
   allCoresMask = "ffffffff";
-  hostCores = "0-7,16-23";
+  hostCores = "0-6,16-22";
   hostCoresMask = "00ff00ff";
   vmCores = "8-15,24-31";
   vmCoresMask = "ff00ff00";
+  pinCores = "7,23";
 
   VM_UUID = "ad2632db-0da0-4204-98b3-0592a185ebd0";
 

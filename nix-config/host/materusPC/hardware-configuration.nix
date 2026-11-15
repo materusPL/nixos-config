@@ -14,6 +14,11 @@ let
     "video=DP-3:1920x1080@240"
   ];
   vmCores = "8-15,24-31";
+
+  amdgpu-kernel-module = pkgs.callPackage ./pkgs/amdgpu-patched.nix {
+    kernel = config.boot.kernelPackages.kernel;
+  };
+
 in
 {
   imports = [
@@ -53,6 +58,7 @@ in
   boot.extraModulePackages = with config.boot.kernelPackages; [
     v4l2loopback
     kvmfr
+    amdgpu-kernel-module
   ];
 
   boot.kernelParams = [
